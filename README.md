@@ -26,5 +26,4 @@ The associated man pages (the man pages for each solution have minor but meaning
 
 ## TODO
 - [x] Write the design spec for the C implementation
-- [ ] Update the bash design spec
 - [x] Create a separate MD file for hblock allow list with hard link between both project dirs 
