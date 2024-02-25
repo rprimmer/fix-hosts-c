@@ -54,6 +54,7 @@ dkms.conf
 # macOS
 .DS_Store
 
+# project specific 
 etc/foo
 etc/hosts
 etc/hosts-HBLOCK

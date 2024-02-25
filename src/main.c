@@ -1,3 +1,5 @@
+#include <getopt.h>
+#include <libgen.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -6,37 +8,24 @@
 
 #include "fix-hosts.h"
 
-enum action_t {
-    ACTION_PREP,
-    ACTION_RESTORE,
-    ACTION_ADD,
-    ACTION_FLUSH,
-    ACTION_INVALID,
-};
-
-enum action_t action = ACTION_INVALID;
-char *DNS_NAME;
-
 void usage(char *program) {
     printf("Usage: %s [OPTIONS] <ACTION>\n\n", program);
-    printf("  -h       Display this help message and exit\n");
-    printf("  -f       Flush DNS cache and restart mDNSResponder\n");
-    printf("  -a       Add a DNS entry to allow list and remove from "
-           "/etc/hosts\n\n");
+    printf("  -h, --help            Display this help message and exit\n");
+    printf("  -a, --add <DNS name>  Add a DNS entry to allow list and remove from /etc/hosts\n");
+    printf("  -f, --flush           Flush DNS cache and restart mDNSResponder\n\n");
     printf("Actions:\n");
-    printf("  prep     Backup hosts file and run hblock to create a new hosts "
-           "file\n");
+    printf("  prep     Backup hosts file and run hblock to create a new hosts file\n");
     printf("  restore  Reinstate original hosts file\n\n");
     printf("Examples:\n");
     printf("  %s prep\n", program);
     printf("  %s restore\n", program);
-    printf("  %s -a example.domain.com\n\n", program);
+    printf("  %s -a example.domain.com\n", program);
+    printf("  %s -f\n\n", program);
     printf("Restrictions:\n");
-    printf("  Requires privileged actions. User must know sudo(1) password");
+    printf("  Requires privileged actions. User must know sudo(1) password\n");
     printf("  The flush action is specific to macOS only.\n\n");
     printf("Notes:\n");
-    printf("  When adding a DNS entry (-a) or flushing the cache (-f) the "
-           "arguments 'prep' | 'restore' are not required\n");
+    printf("  When adding a DNS entry (-a) or flushing the cache (-f) the arguments <prep> | <restore> are not required\n");
     exit(EXIT_SUCCESS);
 }
 
@@ -46,66 +35,74 @@ void handleError(char *msg) {
 }
 
 int main(int argc, char **argv) {
-    int opt;
-    int retval = 0; 
-    char *program = argv[0];
+    int opt = 0;
+    int retval = 0;
+    int option_index = 0;
+    char *program = basename(argv[0]);
+    char *DNS_NAME = NULL;
+    enum action_t {
+        ACTION_PREP,
+        ACTION_RESTORE,
+        ACTION_ADD,
+        ACTION_FLUSH,
+        ACTION_INVALID,
+    };
+    enum action_t action = ACTION_INVALID;
+    static struct option long_options[] = {{"help", no_argument, 0, 'h'},
+                                           {"flush", no_argument, 0, 'f'},
+                                           {"add", required_argument, 0, 'a'},
+                                           {0, 0, 0, 0}};
 
-    while (getopts(argc, argv, "fha") != -1) {
+    while ((opt = getopt_long(argc, argv, "hfa:", long_options, &option_index)) != -1) {
         switch (opt) {
         case 'h':
             usage(program);
-            return EXIT_SUCCESS; 
             break;
         case 'f':
             action = ACTION_FLUSH;
-            printf("DNS Flush\n");
-            // retval = dnsFlush();
-            return retval; 
             break;
         case 'a':
             action = ACTION_ADD;
             DNS_NAME = strdup(optarg);
-            if (!DNS_NAME) handleError("Invalid argument for -a switch");
-            printf("DNS Add\n");
-            // retval = addDnsName(DNS_NAME);
-            return retval; 
+            if (!DNS_NAME)
+                handleError("Memory allocation failed for DNS name");
             break;
         default:
-            action = ACTION_INVALID;
-            handle_error("Invalid option provided");
+            handleError("Invalid option provided");
         }
     }
 
-    // At this point the only valid arguments are 'prep' | 'restore'
-    if (optind < argc) {
-        handleError("Invalid arguments provided");
+    if (action == ACTION_ADD) {
+        // retval = addDnsName(DNS_NAME);
+        free(DNS_NAME);
+        return retval;
+    } else if (action == ACTION_FLUSH) {
+        // retval = dnsFlush();
+        return retval;
     }
 
-#ifdef DEBUG
-    if (optind >= argc)
-        fprintf(stderr, "argc[optind] %s\n", argc[optind]);
-#endif
+    if (argc <= optind)
+        handleError("No action specified");
 
-    if (strcmp(argv[optind], "prep")) 
-        printf("Arg %d is prep\n", optind);
-    else if (strcmp(argv[optind], "restore"))
-        printf("Arg %d is restore, optind");
-    else
-        handleError("Invalid arguments provided");
+    if (strcmp(argv[optind], "prep") == 0) {
+        action = ACTION_PREP;
+    } else if (strcmp(argv[optind], "restore") == 0) {
+        action = ACTION_RESTORE;
+    } else {
+        handleError("Invalid action specified");
+    }
 
-    // switch (action) {
-    // case ACTION_PREP:
-    //     copyHostsFile();
-    //     break;
-    // case ACTION_RESTORE:
-    //     restoreHostsFile();
-    //     break;
-    // default:
-    //     // Should not reach here due to error handling in processArguments()
-    //     break;
-    // }
+    switch (action) {
+    case ACTION_PREP:
+        // copyHostsFile();
+        break;
+    case ACTION_RESTORE:
+        // restoreHostsFile();
+        break;
+    default:
+        handleError("No valid action specified");
+    }
 
-    free(DNS_NAME);
     return EXIT_SUCCESS;
 
 } // main()
