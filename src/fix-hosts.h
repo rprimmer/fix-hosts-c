@@ -1,6 +1,10 @@
+// fix-hosts.h
+
 #pragma once
 
 void usage(char *);
+
+void handleError(char *);
 
 int prepHostsFile(void);
 
