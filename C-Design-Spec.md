@@ -82,7 +82,7 @@ Parse args and switches, call functions
 * return EXIT_SUCCESS; 
 
 ## usage()
-* printf(stderr, "%s\n", "usage: basename $0 [ahf] <prep | restore> [DNS entry]");
+* printf(stderr, "%s\n", "usage: basename $0 <ahf> <prep | restore> <DNS entry>");
 * exit 1
 
 ## prep-hosts-file()
