@@ -22,6 +22,9 @@ Below are recommendations made by [Gemini](#gemini-suggestions) and [ChatGPT](#c
 - [x] Typedef withing a typedef? 
 - [x] Create SERROR? 
 - [x] Move processArguments code to main()?
+- [ ] Consider `perror()` in `handleError()`
+- [ ] Consider globals (e.g., `const char* ETC = "/etc";`) in place of hardcoded strings such as "etc"
+- [ ] Move system functions to separate files (system-actions.{c,h}) 
 - [ ] Compare costs/benefits of `system(3)` to `exec*` calls
 - [ ] Try different format for man page (brew?)
 - [ ] Create the option to copy updates made to `hosts{,.allow}` files to other systems (mac or linux) somehow (shared dropbox folder?)
@@ -31,7 +34,7 @@ Below are recommendations made by [Gemini](#gemini-suggestions) and [ChatGPT](#c
 - [ ] Update bash script with any updates from C project 
 
 ## Binary executable
-* Binary executable located in `~/bin` called `fix-hostfile`
+* Binary executable located in `~/bin` called `fix-hostfile-c`
 
 ## Arguments
 * restore : restores original hosts file, displays output
@@ -43,18 +46,11 @@ Below are recommendations made by [Gemini](#gemini-suggestions) and [ChatGPT](#c
 * -f  : flush DNS cache and restart the `mDNSResponder` service
 * -h  : Display usage
 
-## Includes
-* <stdio.h>
-* <bool.h>
-* "fix-hosts.h" 
-
-## typedefs & defines 
-* HOSTS=/etc/hosts
-* HBLOCK=/etc/hblock
-* ALLOW_LIST=/etc/$HBLOCK/allow.list
-
-## globals
+## Variables 
 ``` C
+const char *const HOSTS = "/etc/hosts";
+const char *const HBLOCK = "/etc/hblock";
+const char *const ALLOWS = "allow.list";
 enum action_t {
     ACTION_PREP,
     ACTION_RESTORE,
@@ -85,10 +81,9 @@ Parse args and switches, call functions
 * printf(stderr, "%s\n", "usage: basename $0 <ahf> <prep | restore> <DNS entry>");
 * exit 1
 
-## prep-hosts-file()
-* cd /etc
+## copyHostsFiles()
 * echo “Existing hosts files”
-* sudo ls -las hosts*
+* sudo ls -las /etc/hosts*
 * Check for existence of files: hosts and hosts-ORIG.
   * IF hosts file doesn’t exist, display error and exit_failure.
 * sudo cp hosts{,-ORIG}

@@ -6,6 +6,7 @@
 #include <unistd.h>
 
 #include "fix-hosts.h"
+#include "system-actions.h"
 
 int main(int argc, char **argv) {
     int opt = 0;
@@ -47,7 +48,7 @@ int main(int argc, char **argv) {
                 handleError("Memory allocation failed for DNS name");
             break;
         default:
-            handleError("Invalid option provided");
+            handleError("Invalid switch provided");
         }
     }
 
