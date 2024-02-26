@@ -1,8 +1,8 @@
 # make bin -> create project directory structre
 # make release -> make final version for release
 
-CC  =		clang
-CFLAGS =	-g -Wall -Wextra
+CC  =		clang 
+CFLAGS =	-g -Wall -Wextra -DDEBUG 
 LDFLAGS =
 SRC = 		src
 OBJ = 		obj

@@ -27,3 +27,6 @@ The associated man pages (the man pages for each solution have minor but meaning
 ## TODO
 - [x] Write the design spec for the C implementation
 - [x] Create a separate MD file for hblock allow list with hard link between both project dirs 
+- [ ] Update makefile in config dir
+- [ ] Update skell.c in config dir 
+- [ ] Update the way VSC formats code: it's breaking up long lines
