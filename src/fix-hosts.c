@@ -1,10 +1,12 @@
 #include "fix-hosts.h"
 
-const char *const ETC = "/etc";
+const char *const ETC = "/etc/";
 const char *const HOSTS = "/etc/hosts";
-const char *const HBLOCK = "/etc/hblock";
-const char *const ALLOWS = "allow.list";
-// const char *const ALLOW = "/etc/hblock/allow.list";
+const char *const HOSTS_ORIG = "/etc/hosts-ORIG"; 
+const char *const HOSTFILES = "hosts*";
+const char *const HBLOCK = "hblock";
+const char *const ALLOWLIST = "allow.list";
+// const char *const ALLOWLIST = "/etc/hblock/allow.list";
 
 void usage(const char *program) {
     printf("Usage: %s [OPTIONS] <ACTION>\n\n", program);
@@ -35,47 +37,17 @@ int copyHostsFiles(void) {
     uid_t original_uid = getuid(); // Store original user ID
 
     // Check for "hosts" file existence
-    if (access("/etc/hosts", F_OK) != 0) {
-        handleError("no hosts file found");
-    }
+    if (access(HOSTS, F_OK) != 0) 
+        handleError("no hosts file found");  
 
     // Show user existing /etc/hosts* files 
-    printf("Existing hosts files...\n"); 
-
-    // TODO Move this function to systems-actions.c 
-    DIR *dir = opendir("/etc");
-
-    if (dir == NULL) {
-        perror("opendir");
-        return EXIT_FAILURE;
-    }
-
-    struct dirent *entry;
-    struct stat file_stat;
-
-    while ((entry = readdir(dir)) != NULL) {
-        if (fnmatch("hosts*", entry->d_name, 0) == 0) {
-            char full_path[PATH_MAX];
-            snprintf(full_path, sizeof(full_path), "/etc/%s", entry->d_name);
-
-            if (lstat(full_path, &file_stat) == 0) {
-                printf("%s ", full_path);
-
-                // Get and print file information
-                printf("Owner: %s ", getpwuid(file_stat.st_uid)->pw_name);
-                printf("Group: %s ", getgrgid(file_stat.st_gid)->gr_name);
-                printf("Size: %lld ", file_stat.st_size);
-                printf("Last modified: %s", ctime(&file_stat.st_mtime));
-                // printf("\n"); // Not sure why this isn't needed, but it isn't. 
-            } else {
-                perror("lstat");
-            }
-        }
-    }
+    printf("Existing hosts files...\n");
+    if (lsFiles(ETC, HOSTFILES))
+        handleError("unable to access hosts files"); 
 
     // Check for "hosts-ORIG" file and prompt for overwrite
-    if (access("/etc/hosts-ORIG", F_OK) == 0) {
-        printf("\nWARNING: File hosts-ORIG already exists. This action will overwrite that file\n");
+    if (access(HOSTS_ORIG, F_OK) == 0) {
+        printf("\nWARNING: File %s already exists. This action will overwrite that file\n", HOSTS_ORIG);
         if (!booleanQuery("Do you want to continue? (y/n)")) {
             printf("Exiting...\n");
             exit(EXIT_SUCCESS);
@@ -93,13 +65,12 @@ int copyHostsFiles(void) {
 
     // hblock(1) creates a new /etc/hosts file
     printf("Running hblock(1) to update hosts file\n"); 
-    // if (system("hblock") != 0)
+    // if (system(HBLOCK) != 0)
     //     handleError("hblock failed");
 
-    printf("Hosts file updated. New hosts files\n"); 
-    // TODO display hosts
-
-    closedir(dir);
+    printf("Hosts file has been updated.\n");
+    printf("Here are the new hosts files\n");
+    lsFiles(ETC, HOSTFILES);
 
     return EXIT_SUCCESS;
 }

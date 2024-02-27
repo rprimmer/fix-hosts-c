@@ -66,3 +66,4 @@ etc/SAVE-ORIG-hosts
 etc/hblock/allow.list
 etc/hblock/SAVE-ORIG-allow.list
 bin/myapp
+bin/myapp
