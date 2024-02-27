@@ -9,12 +9,12 @@
 #include "system-actions.h"
 
 int main(int argc, char **argv) {
-    int opt = 0;
-    int retval = 0;
+    int option = 0;
     int option_index = 0;
+    int retval = 0;
     char *program = basename(argv[0]);
-    char *DNS_NAME = NULL;
     char *argument = NULL;
+    char *DNS_NAME = NULL;
     enum action_t {
         ACTION_PREP,
         ACTION_RESTORE,
@@ -33,8 +33,8 @@ int main(int argc, char **argv) {
 #endif // DEBUG
 
     // Handle switches
-    while ((opt = getopt_long(argc, argv, "hfa:", long_options, &option_index)) != -1) {
-        switch (opt) {
+    while ((option = getopt_long(argc, argv, "hfa:", long_options, &option_index)) != -1) {
+        switch (option) {
         case 'h':
             usage(program);
             break;
@@ -45,10 +45,10 @@ int main(int argc, char **argv) {
             action = ACTION_ADD;
             DNS_NAME = strdup(optarg);
             if (!DNS_NAME)
-                handleError("Memory allocation failed for DNS name");
+                handleError("memory allocation failed for DNS name");
             break;
         default:
-            handleError("Invalid switch provided");
+            handleError("invalid switch provided");
         }
     }
 
@@ -57,16 +57,18 @@ int main(int argc, char **argv) {
 #endif // DEBUG
 
     // Handle arguments
+    const char *const PREP = "prep";
+    const char *const RESTORE = "restore";
     if (argc <= optind && action != ACTION_ADD && action != ACTION_FLUSH)
-        handleError("No action specified");
+        handleError("no action specified");
     else if (argc > optind) {
         argument = argv[optind];
-        if (strcmp(argument, "prep") == 0)
+        if (strcmp(argument, PREP) == 0)
             action = ACTION_PREP;
-        else if (strcmp(argument, "restore") == 0)
+        else if (strcmp(argument, RESTORE) == 0)
             action = ACTION_RESTORE;
         else
-            handleError("Invalid action specified");
+            handleError("invalid action specified");
     }
 
     // Handle actions
@@ -85,7 +87,7 @@ int main(int argc, char **argv) {
         retval = dnsFlush();
         break;
     default:
-        handleError("No valid action specified");
+        handleError("no valid action specified");
     }
 
     return retval;

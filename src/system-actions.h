@@ -24,9 +24,9 @@ void handleError(const char *);
 
 int fileExists(const char *);
 
-void copyFile(const char *, const char *);
+int copyFile(const char *, const char *);
 
-void copyFile2(const char *, const char *); 
+int copyFile2(const char *, const char *); 
 
 int lsFiles(const char *, const char *);
 
