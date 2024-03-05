@@ -1,4 +1,4 @@
-# make bin -> create project directory structre
+# make bin -> create project directory structure 
 # make release -> make final version for release
 
 CC  =		clang 
