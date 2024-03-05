@@ -5,7 +5,7 @@
 Where possible, will try to maintain the same structure in the C program as exists in the bash script, such as function and variable names.
 
 ### Globals
-Globals in Bash are common. In C we may be able to dispense with these, outside of typedefs. 
+Globals in Bash are the default. In C we may be able to dispense with these. 
 
 ### Use of system(3)
 Some of the functions in the bash script (e.g., reading and writing) can be accomplished in C with library functions or system calls, other cannot. For those cases, will experiment with different methods.
@@ -22,16 +22,16 @@ Below are recommendations made by [Gemini](#gemini-suggestions) and [ChatGPT](#c
 - [x] Typedef withing a typedef? 
 - [x] Create SERROR? 
 - [x] Move processArguments code to main()?
-- [ ] Consider `perror()` in `handleError()`
-- [ ] Consider globals (e.g., `const char* ETC = "/etc";`) in place of hardcoded strings such as "etc"
-- [ ] Move system functions to separate files (system-actions.{c,h}) 
+- [x] Consider `perror()` in `handleError()`
+- [x] Consider globals (e.g., `const char* ETC = "/etc";`) in place of hardcoded strings such as "etc"
+- [x] Move system functions to separate files (system-actions.{c,h}) 
+- [x] Research use of long switches (e.g., `--help`)
+- [x] Right now the switches are mutually exclusive. Should -fa be allowed?
 - [ ] Compare costs/benefits of `system(3)` to `exec*` calls
-- [ ] Try different format for man page (brew?)
-- [ ] Create the option to copy updates made to `hosts{,.allow}` files to other systems (mac or linux) somehow (shared dropbox folder?)
 - [ ] Update man page to the new format I discovered (if I can ever locate it again :))
-- [ ] Research use of long switches (e.g., `--help`)
-- [ ] Right now the switches are mutually exclusive. Should -fa be allowed?
+- [ ] Should `handleError()` include `__LINE__` and calling function name?
 - [ ] Update bash script with any updates from C project 
+- [ ] Create the option to copy updates made to `hosts{,.allow}` files to other systems (mac or linux) somehow (shared dropbox folder?)
 
 ## Binary executable
 * Binary executable located in `~/bin` called `fix-hostfile-c`

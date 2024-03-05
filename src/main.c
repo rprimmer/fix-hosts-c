@@ -9,11 +9,7 @@
 #include "system-actions.h"
 
 int main(int argc, char **argv) {
-    int option = 0;
-    int option_index = 0;
-    int retval = 0;
     char *program = basename(argv[0]);
-    char *argument = NULL;
     char *DNS_NAME = NULL;
     enum action_t {
         ACTION_PREP,
@@ -23,16 +19,18 @@ int main(int argc, char **argv) {
         ACTION_INVALID,
     };
     enum action_t action = ACTION_INVALID;
+
+#ifdef DEBUG
+    fprintf(stderr, "argc: %d, optind: %d, line: %d\n", argc, optind, __LINE__);
+#endif // DEBUG
+
+    // Handle switches
+    int option = 0;
+    int option_index = 0;
     static struct option long_options[] = {{"help", no_argument, 0, 'h'},
                                            {"flush", no_argument, 0, 'f'},
                                            {"add", required_argument, 0, 'a'},
                                            {0, 0, 0, 0}};
-
-#ifdef DEBUG
-    fprintf(stderr, "argc: %d, optind: %d\n", argc, optind);
-#endif // DEBUG
-
-    // Handle switches
     while ((option = getopt_long(argc, argv, "hfa:", long_options, &option_index)) != -1) {
         switch (option) {
         case 'h':
@@ -53,12 +51,13 @@ int main(int argc, char **argv) {
     }
 
 #ifdef DEBUG
-    fprintf(stderr, "argc: %d, optind: %d\n", argc, optind);
+    fprintf(stderr, "argc: %d, optind: %d, line: %d\n", argc, optind, __LINE__);
 #endif // DEBUG
 
     // Handle arguments
     const char *const PREP = "prep";
     const char *const RESTORE = "restore";
+    char *argument = NULL;
     if (argc <= optind && action != ACTION_ADD && action != ACTION_FLUSH)
         handleError("no action specified");
     else if (argc > optind) {
@@ -72,6 +71,7 @@ int main(int argc, char **argv) {
     }
 
     // Handle actions
+    int retval = 0;
     switch (action) {
     case ACTION_PREP:
         retval = copyHostsFiles();

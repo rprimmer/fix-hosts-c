@@ -31,7 +31,7 @@ int fileExists(const char *filename) {
 
 int copyFile(const char *src, const char *dest) {
     FILE *source, *destination;
-    char buffer[1024];
+    char buffer[BUFSIZ]; // BUFSIZ from stdio.h 
     size_t bytesRead;
 
     source = fopen(src, "rb");
@@ -55,7 +55,7 @@ int copyFile(const char *src, const char *dest) {
 
 int copyFile2(const char *src, const char *dest) {
     int source_fd, dest_fd;
-    char buffer[4096]; 
+    char buffer[BUFSIZ]; // BUFSIZ from stdio.h
     ssize_t bytes_read, bytes_written;
 
     source_fd = open(src, O_RDONLY);
@@ -85,7 +85,7 @@ int copyFile2(const char *src, const char *dest) {
 
 int lsFiles(const char *dirname, const char *files) { 
 #ifdef DEBUG
-    printf("In function: lsFiles\n");
+    fprintf(stderr, "In function: lsFiles\n");
 #endif // DEBUG
 
     DIR *dir = opendir(dirname);
@@ -156,4 +156,3 @@ int fileInfo(const char *filepath) {
 
     return EXIT_SUCCESS; 
 } // fileInfo() 
-
