@@ -29,12 +29,13 @@ void usage(const char *program) {
     exit(EXIT_SUCCESS);
 }
 
+
 int copyHostsFiles(void) {
 #ifdef DEBUG
     fprintf(stderr, "In function copyHostsFile\n");
 #endif // DEBUG
 
-    uid_t original_uid = getuid(); // Store original user ID
+    uid_t original_uid = getuid(); 
 
     if (access(HOSTS, F_OK) != 0) 
         handleError("no hosts file found");  
@@ -51,7 +52,7 @@ int copyHostsFiles(void) {
         }
     }
 
-    // Copying "hosts" to "hosts-ORIG" (when located in /etc) requires root on most systems
+    // When host files are located in /etc, root is required root on most systems
     if (setuid(0) == -1) 
         handleError("setuid to root failed");
 
@@ -78,6 +79,37 @@ int restoreHostsFile(void) {
 #ifdef DEBUG
     fprintf(stderr, "In function restoreHostsFile\n");
 #endif // DEBUG
+
+    uid_t original_uid = getuid(); 
+
+    if (access(HOSTS_ORIG, F_OK) !=0)
+        handleError("original hosts file backup does not exist");
+
+    printf("Existing hosts files...\n");
+    if (lsFiles(ETC, HOSTFILES))
+        handleError("unable to access hosts files");
+
+    if (access(HOSTS, F_OK) == 0) {
+        printf("\nWARNING: File %s already exists. This action will overwrite that file\n", HOSTS);
+        if (!booleanQuery("Do you want to continue? (y/n)")) {
+            printf("Exiting...\n");
+            exit(EXIT_SUCCESS);
+        }
+    }
+
+    // When host files are located in /etc, root is required root on most systems
+    if (setuid(0) == -1)
+        handleError("setuid to root failed");
+
+    if (copyFile(HOSTS_ORIG, HOSTS))
+        handleError("unable to copy hosts file");
+
+    if (setuid(original_uid) == -1)
+        handleError("setuid to original user failed");
+
+    printf("Hosts file has been updated.\n");
+    printf("Here are the new hosts files\n");
+    lsFiles(ETC, HOSTFILES);
 
     return EXIT_SUCCESS;
 }
