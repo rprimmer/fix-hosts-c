@@ -27,6 +27,7 @@ Below are recommendations made by [Gemini](#gemini-suggestions) and [ChatGPT](#c
 - [x] Move system functions to separate files (system-actions.{c,h}) 
 - [x] Research use of long switches (e.g., `--help`)
 - [x] Right now the switches are mutually exclusive. Should -fa be allowed?
+- [ ] Modify {copy,restore}HostFiles() to be a single function `updateHostFiles(action)` with prep|restore as parameter? 
 - [ ] Compare costs/benefits of `system(3)` to `exec*` calls
 - [ ] Update man page to the new format I discovered (if I can ever locate it again :))
 - [ ] Should `handleError()` include `__LINE__` and calling function name?

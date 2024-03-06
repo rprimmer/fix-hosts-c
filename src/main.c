@@ -41,13 +41,15 @@ int main(int argc, char **argv) {
             break;
         case 'a':
             action = ACTION_ADD;
-            DNS_NAME = strdup(optarg);
-            if (!DNS_NAME)
-                handleError("memory allocation failed for DNS name");
-            break;
-        default:
-            handleError("invalid switch provided");
-        }
+            if (optarg && *optarg != '\0') {
+                DNS_NAME = strdup(optarg);
+                if (!DNS_NAME)
+                    handleError("memory allocation failed for DNS name");
+                break;
+            }
+            default:
+                handleError("invalid switch provided");
+            }
     }
 
 #ifdef DEBUG
