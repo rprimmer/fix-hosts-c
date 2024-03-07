@@ -5,20 +5,14 @@
 #include <string.h>
 #include <unistd.h>
 
+#include "actions.h"
 #include "fix-hosts.h"
 #include "system-actions.h"
 
 int main(int argc, char **argv) {
     char *program = basename(argv[0]);
     char *DNS_NAME = NULL;
-    enum action_t {
-        ACTION_PREP,
-        ACTION_RESTORE,
-        ACTION_ADD,
-        ACTION_FLUSH,
-        ACTION_INVALID,
-    };
-    enum action_t action = ACTION_INVALID;
+    Action action = ACTION_INVALID;
 
 #ifdef DEBUG
     fprintf(stderr, "argc: %d, optind: %d, line: %d\n", argc, optind, __LINE__);
@@ -45,11 +39,11 @@ int main(int argc, char **argv) {
                 DNS_NAME = strdup(optarg);
                 if (!DNS_NAME)
                     handleError("memory allocation failed for DNS name");
-                break;
             }
-            default:
-                handleError("invalid switch provided");
-            }
+            break;
+        default:
+            handleError("invalid switch provided");
+        }
     }
 
 #ifdef DEBUG
@@ -76,10 +70,10 @@ int main(int argc, char **argv) {
     int retval = 0;
     switch (action) {
     case ACTION_PREP:
-        retval = copyHostsFiles();
+        retval = updateHostsFiles(HOSTS, HOSTS_ORIG, action);
         break;
     case ACTION_RESTORE:
-        retval = restoreHostsFile();
+        retval = updateHostsFiles(HOSTS_ORIG, HOSTS, action);
         break;
     case ACTION_ADD:
         retval = addDnsName(DNS_NAME);

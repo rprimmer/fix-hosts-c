@@ -1,7 +1,8 @@
 // system-actions.h
-// Collection of common system functions 
+// Collection of common system functions
 
-#pragma once
+#ifndef SYSTEM_ACTIONS_H
+#define SYSTEM_ACTIONS_H 
 
 #include <dirent.h>
 #include <errno.h>
@@ -30,4 +31,6 @@ int copyFile2(const char *, const char *);
 
 int lsFiles(const char *, const char *);
 
-int fileInfo(const char *); 
+int fileInfo(const char *);
+
+#endif /* SYSTEM_ACTIONS_H */
