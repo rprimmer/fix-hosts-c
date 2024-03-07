@@ -22,9 +22,9 @@ void usage(const char *program) {
 }
 
 int updateHostsFiles(const char *src, const char *dst, Action action) {
-
 #ifdef DEBUG
-    fprintf(stderr, "In function updateHostsFiles, src: %s, dst: %s, action: %d\n", src, dst, action);
+    fprintf(stderr, "In function updateHostsFiles, src: %s, dst: %s, action: %d, line %d\n", src, dst, action, __LINE__);
+    fprintf(stderr, "HOSTS: %s, HOSTS_ORIG: %s\n", HOSTS, HOSTS_ORIG);
 #endif // DEBUG
 
     uid_t original_uid = getuid();
@@ -68,7 +68,7 @@ int updateHostsFiles(const char *src, const char *dst, Action action) {
 
 int addDnsName(const char *dns_name) {
 #ifdef DEBUG
-    fprintf(stderr, "In function addDnsName, DNS name: %s\n", dns_name);
+    fprintf(stderr, "In function addDnsName, DNS name: %s, Line: %d\n", dns_name, __LINE__);
 #endif // DEBUG
 
     return EXIT_SUCCESS;
@@ -76,7 +76,7 @@ int addDnsName(const char *dns_name) {
 
 int dnsFlush(void) {
 #ifdef DEBUG
-    fprintf(stderr, "In function dnsFlush\n");
+    fprintf(stderr, "In function dnsFlush, Line: %d\n", __LINE__);
 #endif // DEBUG
 
     return EXIT_SUCCESS;

@@ -20,27 +20,16 @@
 #include <time.h>
 #include <unistd.h>
 
-// const char *const ETC = "./etc/";
-// const char *const HOSTS = "./etc/hosts";
-// const char *const HOSTS_ORIG = "./etc/hosts-ORIG";
-// const char *const HOSTFILES = "hosts*";
-// const char *const HBLOCK = "hblock";
-// const char *const ALLOWLIST = "/etc/hblock/allow.list";
-
-#define  ETC "./etc/"
-#define  HOSTS "./etc/hosts"
-#define  HOSTS_ORIG "./etc/hosts-ORIG"
-#define  HOSTFILES "hosts*"
-#define  HBLOCK "hblock"
-#define  ALLOWLIST "/etc/hblock/allow.list"
+#define ETC "./etc/"
+#define HOSTS ETC "hosts"
+#define HOSTS_ORIG ETC "hosts-ORIG"
+#define ALLOWLIST ETC "hblock/allow.list"
+#define HOSTFILES "hosts*"
+#define HBLOCK "hblock"
 
 void usage(const char *);
 
 int updateHostsFiles(const char *, const char *, Action);
-
-int copyHostsFiles(void);
-
-int restoreHostsFile(void);
 
 int addDnsName(const char *);
 

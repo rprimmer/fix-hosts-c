@@ -27,12 +27,12 @@ Below are recommendations made by [Gemini](#gemini-suggestions) and [ChatGPT](#c
 - [x] Move system functions to separate files (system-actions.{c,h}) 
 - [x] Research use of long switches (e.g., `--help`)
 - [x] Right now the switches are mutually exclusive. Should -fa be allowed?
-- [ ] Modify {copy,restore}HostFiles() to be a single function `updateHostFiles(action)` with prep|restore as parameter? 
+- [x] Modify {copy,restore}HostFiles() to be a single function `updateHostFiles(action)` with prep|restore as parameter? 
 - [ ] Compare costs/benefits of `system(3)` to `exec*` calls
 - [ ] Update man page to the new format I discovered (if I can ever locate it again :))
-- [ ] Should `handleError()` include `__LINE__` and calling function name?
-- [ ] Update bash script with any updates from C project 
-- [ ] Create the option to copy updates made to `hosts{,.allow}` files to other systems (mac or linux) somehow (shared dropbox folder?)
+- [x] Should `handleError()` include `__LINE__` and calling function name?
+- [ ] Update bash script with updates from C project 
+- [ ] Create option to copy updates made to `hosts{,.allow}` files to other systems (mac or linux) somehow (shared dropbox folder?)
 
 ## Binary executable
 * Binary executable located in `~/bin` called `fix-hostfile-c`
@@ -46,23 +46,6 @@ Below are recommendations made by [Gemini](#gemini-suggestions) and [ChatGPT](#c
 * -a  : add IP entry to allow.list, delete it from hosts
 * -f  : flush DNS cache and restart the `mDNSResponder` service
 * -h  : Display usage
-
-## Variables 
-``` C
-const char *const HOSTS = "/etc/hosts";
-const char *const HBLOCK = "/etc/hblock";
-const char *const ALLOWS = "allow.list";
-enum action_t {
-    ACTION_PREP,
-    ACTION_RESTORE,
-    ACTION_ADD,
-    ACTION_FLUSH,
-    ACTION_INVALID, 
-};
-```
-`enum action_t action = ACTION_INVALID;`
-
-`char *DNS_NAME;`
 
 ## main()
 Parse args and switches, call functions

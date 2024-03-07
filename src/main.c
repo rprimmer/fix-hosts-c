@@ -67,7 +67,7 @@ int main(int argc, char **argv) {
     }
 
     // Handle actions
-    int retval = 0;
+    int retval = 1;
     switch (action) {
     case ACTION_PREP:
         retval = updateHostsFiles(HOSTS, HOSTS_ORIG, action);
