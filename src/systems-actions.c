@@ -17,7 +17,7 @@ int booleanQuery(const char *prompt) {
     if (fgets(response, sizeof(response), stdin) == NULL) 
         handleError("failed to read user response");
 
-    // Empty newline is interpreted as non-yes answer 
+    // Empty newline interpreted as non-yes answer 
     if (response[0] == '\n')     
         return 0;
 
@@ -85,7 +85,7 @@ int copyFile2(const char *src, const char *dest) {
 
 int lsFiles(const char *dirname, const char *files) { 
 #ifdef DEBUG
-    fprintf(stderr, "In function: lsFiles\n");
+    fprintf(stderr, "In function: lsFiles, Line: %d\n", __LINE__);
 #endif // DEBUG
 
     DIR *dir = opendir(dirname);
