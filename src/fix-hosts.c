@@ -1,13 +1,5 @@
 #include "fix-hosts.h"
 
-const char *const ETC = "./etc/";
-const char *const HOSTS = "./etc/hosts";
-const char *const HOSTS_ORIG = "./etc/hosts-ORIG"; 
-const char *const HOSTFILES = "hosts*";
-const char *const HBLOCK = "hblock";
-const char *const ALLOWLIST = "allow.list";
-// const char *const ALLOWLIST = "/etc/hblock/allow.list";
-
 void usage(const char *program) {
     printf("Usage: %s [OPTIONS] <ACTION>\n\n", program);
     printf("  -h, --help            Display this help message and exit\n");
@@ -29,83 +21,43 @@ void usage(const char *program) {
     exit(EXIT_SUCCESS);
 }
 
+int updateHostsFiles(const char *src, const char *dst, Action action) {
 
-int copyHostsFiles(void) {
 #ifdef DEBUG
-    fprintf(stderr, "In function copyHostsFile\n");
+    fprintf(stderr, "In function updateHostsFiles, src: %s, dst: %s, action: %d\n", src, dst, action);
 #endif // DEBUG
 
-    uid_t original_uid = getuid(); 
+    uid_t original_uid = getuid();
 
-    if (access(HOSTS, F_OK) != 0) 
-        handleError("no hosts file found");  
-
-    printf("Existing hosts files...\n");
-    if (lsFiles(ETC, HOSTFILES))
-        handleError("unable to access hosts files"); 
-
-    if (access(HOSTS_ORIG, F_OK) == 0) {
-        printf("\nWARNING: File %s already exists. This action will overwrite that file\n", HOSTS_ORIG);
-        if (!booleanQuery("Do you want to continue? (y/n)")) {
-            printf("Exiting...\n");
-            exit(EXIT_SUCCESS);
-        }
-    }
-
-    // When host files are located in /etc, root is required root on most systems
-    if (setuid(0) == -1) 
-        handleError("setuid to root failed");
-
-    if (copyFile(HOSTS, HOSTS_ORIG))
-        handleError("unable to copy hosts file"); 
-
-    if (setuid(original_uid) == -1) 
-        handleError("setuid to original user failed");
-
-    // hblock(1) creates a new /etc/hosts file
-    printf("Running hblock(1) to update hosts file\n"); 
-    // if (system(HBLOCK))
-    //     handleError("hblock failed");
-
-    printf("Hosts file has been updated.\n");
-    printf("Here are the new hosts files\n");
-    lsFiles(ETC, HOSTFILES);
-
-    return EXIT_SUCCESS;
-}
-
-
-int restoreHostsFile(void) {
-#ifdef DEBUG
-    fprintf(stderr, "In function restoreHostsFile\n");
-#endif // DEBUG
-
-    uid_t original_uid = getuid(); 
-
-    if (access(HOSTS_ORIG, F_OK) !=0)
-        handleError("original hosts file backup does not exist");
+    if (access(src, F_OK))
+        handleError("source file not found");
 
     printf("Existing hosts files...\n");
     if (lsFiles(ETC, HOSTFILES))
         handleError("unable to access hosts files");
 
-    if (access(HOSTS, F_OK) == 0) {
-        printf("\nWARNING: File %s already exists. This action will overwrite that file\n", HOSTS);
+    if (access(dst, F_OK) == 0) {
+        printf("\nWARNING: File %s already exists. This action will overwrite that file\n", dst);
         if (!booleanQuery("Do you want to continue? (y/n)")) {
             printf("Exiting...\n");
-            exit(EXIT_SUCCESS);
+            return EXIT_SUCCESS;
         }
     }
 
-    // When host files are located in /etc, root is required root on most systems
     if (setuid(0) == -1)
         handleError("setuid to root failed");
 
-    if (copyFile(HOSTS_ORIG, HOSTS))
+    if (copyFile(src, dst))
         handleError("unable to copy hosts file");
 
     if (setuid(original_uid) == -1)
         handleError("setuid to original user failed");
+
+    if (action == ACTION_PREP) {
+        printf("Running hblock(1) to update hosts file\n");
+        // if (system(HBLOCK))
+        //     handleError("hblock failed");
+    }
 
     printf("Hosts file has been updated.\n");
     printf("Here are the new hosts files\n");

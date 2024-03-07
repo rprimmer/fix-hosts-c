@@ -2,6 +2,7 @@
     "cSpell.words": [
         "Doxygen",
         "ELIF",
+        "FIXHOSTS",
         "flushcache",
         "hblock",
         "hostfile",
@@ -19,6 +20,7 @@
     "C_Cpp.dimInactiveRegions": false,
     "files.associations": {
         "stdbool.h": "c",
-        "stdio.h": "c"
+        "stdio.h": "c",
+        "system-actions.h": "c"
     }
 }
