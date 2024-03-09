@@ -27,12 +27,12 @@ int booleanQuery(const char *prompt) {
         return 0;
 
     return (response[0] == 'y' || response[0] == 'Y');
-} // booleanQuery() 
+} 
 
 int fileExists(const char *filename) {
     struct stat buffer;
     return (stat(filename, &buffer) == 0);
-} // fileExists() 
+} 
 
 int copyFile(const char *src, const char *dest) {
     FILE *source, *destination;
@@ -56,7 +56,7 @@ int copyFile(const char *src, const char *dest) {
     fclose(destination);
 
     return EXIT_SUCCESS;
-} // copyFile()
+} 
 
 int copyFile2(const char *src, const char *dest) {
     int source_fd, dest_fd;
@@ -86,7 +86,7 @@ int copyFile2(const char *src, const char *dest) {
     printf("File copied successfully!\n");
 
     return EXIT_SUCCESS;
-} // copyFile2()
+} 
 
 int lsFiles(const char *dirname, const char *files) { 
 #ifdef DEBUG
@@ -119,8 +119,7 @@ int lsFiles(const char *dirname, const char *files) {
     }
 
     return (closedir(dir)); 
-    
-} // lsFiles()
+} 
 
 int fileInfo(const char *filepath) {
     struct stat fileStat;
@@ -158,7 +157,7 @@ int fileInfo(const char *filepath) {
     printf("Last status change time: %s", statusChangeTime);
 
     return EXIT_SUCCESS; 
-} // fileInfo() 
+} 
 
 int checkProcess(const char *process_name) {
     char command[128];
@@ -184,7 +183,7 @@ int checkProcess(const char *process_name) {
     }
 
     return (pclose(pipe)); 
-}
+} 
 
 int displayProcess(const char *process_name) {
     char command[128];
@@ -216,4 +215,4 @@ int validateDNSname(const char *dns_name) {
     regfree(&regex); // Free memory allocated to the pattern buffer by regcomp
 
     return result; 
-}
+} 

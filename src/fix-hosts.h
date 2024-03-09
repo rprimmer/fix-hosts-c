@@ -36,7 +36,6 @@
 #define HBLOCK_DIR ETC "hblock"
 
 
-
 void usage(const char *);
 
 int updateHostsFiles(const char *, const char *, Action);

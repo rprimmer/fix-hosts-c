@@ -22,6 +22,7 @@ void usage(const char *program) {
 }
 
 int updateHostsFiles(const char *src, const char *dst, Action action) {
+
 #ifdef DEBUG
     fprintf(stderr, "In function updateHostsFiles, src: %s, dst: %s, action: %d, line %d\n", src, dst, action, __LINE__);
     fprintf(stderr, "HOSTS: %s, HOSTS_ORIG: %s\n", HOSTS, HOSTS_ORIG);
@@ -44,11 +45,12 @@ int updateHostsFiles(const char *src, const char *dst, Action action) {
         }
     }
 
+    // Root typically required to edit files in /etc. For this action user must call with sudo(1)
     if (setuid(0) == -1)
         handleError("setuid to root failed");
 
     if (copyFile(src, dst))
-        handleError("unable to copy hosts file");
+        handleError("unable to copy %s to %s", src, dst);
 
     if (setuid(original_uid) == -1)
         handleError("setuid to original user failed");
@@ -67,6 +69,7 @@ int updateHostsFiles(const char *src, const char *dst, Action action) {
 }
 
 int addDnsName(const char *hblock_dir, const char *dns_name, const char *allow_file) {
+
 #ifdef DEBUG
     fprintf(stderr, "In function addDnsName, DNS name: %s, Line: %d\n", dns_name, __LINE__);
 #endif // DEBUG
@@ -79,7 +82,7 @@ int addDnsName(const char *hblock_dir, const char *dns_name, const char *allow_f
     if (stat(hblock_dir, &st) == -1) {
         if (mkdir(hblock_dir, 0755) == -1) 
             handleError("unable to make dir: %s", hblock_dir);
-    } else if (!S_ISDIR(st.st_mode)) 
+     } else if (!S_ISDIR(st.st_mode)) 
         handleError("%s is not a directory", hblock_dir);
 
     // Check if DNS entry already exists in the allow list
@@ -90,16 +93,15 @@ int addDnsName(const char *hblock_dir, const char *dns_name, const char *allow_f
     int found = 0;
 
     if ((file = fopen(allow_file, "r+")) == NULL)
-        handleError("Failed to open allow list file: %s", allow_file);
+        handleError("failed to open allow list file: %s", allow_file);
 
-    while ((read = getline(&line, &len, file)) != -1) {
+    while ((read = getline(&line, &len, file)) != -1) 
         if (strcmp(line, dns_name) == 0) {
             printf("DNS entry %s already exists in %s\n", dns_name, allow_file);
             found = 1;
             break;
         }
-    }
-
+    
     if (!found) 
         fprintf(file, "%s\n", dns_name);
 
@@ -111,7 +113,7 @@ int addDnsName(const char *hblock_dir, const char *dns_name, const char *allow_f
     fclose(file);
     free(line);
 
-    // Running hblock(1) updates /etc/hosts without allowed DNS names
+    // Running hblock(1) updates /etc/hosts sans DNS names in allow list
     printf("Running hblock(1) to update hosts file\n");
     // if (system(HBLOCK))
     //     handleError("hblock failed");
@@ -120,6 +122,7 @@ int addDnsName(const char *hblock_dir, const char *dns_name, const char *allow_f
 }
 
 int dnsFlush(void) {
+
 #ifdef DEBUG
     fprintf(stderr, "In function dnsFlush, Line: %d\n", __LINE__);
 #endif // DEBUG
@@ -131,10 +134,10 @@ int dnsFlush(void) {
         handleError("flush action is specific to macOS\n");
 
     printf("Flushing DNS cache...\n");
-    // if (system("dscacheutil -flushcache"))
-    //     handleError("dschacheutil failed");
+    if (system("dscacheutil -flushcache"))
+        handleError("dschacheutil failed");
 
-    // sleep(3);
+    sleep(3);
 
     const char *service_name = "mDNSResponder";
 
@@ -145,10 +148,12 @@ int dnsFlush(void) {
 #endif // DEBUG
 
     printf("Restarting the %s service…\n", service_name);
-    // if (system("killall mDNSResponder"))
-    //     handleError("killall(1) failed");
+    char command[30];
+    snprintf(command, sizeof(command), "%s %s", "killall", service_name);
+    if (system(command))
+        handleError("%s failed", command);
 
-    sleep(2); 
+    sleep(3); 
 
     if (checkProcess(service_name))
         handleError("checkProcess failed");
