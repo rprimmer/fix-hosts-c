@@ -1,13 +1,18 @@
 #include "system-actions.h"
 
-void handleError(const char *msg) {
-    if (errno) 
-        perror(msg); 
-     else 
-        fprintf(stderr, "Error: %s\n", msg);
-    
+void handleError(const char *message, ...) {
+    if (errno)
+        perror(message);
+    else {
+        va_list args;
+        va_start(args, message);
+        vfprintf(stderr, message, args);
+        va_end(args);
+        fprintf(stderr, "\n");
+    }
+
     exit(EXIT_FAILURE);
-} // handleError()
+}
 
 int booleanQuery(const char *prompt) {
     char response[10];
@@ -36,12 +41,12 @@ int copyFile(const char *src, const char *dest) {
 
     source = fopen(src, "rb");
     if (source == NULL) 
-        handleError("error opening source file");
+        handleError("error opening source file %s", src);
 
     destination = fopen(dest, "wb");
     if (destination == NULL) {
         fclose(source);
-        handleError("error opening destination file");
+        handleError("error opening destination file: %s", dest);
     }
 
     while ((bytesRead = fread(buffer, 1, sizeof(buffer), source)) > 0) 
@@ -60,11 +65,11 @@ int copyFile2(const char *src, const char *dest) {
 
     source_fd = open(src, O_RDONLY);
     if (source_fd == -1) 
-        handleError("failed to open source file");
+        handleError("failed to open source file: %s", src);
 
     dest_fd = open(dest, O_WRONLY | O_CREAT | O_TRUNC, 0644);
     if (dest_fd == -1) 
-        handleError("failed to create destination file"); 
+        handleError("failed to create destination file: %s", dest); 
 
     while ((bytes_read = read(source_fd, buffer, sizeof(buffer))) > 0) {
         bytes_written = write(dest_fd, buffer, bytes_read);
@@ -113,9 +118,7 @@ int lsFiles(const char *dirname, const char *files) {
         }
     }
 
-    closedir(dir);
-
-    return EXIT_SUCCESS;  
+    return (closedir(dir)); 
     
 } // lsFiles()
 
@@ -156,3 +159,61 @@ int fileInfo(const char *filepath) {
 
     return EXIT_SUCCESS; 
 } // fileInfo() 
+
+int checkProcess(const char *process_name) {
+    char command[128];
+    snprintf(command, sizeof(command), "pgrep %s", process_name);
+
+    FILE *pipe = popen(command, "r");
+    if (pipe == NULL)
+        return EXIT_FAILURE;
+
+    char buffer[256];
+    if (fgets(buffer, sizeof(buffer), pipe) == NULL)
+        fprintf(stderr, "Warning: the %s process is not running.\n", process_name);
+    else {
+        pid_t pid = atoi(strtok(buffer, "\n")); // Extract first PID
+        printf("The %s process is running with PID(s): %d", process_name, pid);
+
+        // Check for additional PIDs
+        while (fgets(buffer, sizeof(buffer), pipe) != NULL) {
+            pid = atoi(strtok(buffer, "\n"));
+            printf(" %d", pid);
+        }
+        printf("\n");
+    }
+
+    return (pclose(pipe)); 
+}
+
+int displayProcess(const char *process_name) {
+    char command[128];
+    snprintf(command, sizeof(command), "ps aux | grep %s | grep -v grep", process_name);
+
+    FILE *pipe = popen(command, "r");
+    if (pipe == NULL)
+        return EXIT_FAILURE; 
+
+    char buffer[256];
+    while (fgets(buffer, sizeof(buffer), pipe) != NULL)
+        printf("%s", buffer);
+
+    return (pclose(pipe));
+}
+
+int validateDNSname(const char *dns_name) {
+    regex_t regex;
+    int result;
+    const char *dns_regex = "^([a-zA-Z0-9]([-a-zA-Z0-9]{0,61}[a-zA-Z0-9])?\\.)+[a-zA-Z]{2,}$";
+
+    // Compile the regular expression
+    result = regcomp(&regex, dns_regex, REG_EXTENDED | REG_NOSUB);
+    if (result) 
+        handleError("could not compile regex");
+
+    // Execute the regular expression
+    result = regexec(&regex, dns_name, 0, NULL, 0);
+    regfree(&regex); // Free memory allocated to the pattern buffer by regcomp
+
+    return result; 
+}

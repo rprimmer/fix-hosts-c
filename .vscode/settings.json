@@ -1,6 +1,7 @@
 {
     "cSpell.words": [
         "Doxygen",
+        "dschacheutil",
         "ELIF",
         "FIXHOSTS",
         "flushcache",
@@ -10,6 +11,7 @@
         "milesandmore",
         "monetate",
         "omtrdc",
+        "pgrep",
         "resolv",
         "SERROR",
         "skell",
@@ -21,6 +23,7 @@
     "files.associations": {
         "stdbool.h": "c",
         "stdio.h": "c",
-        "system-actions.h": "c"
+        "system-actions.h": "c",
+        "utsname.h": "c"
     }
 }
