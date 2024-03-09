@@ -68,3 +68,4 @@ etc/hblock/SAVE-ORIG-allow.list
 bin/myapp
 bin/myapp
 src/temp.c
+bin/fix-hostfiles

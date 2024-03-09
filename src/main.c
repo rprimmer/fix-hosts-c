@@ -63,7 +63,7 @@ int main(int argc, char **argv) {
         else if (strcmp(argument, RESTORE) == 0)
             action = ACTION_RESTORE;
         else
-            handleError("invalid action specified");
+            handleError("invalid action specified: %s", argument);
     }
 
     // Handle actions
@@ -76,7 +76,7 @@ int main(int argc, char **argv) {
         retval = updateHostsFiles(HOSTS_ORIG, HOSTS, action);
         break;
     case ACTION_ADD:
-        retval = addDnsName(DNS_NAME);
+        retval = addDnsName(HBLOCK_DIR, DNS_NAME, ALLOWLIST);
         free(DNS_NAME);
         break;
     case ACTION_FLUSH:

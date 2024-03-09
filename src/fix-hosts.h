@@ -17,21 +17,31 @@
 #include <string.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+#include <sys/utsname.h>
 #include <time.h>
 #include <unistd.h>
 
-#define ETC "./etc/"
+#ifdef DEBUG
+#define ETC "./etc/" 
+#else
+#define ETC "/etc/"
+#endif // DEBUG
+
 #define HOSTS ETC "hosts"
 #define HOSTS_ORIG ETC "hosts-ORIG"
-#define ALLOWLIST ETC "hblock/allow.list"
 #define HOSTFILES "hosts*"
+
 #define HBLOCK "hblock"
+#define ALLOWLIST ETC HBLOCK "/allow.list"
+#define HBLOCK_DIR ETC "hblock"
+
+
 
 void usage(const char *);
 
 int updateHostsFiles(const char *, const char *, Action);
 
-int addDnsName(const char *);
+int addDnsName(const char *, const char *, const char *);
 
 int dnsFlush(void);
 

@@ -30,7 +30,7 @@ int updateHostsFiles(const char *src, const char *dst, Action action) {
     uid_t original_uid = getuid();
 
     if (access(src, F_OK))
-        handleError("source file not found");
+        handleError("source file not found: %s", src);
 
     printf("Existing hosts files...\n");
     if (lsFiles(ETC, HOSTFILES))
@@ -66,10 +66,55 @@ int updateHostsFiles(const char *src, const char *dst, Action action) {
     return EXIT_SUCCESS;
 }
 
-int addDnsName(const char *dns_name) {
+int addDnsName(const char *hblock_dir, const char *dns_name, const char *allow_file) {
 #ifdef DEBUG
     fprintf(stderr, "In function addDnsName, DNS name: %s, Line: %d\n", dns_name, __LINE__);
 #endif // DEBUG
+
+    if (validateDNSname(dns_name))
+        handleError("invalid DNS name: %s", dns_name); 
+
+    // If the hblock directory doesn't exist, create it
+    struct stat st;
+    if (stat(hblock_dir, &st) == -1) {
+        if (mkdir(hblock_dir, 0755) == -1) 
+            handleError("unable to make dir: %s", hblock_dir);
+    } else if (!S_ISDIR(st.st_mode)) 
+        handleError("%s is not a directory", hblock_dir);
+
+    // Check if DNS entry already exists in the allow list
+    FILE *file;
+    char *line = NULL;
+    size_t len = 0;
+    ssize_t read;
+    int found = 0;
+
+    if ((file = fopen(allow_file, "r+")) == NULL)
+        handleError("Failed to open allow list file: %s", allow_file);
+
+    while ((read = getline(&line, &len, file)) != -1) {
+        if (strcmp(line, dns_name) == 0) {
+            printf("DNS entry %s already exists in %s\n", dns_name, allow_file);
+            found = 1;
+            break;
+        }
+    }
+
+    if (!found) 
+        fprintf(file, "%s\n", dns_name);
+
+    rewind(file);
+    printf("Contents of %s:\n", allow_file);
+    while ((read = getline(&line, &len, file)) != -1) 
+        printf("%s", line);
+
+    fclose(file);
+    free(line);
+
+    // Running hblock(1) updates /etc/hosts without allowed DNS names
+    printf("Running hblock(1) to update hosts file\n");
+    // if (system(HBLOCK))
+    //     handleError("hblock failed");
 
     return EXIT_SUCCESS;
 }
@@ -78,6 +123,38 @@ int dnsFlush(void) {
 #ifdef DEBUG
     fprintf(stderr, "In function dnsFlush, Line: %d\n", __LINE__);
 #endif // DEBUG
+
+    struct utsname system_info;      
+    int result = uname(&system_info);
+
+    if (result == 0 && strcmp(system_info.sysname, "Darwin")) 
+        handleError("flush action is specific to macOS\n");
+
+    printf("Flushing DNS cache...\n");
+    // if (system("dscacheutil -flushcache"))
+    //     handleError("dschacheutil failed");
+
+    // sleep(3);
+
+    const char *service_name = "mDNSResponder";
+
+#ifdef DEBUG
+    fprintf(stderr, "PIDs for %s before restart\n", service_name);
+    if (checkProcess(service_name)) handleError("checkProcess failed");
+    if (displayProcess(service_name)) handleError("displayProcess failed");
+#endif // DEBUG
+
+    printf("Restarting the %s service…\n", service_name);
+    // if (system("killall mDNSResponder"))
+    //     handleError("killall(1) failed");
+
+    sleep(2); 
+
+    if (checkProcess(service_name))
+        handleError("checkProcess failed");
+
+    if (displayProcess(service_name))
+        handleError("displayProcess failed");
 
     return EXIT_SUCCESS;
 }

@@ -9,7 +9,7 @@ OBJ = 		obj
 SRCS =		$(wildcard $(SRC)/*.c)
 OBJS = 		$(patsubst $(SRC)/%.c, $(OBJ)/%.o, $(SRCS))
 BINDIR = 	bin
-BIN = 		$(BINDIR)/myapp
+BIN = 		$(BINDIR)/fix-hostfiles
 
 all: $(BIN)
 
