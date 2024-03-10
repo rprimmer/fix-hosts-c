@@ -5,7 +5,7 @@
 Where possible, will try to maintain the same structure in the C program as exists in the bash script, such as function and variable names.
 
 ### Globals
-Globals in Bash are the default. In C we may be able to dispense with these. 
+Globals in Bash are the default. In C we may be able to dispense with these, though `#define` statements will still be helpful for the preprocessor. 
 
 ### Use of system(3)
 Some of the functions in the bash script (e.g., reading and writing) can be accomplished in C with library functions or system calls, other cannot. For those cases, will experiment with different methods.
@@ -33,11 +33,11 @@ Some of the functions in the bash script (e.g., reading and writing) can be acco
 - [ ] Create option to copy updates made to `hosts{,.allow}` files to other systems (mac or linux) somehow (shared dropbox folder?)
 
 ## Binary executable
-* Binary executable located in `~/bin` called `fix-hostfile-c`
+* Binary executable located in `~/bin` called `fix-hostfile`
 
 ## Arguments
-* restore : restores original hosts file, displays output
-* prep : creates copy of original hosts file, displays output, calls hblock(1)
+* **restore** : restores original hosts file, displays output
+* **prep** : creates copy of original hosts file, displays output, calls hblock(1)
 * DNS name to add with -a switch 
 
 ## Switches
@@ -45,92 +45,44 @@ Some of the functions in the bash script (e.g., reading and writing) can be acco
 * -f  : flush DNS cache and restart the `mDNSResponder` service
 * -h  : Display usage
 
-## main()
+#### main()
 Parse args and switches, call functions
-* DNS_FLUSH = FALSE
-* ADD_DNS = FALSE 
-* IF malformed input, call usage(), return EXIT_FAILURE
-* IF -h | —help switch, call usage(), return EXIT_FAILURE
-* IF -f | —flush switch, set DNS_FLUSH = TRUE
-* IF -a | —add switch, set ADD_DNS = TRUE
-* IF arg1 == restore, call restore_hosts_file()
-* ELIF arg1 == prep, call prep_hosts_file()
-* IF ADD_DNS = TRUE, call add_dns_name()
-* IF DNS_FLUSH = TRUE, call dns_flush()
-* return EXIT_SUCCESS; 
+* Handle switches
+* Handle arguments
+* Handle actions
 
-## usage()
-* printf(stderr, "%s\n", "usage: basename $0 <ahf> <prep | restore> <DNS entry>");
-* exit 1
+#### void usage(const char *program) 
+* Display help to user
 
-## copyHostsFiles()
-* echo “Existing hosts files”
-* sudo ls -las /etc/hosts*
-* Check for existence of files: hosts and hosts-ORIG.
-  * IF hosts file doesn’t exist, display error and exit_failure.
-* sudo cp hosts{,-ORIG}
-* echo “Running hblock to create new hosts file…”
-* hblock
-* echo “Updated hosts files”
-* sudo ls -las hosts*
-* return 
+#### int updateHostsFiles(const char *src, const char *dst, Action action)
+* Modify /etc/hosts
+* PREP is essentially cp hosts{,-ORIG}
+* RESTORE is the inverse 
+* if (action == ACTION_PREP), run hblock(1)
 
-## restore_hosts_file()
-* cd /etc
-* echo “Existing hosts files”
-* sudo ls -las hosts*
-* Check for existence of files hosts and hosts-ORIG.
-  * IF either file doesn’t exist, display error, return 1.
-* Check for existence of hosts-HBLOCK. IF it exists, 
-  * Warn that this action will delete this file.
-  * Query user to continue or exit.  
-  * IF continue,
-    * sudo mv hosts{,-HBLOCK}
-    * sudo cp hosts{-ORIG,}
-    * echo “Updated hosts files”
-      * sudo ls -las hosts*
-* return
+#### int addDnsName(const char *hblock_dir, const char *dns_name, const char *allow_file)
+* Add valid DNS name to hblock exception list
+* Run hblock(1)
 
-## add-dns-name(name)
-* char* host = name; 
-* if (name == NULL) usage(), return 1;
-* echo “Adding <name> to /etc/hblock/allow.list”
-* cd /etc/hblock
-* Check if <name> already exists in allow.list. IF present
-  * echo “Entry <name> already exists in allow.list”
-* ELSE
-  * cat >> allow.list <name>
-  * echo “Updated allow.host”
-* cat allow.list
-* cd /etc
-* Verify <name> is in hosts file.  IF present,
-  * echo “Removing <name> from /etc/hosts
-  * sed command to delete <name> from hosts file
-* ELSE
-  * echo “Entry <name> is not present in hosts file”
-* echo “Actions completed”
-* return  
-
-## dns-flush()
-* echo “Flushing DNS cache…”
-* sudo dscacheutil -flushcache
-* sleep
-* echo “Restarting  the mDNSResponder service…”
-* sudo killall -HUP mDNSResponder
-* sleep
-* echo “New mDNSResponder PID” 
-  * Display mDNSResponder PID
-* return
+#### int dnsFlush(void) 
+* Flush DNS cache
+* Restart mDNSResponder daemon 
+* if action = ACTION_PREP, run hblock(1)
 
 ## Results
-I knew going in that this program was done far better as a bash script. I also knew that the performance of the script would be superior to instantiating a binary executable to do the same functions. 
+I knew going in that this program was done far better as a bash script. I also knew that the performance of the script *should* be superior to instantiating a binary executable to do the same functions, some of which require `system(3)`. 
 
-Therefore, the primary goals of this project were:
-* To learn, and
-* To test the performance difference between the two solutions.
+Therefore, the primary goals of this project was to see how well these same functions could be performed in a C program. While bash scripts are enormously useful, C is nicer to code in -- at least for me. 
 
 ### Lessons 
-1. It's better to have separate folders for each project as VSC does better with this.
-
-### Performance Tests
-No surprise, the bash script performed better. Here's the average times.
+1. It's better to have separate folders for each project as VSC does better with this. 
+* Initially I tried having both the C program and bash executable in the same directory, but this caused complications with both VSC and git. 
+2. The saying "it's not the writing but the rewriting" is true for coding as well. 
+* I was surprised to discover things that I missed when creating the bash version of this. In retrospect, these changes should have been self evident. 
+* For example, I had two functions (`copyHostsFile` and `restoreHostsFile`) in the bash script. Only when writing this is C did it become plainly obvious that these two functions should be in a single function (`updateHostsFiles`).
+3. It's good to wait until the code is completed before adding doxygen comments. 
+* At this point I'm undecided whether I prefer these doc comments in the .c file or the corresponding .h. 
+* On the one hand, I like the cleaner look of the c files sans api doc comments. It's just cleaner. 
+* On the other, if these are moved to the .h file, the reader has to bounce back to the header file to see the api doc. 
+* Also, for the doxygen VSC extension to work in the .h file requires that you explicitly name the variables in the header file; e.g., `void usage(const char *program)` instead of just `void usage(const char *)`. I prefer to not name the arguments in the header file as this becomes a PITA any time I change the corresponding c file argument names. 
+* A potential solution is to wait until the code is fully baked and then update the declarations in the header file. This would allow putting the api doc comments there. 

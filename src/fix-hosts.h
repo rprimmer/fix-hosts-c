@@ -33,12 +33,21 @@
 
 #define HBLOCK "hblock"
 #define ALLOWLIST ETC HBLOCK "/allow.list"
-#define HBLOCK_DIR ETC "hblock"
+#define HBLOCK_DIR ETC HBLOCK 
 
-
+/**
+ * @brief 
+ * 
+ */
 void usage(const char *);
 
+/**
+ * @brief 
+ * 
+ * @return int 
+ */
 int updateHostsFiles(const char *, const char *, Action);
+
 
 int addDnsName(const char *, const char *, const char *);
 
