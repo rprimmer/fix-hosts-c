@@ -132,12 +132,15 @@ int addDnsName(const char *hblock_dir, const char *dns_name, const char *allow_f
     if ((file = fopen(allow_file, "r+")) == NULL)
         handleError("failed to open allow list file: %s", allow_file);
 
-    while ((read = getline(&line, &len, file)) != -1) 
+    while ((read = getline(&line, &len, file)) != -1) {
+        line[strcspn(line, "\n")] = '\0'; // Newline character messes up strcmp()
+
         if (strcmp(line, dns_name) == 0) {
             printf("DNS entry %s already exists in %s\n", dns_name, allow_file);
             found = 1;
             break;
         }
+    }
     
     if (!found) 
         fprintf(file, "%s\n", dns_name);
