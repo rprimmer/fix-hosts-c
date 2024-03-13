@@ -38,7 +38,7 @@ int main(int argc, char **argv) {
             if (optarg && *optarg != '\0') {
                 DNS_NAME = strdup(optarg);
                 if (!DNS_NAME)
-                    handleError("memory allocation failed for DNS name");
+                    handleError("memory allocation failed for DNS name: %s", DNS_NAME);
             }
             break;
         default:

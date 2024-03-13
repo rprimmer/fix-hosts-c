@@ -24,6 +24,7 @@
         "stdbool.h": "c",
         "stdio.h": "c",
         "system-actions.h": "c",
-        "utsname.h": "c"
+        "utsname.h": "c",
+        "stdlib.h": "c"
     }
 }

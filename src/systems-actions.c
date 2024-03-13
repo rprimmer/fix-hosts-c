@@ -32,7 +32,7 @@ void handleError(const char *message, ...) {
  * @brief Query user for yes or no
  * 
  * @param prompt Message to be displayed to user
- * @return int Return yes if user entered y or Y
+ * @return int Return true if user entered y or Y
  */
 int booleanQuery(const char *prompt) {
     char response[10];
