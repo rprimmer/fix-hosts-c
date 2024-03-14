@@ -9,8 +9,6 @@
             "args": ["-a", "foo.bar.com"],
             "cwd": "${workspaceFolder}",
             "preLaunchTask": "build my project with clang",
-            "environment": [],
-            "externalConsole": false,
         }
     ]
 }

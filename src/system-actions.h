@@ -1,5 +1,10 @@
-// system-actions.h
-// Collection of common system functions
+/**
+ * @file systems-actions.h
+ * @author Robert Primmer (https://github.com/rprimmer)
+ * @brief Common functions and system actions
+ * @version 1.0
+ * @date 2024-03-10
+ */
 
 #ifndef SYSTEM_ACTIONS_H
 #define SYSTEM_ACTIONS_H
@@ -21,24 +26,87 @@
 #include <time.h>
 #include <unistd.h>
 
-int booleanQuery(const char *);
+/**
+ * @brief Common error handling routine 
+ * 
+ * @param message Message to be displayed to user
+ * @param ... Optional parameters can be provided (va_list)
+ */
+void handleError(const char *message, ...);
 
-void handleError(const char *, ...);
+/**
+ * @brief Query user for yes or no
+ * 
+ * @param prompt Message to be displayed to user
+ * @return int Return true if user entered y or Y
+ */
+int booleanQuery(const char *prompt); 
 
-int fileExists(const char *);
+/**
+ * @brief Check for file existence 
+ * 
+ * @param filename File to check
+ * @return int Return true of file exists
+ */
+int fileExists(const char *filename);
 
-int copyFile(const char *, const char *);
+/**
+ * @brief Make a copy of a file. Uses fread(3) & fwrite(3)
+ * 
+ * @param src File to be copied
+ * @param dest Filename of copy
+ * @return int Return status 
+ */
+int copyFile(const char *src, const char *dest);
 
-int copyFile2(const char *, const char *); 
+/*
+ * @brief Make a copy of a file. Uses read(2) & write(2)
+ *
+ * @param src File to be copied
+ * @param dest Filename of copy
+ * @return int Return status
+ */
+int copyFile2(const char *src, const char *dest);
 
-int lsFiles(const char *, const char *);
+/**
+ * @brief List files in a directory
+ * 
+ * @param dirname Directory housing files
+ * @param files Files to list
+ * @return int Return status 
+ */
+int lsFiles(const char *dirname, const char *files);
 
-int fileInfo(const char *);
+/**
+ * @brief Display information about a file
+ * 
+ * @param filepath File to stat
+ * @return int Return status 
+ */
+int fileInfo(const char *filepath);
 
-int checkProcess(const char *);
+/**
+ * @brief Check if a process is currently running
+ * 
+ * @param process_name Process to look for
+ * @return int Return status 
+ */
+int checkProcess(const char *process_name);
 
-int displayProcess(const char *);
+/**
+ * @brief Display info on a running process
+ *
+ * @param process_name Process to look for
+ * @return int Return status
+ */
+int displayProcess(const char *process_name);
 
-int validateDNSname(const char *d); 
+/**
+ * @brief DNS name must start & end with a letter or a number and can only contain letters, numbers, and hyphens.
+ *
+ * @param dns_name DNS name to check
+ * @return int Return status 
+ */
+int validateDNSname(const char *dns_name);
 
 #endif /* SYSTEM_ACTIONS_H */

@@ -2,7 +2,7 @@
 #define ACTIONS_H
 
 /**
- * @brief Actions a user can perform 
+ * @brief Actions a user can perform, based on switches and arguments
  * 
  */
 typedef enum {

@@ -1,23 +1,12 @@
-/**
- * @file systems-actions.c
- * @author Robert Primmer (https://github.com/rprimmer)
- * @brief Common functions and system actions
- * @version 1.0
- * @date 2024-03-10
- */
+// system-actions.c
 
 #include "system-actions.h"
 
-/**
- * @brief Common error handling routine 
- * 
- * @param message Message to be displayed to user
- * @param ... Optional parameters can be provided (va_list)
- */
 void handleError(const char *message, ...) {
     if (errno)
         perror(message);
     else {
+        fprintf(stderr, "Error: ");
         va_list args;
         va_start(args, message);
         vfprintf(stderr, message, args);
@@ -28,12 +17,6 @@ void handleError(const char *message, ...) {
     exit(EXIT_FAILURE);
 }
 
-/**
- * @brief Query user for yes or no
- * 
- * @param prompt Message to be displayed to user
- * @return int Return true if user entered y or Y
- */
 int booleanQuery(const char *prompt) {
     char response[10];
 
@@ -49,24 +32,11 @@ int booleanQuery(const char *prompt) {
     return (response[0] == 'y' || response[0] == 'Y');
 } 
 
-/**
- * @brief Check for file existence 
- * 
- * @param filename File to check
- * @return int Return true of file exists
- */
 int fileExists(const char *filename) {
     struct stat buffer;
     return (stat(filename, &buffer) == 0);
 } 
 
-/**
- * @brief Make a copy of a file. Uses fread(3) & fwrite(3)
- * 
- * @param src File to be copied
- * @param dest Filename of copy
- * @return int Return status 
- */
 int copyFile(const char *src, const char *dest) {
     FILE *source, *destination;
     char buffer[BUFSIZ]; // BUFSIZ from stdio.h 
@@ -91,13 +61,6 @@ int copyFile(const char *src, const char *dest) {
     return EXIT_SUCCESS;
 }
 
-/**
- * @brief Make a copy of a file. Uses read(2) & write(2)
- *
- * @param src File to be copied
- * @param dest Filename of copy
- * @return int Return status
- */
 int copyFile2(const char *src, const char *dest) {
     int source_fd, dest_fd;
     char buffer[BUFSIZ]; // BUFSIZ from stdio.h
@@ -128,13 +91,6 @@ int copyFile2(const char *src, const char *dest) {
     return EXIT_SUCCESS;
 } 
 
-/**
- * @brief List files in a directory
- * 
- * @param dirname Directory housing files
- * @param files Files to list
- * @return int Return status 
- */
 int lsFiles(const char *dirname, const char *files) { 
 #ifdef DEBUG
     fprintf(stderr, "In function: lsFiles, Line: %d\n", __LINE__);
@@ -168,12 +124,6 @@ int lsFiles(const char *dirname, const char *files) {
     return (closedir(dir)); 
 } 
 
-/**
- * @brief Display information about a file
- * 
- * @param filepath File to stat
- * @return int Return status 
- */
 int fileInfo(const char *filepath) {
     struct stat fileStat;
     if (stat(filepath, &fileStat) < 0) 
@@ -212,12 +162,6 @@ int fileInfo(const char *filepath) {
     return EXIT_SUCCESS; 
 } 
 
-/**
- * @brief Check if a process is currently running
- * 
- * @param process_name Process to look for
- * @return int Return status 
- */
 int checkProcess(const char *process_name) {
     char command[128];
     snprintf(command, sizeof(command), "pgrep %s", process_name);
@@ -244,12 +188,6 @@ int checkProcess(const char *process_name) {
     return (pclose(pipe)); 
 }
 
-/**
- * @brief Display info on a running process
- *
- * @param process_name Process to look for
- * @return int Return status
- */
 int displayProcess(const char *process_name) {
     char command[128];
     snprintf(command, sizeof(command), "ps aux | grep %s | grep -v grep", process_name);
@@ -265,12 +203,6 @@ int displayProcess(const char *process_name) {
     return (pclose(pipe));
 }
 
-/**
- * @brief DNS name must start & end with a letter or a number and can only contain letters, numbers, and hyphens.
- *
- * @param dns_name DNS name to check
- * @return int Return status 
- */
 int validateDNSname(const char *dns_name) {
     regex_t regex;
     int result;
