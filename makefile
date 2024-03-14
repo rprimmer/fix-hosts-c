@@ -1,8 +1,10 @@
-# make bin -> create project directory structure 
+# make bin  -> create project directory structure 
 # make release -> make final version for release
+# make markdown -> convert markdown files
 
-CC  =		clang 
-CFLAGS =	-g -Wall -Wextra -DDEBUG 
+PROGRAM = 	fix-hostfiles
+CC  =		clang
+CFLAGS =	-g -Wall -Wextra -DDEBUG
 LDFLAGS =
 SRC = 		src
 OBJ = 		obj
@@ -10,6 +12,7 @@ SRCS =		$(wildcard $(SRC)/*.c)
 OBJS = 		$(patsubst $(SRC)/%.c, $(OBJ)/%.o, $(SRCS))
 BINDIR = 	bin
 BIN = 		$(BINDIR)/fix-hostfiles
+MANPAGE =	$(PROGRAM).1
 
 all: $(BIN)
 
@@ -24,10 +27,13 @@ $(OBJ)/%.o: $(SRC)/%.c $(OBJ)
 
 release: CFLAGS=-Wall -Wextra -O2 -DNDEBUG
 release: clean
+release: markdown 
 release: $(BIN)
 
-readme: README.md
+markdown: README.md manpage.md 
 	pandoc README.md -o readme.pdf
+	pandoc C-Design-spec.md -o c-design-spec.pdf 
+#	pandoc manpage.md -s -t man -o $(MANPAGE)
 
 clean:
-	$(RM) -rf $(BINDIR)/* $(OBJ)/* *.dSYM readme.pdf
+	$(RM) -rf $(BINDIR)/* $(OBJ)/* *.dSYM readme.pdf $(MANPAGE)

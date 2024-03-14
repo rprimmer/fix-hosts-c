@@ -55,7 +55,7 @@ int main(int argc, char **argv) {
     const char *const RESTORE = "restore";
     char *argument = NULL;
     if (argc <= optind && action != ACTION_ADD && action != ACTION_FLUSH)
-        handleError("no action specified");
+        usage(program);     // no action specified by user at instantiation 
     else if (argc > optind) {
         argument = argv[optind];
         if (strcmp(argument, PREP) == 0)
