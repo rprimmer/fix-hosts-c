@@ -15,7 +15,7 @@ void handleError(const char *message, ...) {
     }
 
     exit(EXIT_FAILURE);
-}
+} // handleError()
 
 int booleanQuery(const char *prompt) {
     char response[10];
@@ -23,19 +23,19 @@ int booleanQuery(const char *prompt) {
     printf("%s ", prompt);
 
     if (fgets(response, sizeof(response), stdin) == NULL) 
-        handleError("failed to read user response, file: %s, line %d", __FILE__, __LINE__);
+        handleError("%s, %d: failed to read user response", basename(__FILE__), __LINE__);
 
     // Empty newline interpreted as non-yes answer 
     if (response[0] == '\n')     
         return 0;
 
     return (response[0] == 'y' || response[0] == 'Y');
-} 
+} // booleanQuery()
 
 int fileExists(const char *filename) {
     struct stat buffer;
     return (stat(filename, &buffer) == 0);
-} 
+} // fileExists()
 
 int copyFile(const char *src, const char *dest) {
     FILE *source, *destination;
@@ -44,12 +44,12 @@ int copyFile(const char *src, const char *dest) {
 
     source = fopen(src, "rb");
     if (source == NULL) 
-        handleError("error opening source file %s", src);
+        handleError("%s, %d: error opening source file %s", basename(__FILE__), __LINE__, src);
 
     destination = fopen(dest, "wb");
     if (destination == NULL) {
         fclose(source);
-        handleError("error opening destination file: %s", dest);
+        handleError("%s, %d: error opening destination file: %s", basename(__FILE__), __LINE__, dest);
     }
 
     while ((bytesRead = fread(buffer, 1, sizeof(buffer), source)) > 0) 
@@ -59,7 +59,7 @@ int copyFile(const char *src, const char *dest) {
     fclose(destination);
 
     return EXIT_SUCCESS;
-}
+} // copyFile()
 
 int copyFile2(const char *src, const char *dest) {
     int source_fd, dest_fd;
@@ -68,20 +68,20 @@ int copyFile2(const char *src, const char *dest) {
 
     source_fd = open(src, O_RDONLY);
     if (source_fd == -1) 
-        handleError("failed to open source file: %s", src);
+        handleError("%s, %d: failed to open source file: %s", basename(__FILE__), __LINE__, src);
 
     dest_fd = open(dest, O_WRONLY | O_CREAT | O_TRUNC, 0644);
     if (dest_fd == -1) 
-        handleError("failed to create destination file: %s", dest); 
+        handleError("%s, %d: failed to create destination file: %s", basename(__FILE__), __LINE__, dest); 
 
     while ((bytes_read = read(source_fd, buffer, sizeof(buffer))) > 0) {
         bytes_written = write(dest_fd, buffer, bytes_read);
         if (bytes_written == -1) 
-            handleError("write error");
+            handleError("%s, %d: write error", basename(__FILE__), __LINE__);
     }
 
     if (bytes_read == -1) 
-        handleError("read error");
+        handleError("%s, %d: read error", basename(__FILE__), __LINE__);
 
     close(source_fd);
     close(dest_fd);
@@ -89,11 +89,11 @@ int copyFile2(const char *src, const char *dest) {
     printf("File copied successfully!\n");
 
     return EXIT_SUCCESS;
-} 
+} // copyFile2()
 
 int lsFiles(const char *dirname, const char *files) { 
 #ifdef DEBUG
-    fprintf(stderr, "In function: lsFiles, Line: %d\n", __LINE__);
+    fprintf(stderr, "%s, %d: in function lsFiles\n", basename(__FILE__), __LINE__);
 #endif // DEBUG
 
     DIR *dir = opendir(dirname);
@@ -122,7 +122,7 @@ int lsFiles(const char *dirname, const char *files) {
     }
 
     return (closedir(dir)); 
-} 
+} // lsFiles()
 
 int fileInfo(const char *filepath) {
     struct stat fileStat;
@@ -160,7 +160,7 @@ int fileInfo(const char *filepath) {
     printf("Last status change time: %s", statusChangeTime);
 
     return EXIT_SUCCESS; 
-} 
+} // fileInfo()
 
 int checkProcess(const char *process_name) {
     char command[128];
@@ -186,7 +186,7 @@ int checkProcess(const char *process_name) {
     }
 
     return (pclose(pipe)); 
-}
+} // checkProcess()
 
 int displayProcess(const char *process_name) {
     char command[128];
@@ -201,7 +201,7 @@ int displayProcess(const char *process_name) {
         printf("%s", buffer);
 
     return (pclose(pipe));
-}
+} // displayProcess()
 
 int validateDNSname(const char *dns_name) {
     regex_t regex;
@@ -211,11 +211,11 @@ int validateDNSname(const char *dns_name) {
     // Compile the regular expression
     result = regcomp(&regex, dns_regex, REG_EXTENDED | REG_NOSUB);
     if (result) 
-        handleError("could not compile regex");
+        handleError("%s, %d: could not compile regex", basename(__FILE__), __LINE__);
 
     // Execute the regular expression
     result = regexec(&regex, dns_name, 0, NULL, 0);
     regfree(&regex); // Free memory allocated to the pattern buffer by regcomp
 
     return result; 
-} 
+} // validateDNSname
