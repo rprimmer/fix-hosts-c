@@ -48,7 +48,7 @@ Some of the functions in the bash script (e.g., reading and writing) can be acco
 
 * Modify /etc/hosts
 * PREP is essentially cp hosts{,-ORIG}
-* RESTORE is the inverse 
+* RESTORE is the inverse
 * if `(action == ACTION_PREP)`, run `hblock(1)`
 
 `int addDnsName(const char *hblock_dir, const char *dns_name, const char *allow_file)`
@@ -59,8 +59,8 @@ Some of the functions in the bash script (e.g., reading and writing) can be acco
 
 `int dnsFlush(void)`
 
-* Verify running on macOS (Darwin). 
-* Flush DNS cache. 
+* Verify running on macOS (Darwin).
+* Flush DNS cache.
 * Restart mDNSResponder daemon.
 * if `action = ACTION_PREP`, run `hblock(1)`.
 
@@ -74,7 +74,7 @@ In practice I didn't find the performance difference to be meaningful. It turned
 
 ## Lessons
 
-1. **Separate Folders**: It's better to have separate folders for each project as VSC does better with this. 
+1. **Separate Folders**: It's better to have separate folders for each project as VSC does better with this.
 
     * Initially I tried having both the C program and bash executable in the same directory, but this caused complications with both VSC and git.
 
@@ -94,7 +94,7 @@ In practice I didn't find the performance difference to be meaningful. It turned
 
 5. **Doxygen**: It's good to wait until the code is fully completed before adding doxygen API comments.
     * I'm ambivalent about  whether I prefer these doc comments in the .c file or the corresponding .h.
-    * I like the cleaner look of the c files sans api doc comments, but if these are in the .h file, the reader has to bounce back to the header file to see the api doc. 
+    * I like the cleaner look of the c files sans api doc comments, but if these are in the .h file, the reader has to bounce back to the header file to see the api doc.
     * Also, for the doxygen VSC extension to work in the .h file requires that you explicitly name the variables in the header file; e.g., `void usage(const char *program)` instead of just `void usage(const char *)`.
 
 ## TODO
