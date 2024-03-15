@@ -14,6 +14,7 @@
 #include <fcntl.h>
 #include <fnmatch.h>
 #include <grp.h>
+#include <libgen.h>
 #include <limits.h>
 #include <pwd.h>
 #include <regex.h>

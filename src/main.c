@@ -10,12 +10,13 @@
 #include "system-actions.h"
 
 int main(int argc, char **argv) {
-    char *program = basename(argv[0]);
+    char program[PATH_MAX];
+    basename_r(argv[0], program); // basename(3) cannot be re-used for persistent vars, cf. manpage.
     char *DNS_NAME = NULL;
     Action action = ACTION_INVALID;
 
 #ifdef DEBUG
-    fprintf(stderr, "argc: %d, optind: %d, line: %d\n", argc, optind, __LINE__);
+    fprintf(stderr, "%s, %d: argc: %d, optind: %d\n", basename(__FILE__), __LINE__, argc, optind);
 #endif // DEBUG
 
     // Handle switches
@@ -38,16 +39,16 @@ int main(int argc, char **argv) {
             if (optarg && *optarg != '\0') {
                 DNS_NAME = strdup(optarg);
                 if (!DNS_NAME)
-                    handleError("memory allocation failed for DNS name: %s", DNS_NAME);
+                    handleError("%s, %d: memory allocation failed for DNS name: %s", basename(__FILE__), __LINE__, DNS_NAME);
             }
             break;
         default:
-            handleError("invalid switch provided");
+            handleError("%s, %d: invalid switch provided", basename(__FILE__), __LINE__);
         }
     }
 
 #ifdef DEBUG
-    fprintf(stderr, "argc: %d, optind: %d, line: %d\n", argc, optind, __LINE__);
+    fprintf(stderr, "%s, %d: argc: %d, optind: %d\n", basename(__FILE__), __LINE__, argc, optind);
 #endif // DEBUG
 
     // Handle arguments
@@ -63,7 +64,7 @@ int main(int argc, char **argv) {
         else if (strcmp(argument, RESTORE) == 0)
             action = ACTION_RESTORE;
         else
-            handleError("invalid action specified: %s", argument);
+            handleError("%s, %d: invalid action specified: %s", basename(__FILE__), __LINE__, argument);
     }
 
     // Handle actions
@@ -83,7 +84,7 @@ int main(int argc, char **argv) {
         retval = dnsFlush();
         break;
     default:
-        handleError("no valid action specified");
+        handleError("%s, %d: no valid action specified", basename(__FILE__), __LINE__);
     }
 
     return retval;
