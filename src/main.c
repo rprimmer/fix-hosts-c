@@ -39,11 +39,11 @@ int main(int argc, char **argv) {
             if (optarg && *optarg != '\0') {
                 DNS_NAME = strdup(optarg);
                 if (!DNS_NAME)
-                    handleError("%s, %d: memory allocation failed for DNS name: %s", basename(__FILE__), __LINE__, DNS_NAME);
+                    HANDLE_ERROR("memory allocation failed for DNS name: %s", DNS_NAME);
             }
             break;
         default:
-            handleError("%s, %d: invalid switch provided", basename(__FILE__), __LINE__);
+            HANDLE_ERROR("invalid switch provided"); 
         }
     }
 
@@ -63,8 +63,6 @@ int main(int argc, char **argv) {
             action = ACTION_PREP;
         else if (strcmp(argument, RESTORE) == 0)
             action = ACTION_RESTORE;
-        else
-            handleError("%s, %d: invalid action specified: %s", basename(__FILE__), __LINE__, argument);
     }
 
     // Handle actions
@@ -84,7 +82,7 @@ int main(int argc, char **argv) {
         retval = dnsFlush();
         break;
     default:
-        handleError("%s, %d: no valid action specified", basename(__FILE__), __LINE__);
+        HANDLE_ERROR("no valid action specified"); 
     }
 
     return retval;

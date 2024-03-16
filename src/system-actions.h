@@ -27,6 +27,13 @@
 #include <time.h>
 #include <unistd.h>
 
+// NOTE: In this macro, ##__VA_ARGS__ is a GNU extension that still works if __VA_ARGS__ is empty, 
+// which supports calling HANDLE_ERROR with just a string or with additional format arguments.
+// Modern compilers support this so I didn't want to clutter the code with a bunch of 
+// #ifdef __GNUC__ conditionals just for the sake of some ancient compiler from a time long ago...
+#define HANDLE_ERROR(fmt, ...) handleError("%s, %d: " fmt, basename(__FILE__), __LINE__, ##__VA_ARGS__)
+
+
 /**
  * @brief Common error handling routine 
  * 
