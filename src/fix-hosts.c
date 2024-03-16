@@ -33,11 +33,11 @@ int updateHostsFiles(const char *src, const char *dst, Action action) {
     uid_t original_uid = getuid();
 
     if (access(src, F_OK))
-        handleError("%s, %d: source file not found: %s", basename(__FILE__), __LINE__, src);
+        HANDLE_ERROR("source file not found: %s", src); 
 
     printf("Existing hosts files...\n");
     if (lsFiles(ETC, HOSTFILES))
-        handleError("%s, %d: unable to access hosts files", basename(__FILE__), __LINE__);
+        HANDLE_ERROR("unable to access host files"); 
 
     if (access(dst, F_OK) == 0) {
         printf("\nWARNING: File %s already exists. This action will overwrite that file\n", dst);
@@ -49,18 +49,18 @@ int updateHostsFiles(const char *src, const char *dst, Action action) {
 
     // Root typically required to edit files in /etc. For this action user must call with sudo(1)
     if (setuid(0) == -1)
-        handleError("%s, %d: setuid to root failed", basename(__FILE__), __LINE__);
+        HANDLE_ERROR("setuid to root failed"); 
 
     if (copyFile(src, dst))
-        handleError("%s, %d: unable to copy %s to %s", basename(__FILE__), __LINE__, src, dst);
+        HANDLE_ERROR("unable to copy %s to %s", src, dst); 
 
     if (setuid(original_uid) == -1)
-        handleError("%s, %d: setuid to original user failed", basename(__FILE__), __LINE__);
+        HANDLE_ERROR("setuid to original user failed"); 
 
     if (action == ACTION_PREP) {
         printf("Running hblock(1) to update hosts file\n");
         if (system(HBLOCK))
-            handleError("%s, %d: hblock failed", basename(__FILE__), __LINE__);
+            HANDLE_ERROR("hblock failed"); 
     }
 
     printf("Hosts file has been updated.\n");
@@ -76,15 +76,15 @@ int addDnsName(const char *hblock_dir, const char *dns_name, const char *allow_f
 #endif // DEBUG
 
     if (validateDNSname(dns_name))
-        handleError("%s, %d: invalid DNS name: %s", basename(__FILE__), __LINE__, dns_name); 
+        HANDLE_ERROR("invalid DNS name: %s", dns_name);
 
     // If the hblock directory doesn't exist, create it
     struct stat st;
     if (stat(hblock_dir, &st) == -1) {
         if (mkdir(hblock_dir, 0755) == -1) 
-            handleError("%s, %d: unable to make dir: %s", basename(__FILE__), __LINE__, hblock_dir);
+            HANDLE_ERROR("unable to create dir: %s", hblock_dir); 
      } else if (!S_ISDIR(st.st_mode)) 
-        handleError("%s, %d: %s is not a directory", basename(__FILE__), __LINE__, hblock_dir);
+        HANDLE_ERROR("%s is not a directory", hblock_dir); 
 
     // Check if DNS entry already exists in the allow list
     FILE *file;
@@ -94,7 +94,7 @@ int addDnsName(const char *hblock_dir, const char *dns_name, const char *allow_f
     int found = 0;
 
     if ((file = fopen(allow_file, "r+")) == NULL)
-        handleError("%s, %d: failed to open allow list file: %s", basename(__FILE__), __LINE__, allow_file);
+        HANDLE_ERROR("failed to open allow list file: %s", allow_file); 
 
     while ((read = getline(&line, &len, file)) != -1) {
         line[strcspn(line, "\n")] = '\0'; // Newline character messes up strcmp()
@@ -120,7 +120,7 @@ int addDnsName(const char *hblock_dir, const char *dns_name, const char *allow_f
     // Running hblock(1) updates /etc/hosts sans DNS names in allow list
     printf("Running hblock(1) to update hosts file\n");
     if (system(HBLOCK))
-        handleError("%s, %d: hblock failed", basename(__FILE__), __LINE__);
+        HANDLE_ERROR("hblock failed"); 
 
     return EXIT_SUCCESS;
 } // addDnsName()
@@ -134,11 +134,11 @@ int dnsFlush(void) {
     int result = uname(&system_info);
 
     if (result == 0 && strcmp(system_info.sysname, "Darwin")) 
-        handleError("%s, %d: flush action is specific to macOS", basename(__FILE__), __LINE__);
+        HANDLE_ERROR("flush action is specific to macOS");
 
     printf("Flushing DNS cache...\n");
     if (system("dscacheutil -flushcache"))
-        handleError("%s, %d: dschacheutil failed", basename(__FILE__), __LINE__);
+        HANDLE_ERROR("dschacheutil failed");
 
     sleep(3);
 
@@ -146,23 +146,23 @@ int dnsFlush(void) {
 
 #ifdef DEBUG
     fprintf(stderr, "%s, %d: PIDs for %s before restart\n", basename(__FILE__), __LINE__, service_name);
-    if (checkProcess(service_name)) handleError("checkProcess failed");
-    if (displayProcess(service_name)) handleError("displayProcess failed");
+    if (checkProcess(service_name)) HANDLE_ERROR("checkProcess failed");
+    if (displayProcess(service_name)) HANDLE_ERROR("displayProcess failed");
 #endif // DEBUG
 
     printf("Restarting the %s service…\n", service_name);
     char command[30];
     snprintf(command, sizeof(command), "%s %s", "killall", service_name);
     if (system(command))
-        handleError("%s, %d: %s failed", basename(__FILE__), __LINE__, command);
+        HANDLE_ERROR("%s failed", command);
 
     sleep(3); 
 
     if (checkProcess(service_name))
-        handleError("%s, %d: checkProcess failed", basename(__FILE__), __LINE__);
+        HANDLE_ERROR("checkProcess failed");
 
     if (displayProcess(service_name))
-        handleError("%s, %d: displayProcess failed", basename(__FILE__), __LINE__);
+        HANDLE_ERROR("displayProcess failed"); 
 
     return EXIT_SUCCESS;
 } // dnsFlush()

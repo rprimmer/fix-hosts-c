@@ -22,8 +22,8 @@ int booleanQuery(const char *prompt) {
 
     printf("%s ", prompt);
 
-    if (fgets(response, sizeof(response), stdin) == NULL) 
-        handleError("%s, %d: failed to read user response", basename(__FILE__), __LINE__);
+    if (fgets(response, sizeof(response), stdin) == NULL)
+        HANDLE_ERROR("failed to read user response"); 
 
     // Empty newline interpreted as non-yes answer 
     if (response[0] == '\n')     
@@ -44,12 +44,12 @@ int copyFile(const char *src, const char *dest) {
 
     source = fopen(src, "rb");
     if (source == NULL) 
-        handleError("%s, %d: error opening source file %s", basename(__FILE__), __LINE__, src);
+        HANDLE_ERROR("error opening source file %s", src); 
 
     destination = fopen(dest, "wb");
     if (destination == NULL) {
         fclose(source);
-        handleError("%s, %d: error opening destination file: %s", basename(__FILE__), __LINE__, dest);
+        HANDLE_ERROR("error opening destination file: %s", dest); 
     }
 
     while ((bytesRead = fread(buffer, 1, sizeof(buffer), source)) > 0) 
@@ -68,20 +68,20 @@ int copyFile2(const char *src, const char *dest) {
 
     source_fd = open(src, O_RDONLY);
     if (source_fd == -1) 
-        handleError("%s, %d: failed to open source file: %s", basename(__FILE__), __LINE__, src);
+        HANDLE_ERROR("failed to open source file: %s", src); 
 
     dest_fd = open(dest, O_WRONLY | O_CREAT | O_TRUNC, 0644);
     if (dest_fd == -1) 
-        handleError("%s, %d: failed to create destination file: %s", basename(__FILE__), __LINE__, dest); 
+        HANDLE_ERROR("failed to create destination file: %s", dest); 
 
     while ((bytes_read = read(source_fd, buffer, sizeof(buffer))) > 0) {
         bytes_written = write(dest_fd, buffer, bytes_read);
         if (bytes_written == -1) 
-            handleError("%s, %d: write error", basename(__FILE__), __LINE__);
+            HANDLE_ERROR("write error"); 
     }
 
     if (bytes_read == -1) 
-        handleError("%s, %d: read error", basename(__FILE__), __LINE__);
+        HANDLE_ERROR("read error"); 
 
     close(source_fd);
     close(dest_fd);
@@ -211,7 +211,7 @@ int validateDNSname(const char *dns_name) {
     // Compile the regular expression
     result = regcomp(&regex, dns_regex, REG_EXTENDED | REG_NOSUB);
     if (result) 
-        handleError("%s, %d: could not compile regex", basename(__FILE__), __LINE__);
+        HANDLE_ERROR("could not compile regex"); 
 
     // Execute the regular expression
     result = regexec(&regex, dns_name, 0, NULL, 0);
