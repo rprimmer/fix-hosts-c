@@ -3,7 +3,7 @@
  * @author Robert Primmer (https://github.com/rprimmer)
  * @brief Common functions and system actions
  * @version 1.0
- * @date 2024-03-10
+ * @date 2024-03-16
  */
 
 #ifndef SYSTEM_ACTIONS_H
