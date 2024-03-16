@@ -18,9 +18,10 @@ Some of the functions in the bash script (e.g., reading and writing) can be acco
 * execve(2)
 * fork(2)
 
-## Binary executable
+## File Locations
 
-* Binary executable located in `~/bin` called `fix-hostfile`
+* Binary executable (`fix-hostfile`) located in `~/bin`
+* Manpage (`fix-hostfiles.1`) located in `/usr/local/share/man/man1`
 
 ## Arguments
 
