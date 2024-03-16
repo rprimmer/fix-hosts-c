@@ -11,7 +11,7 @@
  * entry from `/etc/hosts`. It will also optionally flush the DNS cache and 
  * restart the `mDNSResponder` daemon.
  * @version 1.0
- * @date 2024-03-20
+ * @date 2024-03-10
  */
 
 #ifndef FIX_HOSTS_H
