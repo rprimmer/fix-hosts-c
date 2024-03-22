@@ -4,7 +4,7 @@
 
 void handleError(const char *message, ...) {
     if (errno)
-        perror(message);
+        perror(NULL);
     else {
         fprintf(stderr, "Error: ");
         va_list args;
