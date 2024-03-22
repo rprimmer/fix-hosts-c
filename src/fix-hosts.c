@@ -59,8 +59,8 @@ int updateHostsFiles(const char *src, const char *dst, Action action) {
 
     if (action == ACTION_PREP) {
         printf("Running hblock(1) to update hosts file\n");
-        if (system(HBLOCK))
-            HANDLE_ERROR("hblock failed"); 
+        // if (system(HBLOCK))
+        //     HANDLE_ERROR("hblock failed"); 
     }
 
     printf("Hosts file has been updated.\n");
