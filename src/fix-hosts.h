@@ -10,8 +10,8 @@
  * the exclusion list (`/etc/hblock/allow.list`) and removing the corresponding
  * entry from `/etc/hosts`. It will also optionally flush the DNS cache and 
  * restart the `mDNSResponder` daemon.
- * @version 1.0
- * @date 2024-03-10
+ * @version 1.1
+ * @date 2024-03-22
  */
 
 #ifndef FIX_HOSTS_H
@@ -28,6 +28,7 @@
 #include <limits.h>
 #include <pwd.h>
 #include <stdio.h>
+#include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>

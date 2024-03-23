@@ -2,8 +2,8 @@
  * @file systems-actions.h
  * @author Robert Primmer (https://github.com/rprimmer)
  * @brief Common functions and system actions
- * @version 1.0
- * @date 2024-03-16
+ * @version 1.1
+ * @date 2024-03-22
  */
 
 #ifndef SYSTEM_ACTIONS_H
@@ -32,8 +32,8 @@
 // which supports calling HANDLE_ERROR with just a string or with additional format arguments.
 // Modern compilers support this so I didn't want to clutter the code with a bunch of 
 // #ifdef __GNUC__ conditionals just for the sake of some ancient compiler from a time long ago...
-#define HANDLE_ERROR(fmt, ...) handleError("%s, %d: " fmt, basename(__FILE__), __LINE__, ##__VA_ARGS__)
-
+// Additionally, __func__ was introduced in C99. 
+#define HANDLE_ERROR(fmt, ...) handleError("%s:%s, %d: " fmt, basename(__FILE__), __func__, __LINE__, ##__VA_ARGS__)
 
 /**
  * @brief Common error handling routine 
@@ -68,7 +68,7 @@ int fileExists(const char *filename);
  */
 int copyFile(const char *src, const char *dest);
 
-/*
+/**
  * @brief Make a copy of a file. Uses read(2) & write(2)
  *
  * @param src File to be copied

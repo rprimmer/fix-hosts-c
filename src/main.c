@@ -49,6 +49,7 @@ int main(int argc, char **argv) {
 
 #ifdef DEBUG
     fprintf(stderr, "%s, %d: argc: %d, optind: %d\n", basename(__FILE__), __LINE__, argc, optind);
+    fileInfo(ETC);
 #endif // DEBUG
 
     // Handle arguments

@@ -36,4 +36,4 @@ markdown: README.md manpage.md
 #	pandoc manpage.md -s -t man -o $(MANPAGE)
 
 clean:
-	$(RM) -rf $(BINDIR)/* $(OBJ)/* *.dSYM readme.pdf $(MANPAGE)
+	$(RM) -rf $(BINDIR)/* $(OBJ)/* *.dSYM readme.pdf
