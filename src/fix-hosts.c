@@ -23,17 +23,17 @@ void usage(const char *program) {
     exit(EXIT_SUCCESS);
 } // usage()
 
-int updateHostsFiles(const char *src, const char *dst, Action action) {
 
+int updateHostsFiles(const char *src, const char *dst, Action action) {
 #ifdef DEBUG
-    fprintf(stderr, "%s, %d: function updateHostsFiles, src: %s, dst: %s, action: %d\n", basename(__FILE__), __LINE__, src, dst, action);
+    fprintf(stderr, "%s:%s, %d: src: %s, dst: %s, action: %d\n", basename(__FILE__), __func__, __LINE__, src, dst, action);
     fprintf(stderr, "%s, %d: HOSTS: %s, HOSTS_ORIG: %s\n", basename(__FILE__), __LINE__, HOSTS, HOSTS_ORIG);
 #endif // DEBUG
 
     uid_t original_uid = getuid();
 
     if (access(src, F_OK))
-        HANDLE_ERROR("source file not found: %s", src); 
+        HANDLE_ERROR("access: %s, file: %s", strerror(errno), src);
 
     printf("Existing hosts files...\n");
     if (lsFiles(ETC, HOSTFILES))
@@ -48,20 +48,22 @@ int updateHostsFiles(const char *src, const char *dst, Action action) {
     }
 
     // Root typically required to edit files in /etc. For this action user must call with sudo(1)
-    if (setuid(0) == -1)
-        HANDLE_ERROR("setuid to root failed"); 
+    if (setuid(0) == -1) 
+        HANDLE_ERROR("setuid: %s", strerror(errno)); 
 
     if (copyFile(src, dst))
         HANDLE_ERROR("unable to copy %s to %s", src, dst); 
 
-    if (setuid(original_uid) == -1)
-        HANDLE_ERROR("setuid to original user failed"); 
+    if (setuid(original_uid) == -1) 
+        HANDLE_ERROR("setuid: %s", strerror(errno)); 
 
+#ifndef DEBUG
     if (action == ACTION_PREP) {
         printf("Running hblock(1) to update hosts file\n");
-        // if (system(HBLOCK))
-        //     HANDLE_ERROR("hblock failed"); 
+        if (system(HBLOCK))
+            HANDLE_ERROR("hblock failed"); 
     }
+#endif // DEBUG
 
     printf("Hosts file has been updated.\n");
     printf("Here are the new hosts files\n");
@@ -70,9 +72,10 @@ int updateHostsFiles(const char *src, const char *dst, Action action) {
     return EXIT_SUCCESS;
 } // updateHostsFiles()
 
+
 int addDnsName(const char *hblock_dir, const char *dns_name, const char *allow_file) {
 #ifdef DEBUG
-    fprintf(stderr, "%s, %d: function addDnsName, DNS name: %s\n", basename(__FILE__), __LINE__, dns_name);
+    fprintf(stderr, "%s:%s, %d: DNS name: %s\n", basename(__FILE__), __func__, __LINE__, dns_name);
 #endif // DEBUG
 
     if (validateDNSname(dns_name))
@@ -82,52 +85,57 @@ int addDnsName(const char *hblock_dir, const char *dns_name, const char *allow_f
     struct stat st;
     if (stat(hblock_dir, &st) == -1) {
         if (mkdir(hblock_dir, 0755) == -1) 
-            HANDLE_ERROR("unable to create dir: %s", hblock_dir); 
-     } else if (!S_ISDIR(st.st_mode)) 
-        HANDLE_ERROR("%s is not a directory", hblock_dir); 
+            HANDLE_ERROR("mkdir: %s, file: %s", strerror(errno), hblock_dir);
+        else if (!S_ISDIR(st.st_mode))
+            HANDLE_ERROR("%s is not a directory", hblock_dir);
+    }
 
     // Check if DNS entry already exists in the allow list
     FILE *file;
     char *line = NULL;
     size_t len = 0;
     ssize_t read;
-    int found = 0;
+    bool dns_found = false;
 
     if ((file = fopen(allow_file, "r+")) == NULL)
-        HANDLE_ERROR("failed to open allow list file: %s", allow_file); 
+        HANDLE_ERROR("failed to open allow list file: %s", allow_file);
 
     while ((read = getline(&line, &len, file)) != -1) {
-        line[strcspn(line, "\n")] = '\0'; // Newline character messes up strcmp()
+        line[strcspn(line, "\n")] = '\0';   // Newline messes up strcmp()
 
         if (strcmp(line, dns_name) == 0) {
             printf("DNS entry %s already exists in %s\n", dns_name, allow_file);
-            found = 1;
+            dns_found = true;
             break;
         }
     }
-    
-    if (!found) 
+
+    if (!dns_found)
         fprintf(file, "%s\n", dns_name);
 
     rewind(file);
     printf("Contents of %s:\n", allow_file);
-    while ((read = getline(&line, &len, file)) != -1) 
+    while ((read = getline(&line, &len, file)) != -1)
         printf("%s", line);
 
     fclose(file);
     free(line);
 
+#ifndef DEBUG
     // Running hblock(1) updates /etc/hosts sans DNS names in allow list
     printf("Running hblock(1) to update hosts file\n");
     if (system(HBLOCK))
         HANDLE_ERROR("hblock failed"); 
+#endif // DEBUG
 
     return EXIT_SUCCESS;
+
 } // addDnsName()
+
 
 int dnsFlush(void) {
 #ifdef DEBUG
-    fprintf(stderr, "%s, %d: function dnsFlush\n", basename(__FILE__), __LINE__);
+    fprintf(stderr, "%s:%s, %d\n", basename(__FILE__), __func__, __LINE__);
 #endif // DEBUG
 
     struct utsname system_info;      
@@ -145,13 +153,13 @@ int dnsFlush(void) {
     const char *service_name = "mDNSResponder";
 
 #ifdef DEBUG
-    fprintf(stderr, "%s, %d: PIDs for %s before restart\n", basename(__FILE__), __LINE__, service_name);
+    fprintf(stderr, "%s:%s, %d: PIDs for %s before restart\n", basename(__FILE__), __func__, __LINE__, service_name);
     if (checkProcess(service_name)) HANDLE_ERROR("checkProcess failed");
     if (displayProcess(service_name)) HANDLE_ERROR("displayProcess failed");
 #endif // DEBUG
 
     printf("Restarting the %s service…\n", service_name);
-    char command[30];
+    char command[20];
     snprintf(command, sizeof(command), "%s %s", "killall", service_name);
     if (system(command))
         HANDLE_ERROR("%s failed", command);

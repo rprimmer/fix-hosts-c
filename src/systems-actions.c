@@ -3,17 +3,12 @@
 #include "system-actions.h"
 
 void handleError(const char *message, ...) {
-    if (errno)
-        perror(NULL);
-    else {
-        fprintf(stderr, "Error: ");
-        va_list args;
-        va_start(args, message);
-        vfprintf(stderr, message, args);
-        va_end(args);
-        fprintf(stderr, "\n");
-    }
-
+    fprintf(stderr, "Error: ");
+    va_list args;
+    va_start(args, message);
+    vfprintf(stderr, message, args);
+    va_end(args);
+    fprintf(stderr, "\n");
     exit(EXIT_FAILURE);
 } // handleError()
 
@@ -38,22 +33,37 @@ int fileExists(const char *filename) {
 } // fileExists()
 
 int copyFile(const char *src, const char *dest) {
-    FILE *source, *destination;
-    char buffer[BUFSIZ]; // BUFSIZ from stdio.h 
-    size_t bytesRead;
+    char buffer[BUFSIZ];
+    size_t bytesRead, bytesWritten; 
 
-    source = fopen(src, "rb");
+    FILE *source = fopen(src, "rb");
     if (source == NULL) 
         HANDLE_ERROR("error opening source file %s", src); 
 
-    destination = fopen(dest, "wb");
+    FILE *destination = fopen(dest, "wb");
     if (destination == NULL) {
         fclose(source);
         HANDLE_ERROR("error opening destination file: %s", dest); 
     }
 
-    while ((bytesRead = fread(buffer, 1, sizeof(buffer), source)) > 0) 
-        fwrite(buffer, 1, bytesRead, destination);
+    while ((bytesRead = fread(buffer, 1, sizeof(buffer), source)) > 0) {
+        bytesWritten = fwrite(buffer, 1, bytesRead, destination);
+        if (bytesWritten < bytesRead) {
+            fclose(source);
+            fclose(destination);
+            HANDLE_ERROR("write error on destination file: %s", dest);
+        }
+    }
+
+    if (ferror(source)) {
+        fclose(source);
+        fclose(destination);
+        HANDLE_ERROR("read error: %s", src);
+    } else if (!feof(source)) {
+        fclose(source);
+        fclose(destination);
+        HANDLE_ERROR("unexpected end of file: %s", src);
+    }
 
     fclose(source);
     fclose(destination);
@@ -62,62 +72,75 @@ int copyFile(const char *src, const char *dest) {
 } // copyFile()
 
 int copyFile2(const char *src, const char *dest) {
-    int source_fd, dest_fd;
-    char buffer[BUFSIZ]; // BUFSIZ from stdio.h
-    ssize_t bytes_read, bytes_written;
+    char buffer[BUFSIZ];
+    ssize_t bytes_read, bytes_written, total_written;
 
-    source_fd = open(src, O_RDONLY);
+    int source_fd = open(src, O_RDONLY);
     if (source_fd == -1) 
-        HANDLE_ERROR("failed to open source file: %s", src); 
+        HANDLE_ERROR("failed to open source file: %s", src);
 
-    dest_fd = open(dest, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-    if (dest_fd == -1) 
-        HANDLE_ERROR("failed to create destination file: %s", dest); 
-
-    while ((bytes_read = read(source_fd, buffer, sizeof(buffer))) > 0) {
-        bytes_written = write(dest_fd, buffer, bytes_read);
-        if (bytes_written == -1) 
-            HANDLE_ERROR("write error"); 
+    int dest_fd = open(dest, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+    if (dest_fd == -1) {
+        close(source_fd);
+        HANDLE_ERROR("failed to create destination file: %s", dest);
     }
 
-    if (bytes_read == -1) 
-        HANDLE_ERROR("read error"); 
+    while ((bytes_read = read(source_fd, buffer, sizeof(buffer))) > 0) {
+        total_written = 0;
+        do {
+            bytes_written = write(dest_fd, buffer + total_written, bytes_read - total_written);
+            if (bytes_written >= 0) {
+                total_written += bytes_written;
+            } else {
+                close(source_fd);
+                close(dest_fd);
+                HANDLE_ERROR("write error: %s", dest);
+            }
+        } while (bytes_read > total_written);
+    }
+
+    if (bytes_read == -1) {
+        close(source_fd);
+        close(dest_fd);
+        HANDLE_ERROR("read error: %s", src);
+    }
 
     close(source_fd);
     close(dest_fd);
-
-    printf("File copied successfully!\n");
 
     return EXIT_SUCCESS;
 } // copyFile2()
 
 int lsFiles(const char *dirname, const char *files) { 
-#ifdef DEBUG
-    fprintf(stderr, "%s, %d: in function lsFiles\n", basename(__FILE__), __LINE__);
-#endif // DEBUG
-
     DIR *dir = opendir(dirname);
 
-    if (dir == NULL)
+    if (dir == NULL) {
+        perror("opendir"); 
         return EXIT_FAILURE; 
+    }
 
     struct dirent *entry;
     struct stat file_stat;
+    char full_path[PATH_MAX];
 
     while ((entry = readdir(dir)) != NULL) {
         if (fnmatch(files, entry->d_name, 0) == 0) {
-            char full_path[PATH_MAX];
-            snprintf(full_path, sizeof(full_path), "%s%s", dirname, entry->d_name);
+            
+            if (dirname[strlen(dirname) - 1] == '/') 
+                snprintf(full_path, sizeof(full_path), "%s%s", dirname, entry->d_name);
+            else 
+                snprintf(full_path, sizeof(full_path), "%s/%s", dirname, entry->d_name);
 
             if (lstat(full_path, &file_stat) == 0) {
                 printf("%s ", full_path);
                 printf("Owner: %s ", getpwuid(file_stat.st_uid)->pw_name);
                 printf("Group: %s ", getgrgid(file_stat.st_gid)->gr_name);
-                printf("Size: %lld ", file_stat.st_size);
+                printf("Size: %lld ", (long long)file_stat.st_size);
                 printf("Last modified: %s", ctime(&file_stat.st_mtime));
-                // printf("\n"); --  Not sure why this newline isn't needed, but it isn't.
-            } else 
-                return EXIT_FAILURE; 
+            } else {
+                perror("lstat");
+                return EXIT_FAILURE;
+            }
         }
     }
 
@@ -126,38 +149,59 @@ int lsFiles(const char *dirname, const char *files) {
 
 int fileInfo(const char *filepath) {
     struct stat fileStat;
-    if (stat(filepath, &fileStat) < 0) 
-        return EXIT_FAILURE;
+    if (lstat(filepath, &fileStat) < 0) 
+        HANDLE_ERROR("lstat: %s", strerror(errno));
 
     printf("Information for %s\n", filepath);
     printf("---------------------------\n");
-    printf("File Size: \t\t%lld bytes\n", fileStat.st_size);
+    printf("File Size: \t\t%lld bytes\n", (long long)fileStat.st_size);
     printf("Number of Links: \t%lu\n", (unsigned long)fileStat.st_nlink);
     printf("File inode: \t\t%lu\n", (unsigned long)fileStat.st_ino);
 
     printf("File Permissions: \t");
-    printf((S_ISDIR(fileStat.st_mode)) ? "d" : "-");
+    printf((S_ISDIR(fileStat.st_mode)) ? "d" : (S_ISLNK(fileStat.st_mode)) ? "l" : (S_ISFIFO(fileStat.st_mode)) ? "p" :
+           (S_ISSOCK(fileStat.st_mode)) ? "s" : (S_ISCHR(fileStat.st_mode)) ? "c" : (S_ISBLK(fileStat.st_mode)) ? "b" : "-");
     printf((fileStat.st_mode & S_IRUSR) ? "r" : "-");
     printf((fileStat.st_mode & S_IWUSR) ? "w" : "-");
-    printf((fileStat.st_mode & S_IXUSR) ? "x" : "-");
+    printf((fileStat.st_mode & S_IXUSR) ? ((fileStat.st_mode & S_ISUID) ? "s" : "x") : 
+           ((fileStat.st_mode & S_ISUID) ? "S" : "-"));
     printf((fileStat.st_mode & S_IRGRP) ? "r" : "-");
     printf((fileStat.st_mode & S_IWGRP) ? "w" : "-");
-    printf((fileStat.st_mode & S_IXGRP) ? "x" : "-");
+    printf((fileStat.st_mode & S_IXGRP) ? ((fileStat.st_mode & S_ISGID) ? "s" : "x") :
+           ((fileStat.st_mode & S_ISGID) ? "S" : "-"));
     printf((fileStat.st_mode & S_IROTH) ? "r" : "-");
     printf((fileStat.st_mode & S_IWOTH) ? "w" : "-");
-    printf((fileStat.st_mode & S_IXOTH) ? "x" : "-");
+    printf((fileStat.st_mode & S_IXOTH) ? ((fileStat.st_mode & S_ISVTX) ? "t" : "x") :
+           ((fileStat.st_mode & S_ISVTX) ? "T" : "-"));
     printf("\n");
 
-    printf("The file %s a symbolic link\n", (S_ISLNK(fileStat.st_mode)) ? "is" : "is not");
+    printf("Last access time: \t%s", ctime(&fileStat.st_atime));
+    printf("Last modification time: %s", ctime(&fileStat.st_mtime));
+    printf("Last status change time: %s", ctime(&fileStat.st_ctime));
 
-    char *accessTime = ctime(&fileStat.st_atime);
-    printf("Last access time: %s", accessTime);
-   
-    char *modificationTime = ctime(&fileStat.st_mtime);
-    printf("Last modification time: %s", modificationTime);
+    struct passwd *pw = getpwuid(fileStat.st_uid);
+    struct group *gr = getgrgid(fileStat.st_gid);
+    printf("File Owner: \t\t%s (%d)\n", pw->pw_name, fileStat.st_uid);
+    printf("File Group: \t\t%s (%d)\n", gr->gr_name, fileStat.st_gid);
+    printf("Block Size: \t\t%ld bytes\n", (long)fileStat.st_blksize);
 
-    char *statusChangeTime = ctime(&fileStat.st_ctime);
-    printf("Last status change time: %s", statusChangeTime);
+    printf("File Type: \t\t");
+    if (S_ISREG(fileStat.st_mode))
+        printf("Regular file\n");
+    else if (S_ISDIR(fileStat.st_mode))
+        printf("Directory\n");
+    else if (S_ISCHR(fileStat.st_mode))
+        printf("Character device\n");
+    else if (S_ISBLK(fileStat.st_mode))
+        printf("Block device\n");
+    else if (S_ISFIFO(fileStat.st_mode))
+        printf("FIFO\n");
+    else if (S_ISLNK(fileStat.st_mode))
+        printf("Symbolic link\n");
+    else if (S_ISSOCK(fileStat.st_mode))
+        printf("Socket\n");
+    else
+        printf("Unknown\n");
 
     return EXIT_SUCCESS; 
 } // fileInfo()
