@@ -1,0 +1,28 @@
+\@ifundefined {etoctocstyle}{\let \etoc@startlocaltoc \@gobble \let \etoc@settocdepth \@gobble \let \etoc@depthtag \@gobble \let \etoc@setlocaltop \@gobble }{}
+\contentsline {chapter}{\numberline {1}File Index}{1}{chapter.1}%
+\contentsline {section}{\numberline {1.1}File List}{1}{section.1.1}%
+\contentsline {chapter}{\numberline {2}File Documentation}{3}{chapter.2}%
+\contentsline {section}{\numberline {2.1}actions.\discretionary {\mbox {\scriptsize $\hookleftarrow $}}{}{}h}{3}{section.2.1}%
+\contentsline {section}{\numberline {2.2}src/fix-\/hosts.h File Reference}{3}{section.2.2}%
+\contentsline {subsection}{\numberline {2.2.1}Detailed Description}{4}{subsection.2.2.1}%
+\contentsline {subsection}{\numberline {2.2.2}Function Documentation}{4}{subsection.2.2.2}%
+\contentsline {subsubsection}{\numberline {2.2.2.1}addDnsName()}{4}{subsubsection.2.2.2.1}%
+\contentsline {subsubsection}{\numberline {2.2.2.2}dnsFlush()}{5}{subsubsection.2.2.2.2}%
+\contentsline {subsubsection}{\numberline {2.2.2.3}updateHostsFiles()}{5}{subsubsection.2.2.2.3}%
+\contentsline {subsubsection}{\numberline {2.2.2.4}usage()}{5}{subsubsection.2.2.2.4}%
+\contentsline {section}{\numberline {2.3}fix-\/hosts.h}{6}{section.2.3}%
+\contentsline {section}{\numberline {2.4}src/system-\/actions.h File Reference}{6}{section.2.4}%
+\contentsline {subsection}{\numberline {2.4.1}Detailed Description}{7}{subsection.2.4.1}%
+\contentsline {subsection}{\numberline {2.4.2}Function Documentation}{8}{subsection.2.4.2}%
+\contentsline {subsubsection}{\numberline {2.4.2.1}booleanQuery()}{8}{subsubsection.2.4.2.1}%
+\contentsline {subsubsection}{\numberline {2.4.2.2}checkProcess()}{8}{subsubsection.2.4.2.2}%
+\contentsline {subsubsection}{\numberline {2.4.2.3}copyFile()}{8}{subsubsection.2.4.2.3}%
+\contentsline {subsubsection}{\numberline {2.4.2.4}copyFile2()}{9}{subsubsection.2.4.2.4}%
+\contentsline {subsubsection}{\numberline {2.4.2.5}displayProcess()}{9}{subsubsection.2.4.2.5}%
+\contentsline {subsubsection}{\numberline {2.4.2.6}fileExists()}{9}{subsubsection.2.4.2.6}%
+\contentsline {subsubsection}{\numberline {2.4.2.7}fileInfo()}{10}{subsubsection.2.4.2.7}%
+\contentsline {subsubsection}{\numberline {2.4.2.8}handleError()}{10}{subsubsection.2.4.2.8}%
+\contentsline {subsubsection}{\numberline {2.4.2.9}lsFiles()}{10}{subsubsection.2.4.2.9}%
+\contentsline {subsubsection}{\numberline {2.4.2.10}validateDNSname()}{11}{subsubsection.2.4.2.10}%
+\contentsline {section}{\numberline {2.5}system-\/actions.h}{11}{section.2.5}%
+\contentsline {chapter}{Index}{13}{section*.5}%

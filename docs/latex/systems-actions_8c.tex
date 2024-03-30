@@ -1,0 +1,233 @@
+\doxysection{src/systems-\/actions.c File Reference}
+\hypertarget{systems-actions_8c}{}\label{systems-actions_8c}\index{src/systems-\/actions.c@{src/systems-\/actions.c}}
+
+
+Common functions and system actions.  
+
+
+{\ttfamily \#include "{}system-\/actions.\+h"{}}\newline
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{systems-actions_8c_af9587281938811c112fdab008e3cb5ce}{handle\+Error}} (const char \texorpdfstring{$\ast$}{*}message,...)
+\begin{DoxyCompactList}\small\item\em Common error handling routine. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{systems-actions_8c_aacec6921920b3fd38c4a4e697b511294}{boolean\+Query}} (const char \texorpdfstring{$\ast$}{*}prompt)
+\begin{DoxyCompactList}\small\item\em Query user for yes or no. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{systems-actions_8c_a5c3fee518af0ba8b435624e66e850f73}{file\+Exists}} (const char \texorpdfstring{$\ast$}{*}filename)
+\begin{DoxyCompactList}\small\item\em Check for file existence. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{systems-actions_8c_a867793539943cf9063d0211f522bdeb7}{copy\+File}} (const char \texorpdfstring{$\ast$}{*}src, const char \texorpdfstring{$\ast$}{*}dest)
+\begin{DoxyCompactList}\small\item\em Make a copy of a file. Uses fread(3) \& fwrite(3) \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{systems-actions_8c_ad8b64d3293d7b5b4eef88bb487f52dc7}{copy\+File2}} (const char \texorpdfstring{$\ast$}{*}src, const char \texorpdfstring{$\ast$}{*}dest)
+\begin{DoxyCompactList}\small\item\em Make a copy of a file. Uses read(2) \& write(2) \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{systems-actions_8c_af3f50032c2e61b1af985fa1cd136b18c}{ls\+Files}} (const char \texorpdfstring{$\ast$}{*}dirname, const char \texorpdfstring{$\ast$}{*}files)
+\begin{DoxyCompactList}\small\item\em List files in a directory. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{systems-actions_8c_ade1d1cc95d45aa0d314ee83573ca2d8b}{file\+Info}} (const char \texorpdfstring{$\ast$}{*}filepath)
+\begin{DoxyCompactList}\small\item\em Display information about a file. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{systems-actions_8c_a17115f262e6d530eb316f389d25ea9c3}{check\+Process}} (const char \texorpdfstring{$\ast$}{*}process\+\_\+name)
+\begin{DoxyCompactList}\small\item\em Check if a process is currently running. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{systems-actions_8c_a9933a8203091574569403e9409795446}{display\+Process}} (const char \texorpdfstring{$\ast$}{*}process\+\_\+name)
+\begin{DoxyCompactList}\small\item\em Display info on a running process. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{systems-actions_8c_a5ffe2cbc043d8660d971d6b9d734f539}{validate\+DNSname}} (const char \texorpdfstring{$\ast$}{*}dns\+\_\+name)
+\begin{DoxyCompactList}\small\item\em DNS name must start \& end with a letter or a number and can only contain letters, numbers, and hyphens. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Common functions and system actions. 
+
+\begin{DoxyAuthor}{Author}
+Robert Primmer (\href{https://github.com/rprimmer}{\texttt{ https\+://github.\+com/rprimmer}}) 
+\end{DoxyAuthor}
+\begin{DoxyVersion}{Version}
+1.\+0 
+\end{DoxyVersion}
+\begin{DoxyDate}{Date}
+2024-\/03-\/10 
+\end{DoxyDate}
+
+
+\doxysubsection{Function Documentation}
+\Hypertarget{systems-actions_8c_aacec6921920b3fd38c4a4e697b511294}\label{systems-actions_8c_aacec6921920b3fd38c4a4e697b511294} 
+\index{systems-\/actions.c@{systems-\/actions.c}!booleanQuery@{booleanQuery}}
+\index{booleanQuery@{booleanQuery}!systems-\/actions.c@{systems-\/actions.c}}
+\doxysubsubsection{\texorpdfstring{booleanQuery()}{booleanQuery()}}
+{\footnotesize\ttfamily int boolean\+Query (\begin{DoxyParamCaption}\item[{const char \texorpdfstring{$\ast$}{*}}]{prompt }\end{DoxyParamCaption})}
+
+
+
+Query user for yes or no. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em prompt} & Message to be displayed to user \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+int Return true if user entered y or Y 
+\end{DoxyReturn}
+\Hypertarget{systems-actions_8c_a17115f262e6d530eb316f389d25ea9c3}\label{systems-actions_8c_a17115f262e6d530eb316f389d25ea9c3} 
+\index{systems-\/actions.c@{systems-\/actions.c}!checkProcess@{checkProcess}}
+\index{checkProcess@{checkProcess}!systems-\/actions.c@{systems-\/actions.c}}
+\doxysubsubsection{\texorpdfstring{checkProcess()}{checkProcess()}}
+{\footnotesize\ttfamily int check\+Process (\begin{DoxyParamCaption}\item[{const char \texorpdfstring{$\ast$}{*}}]{process\+\_\+name }\end{DoxyParamCaption})}
+
+
+
+Check if a process is currently running. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em process\+\_\+name} & Process to look for \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+int Return status 
+\end{DoxyReturn}
+\Hypertarget{systems-actions_8c_a867793539943cf9063d0211f522bdeb7}\label{systems-actions_8c_a867793539943cf9063d0211f522bdeb7} 
+\index{systems-\/actions.c@{systems-\/actions.c}!copyFile@{copyFile}}
+\index{copyFile@{copyFile}!systems-\/actions.c@{systems-\/actions.c}}
+\doxysubsubsection{\texorpdfstring{copyFile()}{copyFile()}}
+{\footnotesize\ttfamily int copy\+File (\begin{DoxyParamCaption}\item[{const char \texorpdfstring{$\ast$}{*}}]{src,  }\item[{const char \texorpdfstring{$\ast$}{*}}]{dest }\end{DoxyParamCaption})}
+
+
+
+Make a copy of a file. Uses fread(3) \& fwrite(3) 
+
+
+\begin{DoxyParams}{Parameters}
+{\em src} & File to be copied \\
+\hline
+{\em dest} & Filename of copy \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+int Return status 
+\end{DoxyReturn}
+\Hypertarget{systems-actions_8c_ad8b64d3293d7b5b4eef88bb487f52dc7}\label{systems-actions_8c_ad8b64d3293d7b5b4eef88bb487f52dc7} 
+\index{systems-\/actions.c@{systems-\/actions.c}!copyFile2@{copyFile2}}
+\index{copyFile2@{copyFile2}!systems-\/actions.c@{systems-\/actions.c}}
+\doxysubsubsection{\texorpdfstring{copyFile2()}{copyFile2()}}
+{\footnotesize\ttfamily int copy\+File2 (\begin{DoxyParamCaption}\item[{const char \texorpdfstring{$\ast$}{*}}]{src,  }\item[{const char \texorpdfstring{$\ast$}{*}}]{dest }\end{DoxyParamCaption})}
+
+
+
+Make a copy of a file. Uses read(2) \& write(2) 
+
+
+\begin{DoxyParams}{Parameters}
+{\em src} & File to be copied \\
+\hline
+{\em dest} & Filename of copy \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+int Return status 
+\end{DoxyReturn}
+\Hypertarget{systems-actions_8c_a9933a8203091574569403e9409795446}\label{systems-actions_8c_a9933a8203091574569403e9409795446} 
+\index{systems-\/actions.c@{systems-\/actions.c}!displayProcess@{displayProcess}}
+\index{displayProcess@{displayProcess}!systems-\/actions.c@{systems-\/actions.c}}
+\doxysubsubsection{\texorpdfstring{displayProcess()}{displayProcess()}}
+{\footnotesize\ttfamily int display\+Process (\begin{DoxyParamCaption}\item[{const char \texorpdfstring{$\ast$}{*}}]{process\+\_\+name }\end{DoxyParamCaption})}
+
+
+
+Display info on a running process. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em process\+\_\+name} & Process to look for \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+int Return status 
+\end{DoxyReturn}
+\Hypertarget{systems-actions_8c_a5c3fee518af0ba8b435624e66e850f73}\label{systems-actions_8c_a5c3fee518af0ba8b435624e66e850f73} 
+\index{systems-\/actions.c@{systems-\/actions.c}!fileExists@{fileExists}}
+\index{fileExists@{fileExists}!systems-\/actions.c@{systems-\/actions.c}}
+\doxysubsubsection{\texorpdfstring{fileExists()}{fileExists()}}
+{\footnotesize\ttfamily int file\+Exists (\begin{DoxyParamCaption}\item[{const char \texorpdfstring{$\ast$}{*}}]{filename }\end{DoxyParamCaption})}
+
+
+
+Check for file existence. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em filename} & File to check \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+int Return true of file exists 
+\end{DoxyReturn}
+\Hypertarget{systems-actions_8c_ade1d1cc95d45aa0d314ee83573ca2d8b}\label{systems-actions_8c_ade1d1cc95d45aa0d314ee83573ca2d8b} 
+\index{systems-\/actions.c@{systems-\/actions.c}!fileInfo@{fileInfo}}
+\index{fileInfo@{fileInfo}!systems-\/actions.c@{systems-\/actions.c}}
+\doxysubsubsection{\texorpdfstring{fileInfo()}{fileInfo()}}
+{\footnotesize\ttfamily int file\+Info (\begin{DoxyParamCaption}\item[{const char \texorpdfstring{$\ast$}{*}}]{filepath }\end{DoxyParamCaption})}
+
+
+
+Display information about a file. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em filepath} & File to stat \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+int Return status 
+\end{DoxyReturn}
+\Hypertarget{systems-actions_8c_af9587281938811c112fdab008e3cb5ce}\label{systems-actions_8c_af9587281938811c112fdab008e3cb5ce} 
+\index{systems-\/actions.c@{systems-\/actions.c}!handleError@{handleError}}
+\index{handleError@{handleError}!systems-\/actions.c@{systems-\/actions.c}}
+\doxysubsubsection{\texorpdfstring{handleError()}{handleError()}}
+{\footnotesize\ttfamily void handle\+Error (\begin{DoxyParamCaption}\item[{const char \texorpdfstring{$\ast$}{*}}]{message,  }\item[{}]{... }\end{DoxyParamCaption})}
+
+
+
+Common error handling routine. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em message} & Message to be displayed to user \\
+\hline
+{\em ...} & Optional parameters can be provided (va\+\_\+list) \\
+\hline
+\end{DoxyParams}
+\Hypertarget{systems-actions_8c_af3f50032c2e61b1af985fa1cd136b18c}\label{systems-actions_8c_af3f50032c2e61b1af985fa1cd136b18c} 
+\index{systems-\/actions.c@{systems-\/actions.c}!lsFiles@{lsFiles}}
+\index{lsFiles@{lsFiles}!systems-\/actions.c@{systems-\/actions.c}}
+\doxysubsubsection{\texorpdfstring{lsFiles()}{lsFiles()}}
+{\footnotesize\ttfamily int ls\+Files (\begin{DoxyParamCaption}\item[{const char \texorpdfstring{$\ast$}{*}}]{dirname,  }\item[{const char \texorpdfstring{$\ast$}{*}}]{files }\end{DoxyParamCaption})}
+
+
+
+List files in a directory. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em dirname} & Directory housing files \\
+\hline
+{\em files} & Files to list \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+int Return status 
+\end{DoxyReturn}
+\Hypertarget{systems-actions_8c_a5ffe2cbc043d8660d971d6b9d734f539}\label{systems-actions_8c_a5ffe2cbc043d8660d971d6b9d734f539} 
+\index{systems-\/actions.c@{systems-\/actions.c}!validateDNSname@{validateDNSname}}
+\index{validateDNSname@{validateDNSname}!systems-\/actions.c@{systems-\/actions.c}}
+\doxysubsubsection{\texorpdfstring{validateDNSname()}{validateDNSname()}}
+{\footnotesize\ttfamily int validate\+DNSname (\begin{DoxyParamCaption}\item[{const char \texorpdfstring{$\ast$}{*}}]{dns\+\_\+name }\end{DoxyParamCaption})}
+
+
+
+DNS name must start \& end with a letter or a number and can only contain letters, numbers, and hyphens. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em dns\+\_\+name} & DNS name to check \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+int Return status 
+\end{DoxyReturn}

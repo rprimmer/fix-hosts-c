@@ -1,0 +1,78 @@
+\begin{theindex}
+
+  \item {addDnsName}
+    \subitem {fix-\/hosts.h}, \hyperpage{4}
+
+  \indexspace
+
+  \item {booleanQuery}
+    \subitem {system-\/actions.h}, \hyperpage{8}
+
+  \indexspace
+
+  \item {checkProcess}
+    \subitem {system-\/actions.h}, \hyperpage{8}
+  \item {copyFile}
+    \subitem {system-\/actions.h}, \hyperpage{8}
+  \item {copyFile2}
+    \subitem {system-\/actions.h}, \hyperpage{9}
+
+  \indexspace
+
+  \item {displayProcess}
+    \subitem {system-\/actions.h}, \hyperpage{9}
+  \item {dnsFlush}
+    \subitem {fix-\/hosts.h}, \hyperpage{5}
+
+  \indexspace
+
+  \item {fileExists}
+    \subitem {system-\/actions.h}, \hyperpage{9}
+  \item {fileInfo}
+    \subitem {system-\/actions.h}, \hyperpage{10}
+  \item {fix-\/hosts.h}
+    \subitem {addDnsName}, \hyperpage{4}
+    \subitem {dnsFlush}, \hyperpage{5}
+    \subitem {updateHostsFiles}, \hyperpage{5}
+    \subitem {usage}, \hyperpage{5}
+
+  \indexspace
+
+  \item {handleError}
+    \subitem {system-\/actions.h}, \hyperpage{10}
+
+  \indexspace
+
+  \item {lsFiles}
+    \subitem {system-\/actions.h}, \hyperpage{10}
+
+  \indexspace
+
+  \item {src/actions.h}, \hyperpage{3}
+  \item {src/fix-\/hosts.h}, \hyperpage{3}, \hyperpage{6}
+  \item {src/system-\/actions.h}, \hyperpage{6}, \hyperpage{11}
+  \item {system-\/actions.h}
+    \subitem {booleanQuery}, \hyperpage{8}
+    \subitem {checkProcess}, \hyperpage{8}
+    \subitem {copyFile}, \hyperpage{8}
+    \subitem {copyFile2}, \hyperpage{9}
+    \subitem {displayProcess}, \hyperpage{9}
+    \subitem {fileExists}, \hyperpage{9}
+    \subitem {fileInfo}, \hyperpage{10}
+    \subitem {handleError}, \hyperpage{10}
+    \subitem {lsFiles}, \hyperpage{10}
+    \subitem {validateDNSname}, \hyperpage{11}
+
+  \indexspace
+
+  \item {updateHostsFiles}
+    \subitem {fix-\/hosts.h}, \hyperpage{5}
+  \item {usage}
+    \subitem {fix-\/hosts.h}, \hyperpage{5}
+
+  \indexspace
+
+  \item {validateDNSname}
+    \subitem {system-\/actions.h}, \hyperpage{11}
+
+\end{theindex}

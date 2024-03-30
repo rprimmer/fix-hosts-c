@@ -2,7 +2,7 @@
 .SH NAME
 fix-hostfiles \- Prepare /etc/hosts for hblock(1) 
 .SH USAGE
-.B fix-hostfiles.sh [OPTIONS] <ACTION>
+.B fix-hostfiles [OPTIONS] <ACTION>
 .SH DESCRIPTION
 hblock(1) is a shell script (available on homebrew) that blocks ads, beacons and malware sites. 
 It does this by editing /etc/hosts and setting the IP address for such sites to 0.0.0.0.
@@ -53,7 +53,7 @@ sudo fix-hostfiles -f
 .SH FILE LOCATIONS 
 .TP
 /usr/local/bin/fix-hostfiles
-Bash script 
+Executable
 .TP
 /usr/local/share/man/man1/fix-hostfiles.1
 Manpage 
