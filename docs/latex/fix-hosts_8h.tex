@@ -1,0 +1,149 @@
+\doxysection{src/fix-\/hosts.h File Reference}
+\hypertarget{fix-hosts_8h}{}\label{fix-hosts_8h}\index{src/fix-\/hosts.h@{src/fix-\/hosts.h}}
+
+
+Modify /etc/hosts for use with hblock(1)  
+
+
+{\ttfamily \#include "{}system-\/actions.\+h"{}}\newline
+{\ttfamily \#include "{}actions.\+h"{}}\newline
+{\ttfamily \#include $<$dirent.\+h$>$}\newline
+{\ttfamily \#include $<$fcntl.\+h$>$}\newline
+{\ttfamily \#include $<$fnmatch.\+h$>$}\newline
+{\ttfamily \#include $<$grp.\+h$>$}\newline
+{\ttfamily \#include $<$libgen.\+h$>$}\newline
+{\ttfamily \#include $<$limits.\+h$>$}\newline
+{\ttfamily \#include $<$pwd.\+h$>$}\newline
+{\ttfamily \#include $<$stdio.\+h$>$}\newline
+{\ttfamily \#include $<$stdbool.\+h$>$}\newline
+{\ttfamily \#include $<$stdlib.\+h$>$}\newline
+{\ttfamily \#include $<$string.\+h$>$}\newline
+{\ttfamily \#include $<$sys/stat.\+h$>$}\newline
+{\ttfamily \#include $<$sys/types.\+h$>$}\newline
+{\ttfamily \#include $<$sys/utsname.\+h$>$}\newline
+{\ttfamily \#include $<$time.\+h$>$}\newline
+{\ttfamily \#include $<$unistd.\+h$>$}\newline
+\doxysubsubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{fix-hosts_8h_a86d0608c5a8dd8a64eb88d7b229904fa}\label{fix-hosts_8h_a86d0608c5a8dd8a64eb88d7b229904fa} 
+\#define {\bfseries ETC}~"{}/etc/"{}
+\item 
+\Hypertarget{fix-hosts_8h_a0cacea6cfd787ee58dfe0db5ce40d448}\label{fix-hosts_8h_a0cacea6cfd787ee58dfe0db5ce40d448} 
+\#define {\bfseries HOSTS}~ETC "{}hosts"{}
+\item 
+\Hypertarget{fix-hosts_8h_afbe40b73485379ba1023cdcdbecbf428}\label{fix-hosts_8h_afbe40b73485379ba1023cdcdbecbf428} 
+\#define {\bfseries HOSTS\+\_\+\+ORIG}~ETC "{}hosts-\/ORIG"{}
+\item 
+\Hypertarget{fix-hosts_8h_a7dfe127a1ffe9454d4629286056f0f5b}\label{fix-hosts_8h_a7dfe127a1ffe9454d4629286056f0f5b} 
+\#define {\bfseries HOSTFILES}~"{}hosts\texorpdfstring{$\ast$}{*}"{}
+\item 
+\Hypertarget{fix-hosts_8h_a4613a92ec7a29ab5454ed8754686896a}\label{fix-hosts_8h_a4613a92ec7a29ab5454ed8754686896a} 
+\#define {\bfseries HBLOCK}~"{}hblock"{}
+\item 
+\Hypertarget{fix-hosts_8h_a2ca9cbc054a57be4b9f6628b95368727}\label{fix-hosts_8h_a2ca9cbc054a57be4b9f6628b95368727} 
+\#define {\bfseries ALLOWLIST}~ETC HBLOCK "{}/allow.\+list"{}
+\item 
+\Hypertarget{fix-hosts_8h_ab39e59d52cffabd234cd4edf6df12068}\label{fix-hosts_8h_ab39e59d52cffabd234cd4edf6df12068} 
+\#define {\bfseries HBLOCK\+\_\+\+DIR}~ETC HBLOCK
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{fix-hosts_8h_aa2fcbb42fa01bd818c6942546447cbb5}{usage}} (const char \texorpdfstring{$\ast$}{*}program)
+\begin{DoxyCompactList}\small\item\em Display usage. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{fix-hosts_8h_a9497f07dad57da211843b1c08cd6ca3a}{update\+Hosts\+Files}} (const char \texorpdfstring{$\ast$}{*}src, const char \texorpdfstring{$\ast$}{*}dst, Action action)
+\begin{DoxyCompactList}\small\item\em Modify /etc/hosts. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{fix-hosts_8h_adceb939a0d53db7851192cf8c5581b1c}{add\+Dns\+Name}} (const char \texorpdfstring{$\ast$}{*}hblock\+\_\+dir, const char \texorpdfstring{$\ast$}{*}dns\+\_\+name, const char \texorpdfstring{$\ast$}{*}allow\+\_\+file)
+\begin{DoxyCompactList}\small\item\em Add DNS name to hblock allow list. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{fix-hosts_8h_a41d6b59f6c02f7b340a08ae07296a7af}{dns\+Flush}} (void)
+\begin{DoxyCompactList}\small\item\em Flush the DNS cache and restart m\+DNSResponder daemon. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Modify /etc/hosts for use with hblock(1) 
+
+\begin{DoxyAuthor}{Author}
+Robert Primmer (\href{https://github.com/rprimmer}{\texttt{ https\+://github.\+com/rprimmer}})
+\end{DoxyAuthor}
+hblock(1) is a shell script, available on \href{https://brew.sh}{\texttt{ homebrew}}, that blocks ads, beacons and malware sites. It does this by editing {\ttfamily /etc/hosts} and setting the IP address for such sites to 0.\+0.\+0.\+0. The issue is that hblock sometimes adds sites to /etc/hosts that are needed. This executable fixes such issues by adding good DNS hosts to the exclusion list ({\ttfamily /etc/hblock/allow.list}) and removing the corresponding entry from {\ttfamily /etc/hosts}. It will also optionally flush the DNS cache and restart the {\ttfamily m\+DNSResponder} daemon. \begin{DoxyVersion}{Version}
+1.\+1 
+\end{DoxyVersion}
+\begin{DoxyDate}{Date}
+2024-\/03-\/22 
+\end{DoxyDate}
+
+
+\doxysubsection{Function Documentation}
+\Hypertarget{fix-hosts_8h_adceb939a0d53db7851192cf8c5581b1c}\label{fix-hosts_8h_adceb939a0d53db7851192cf8c5581b1c} 
+\index{fix-\/hosts.h@{fix-\/hosts.h}!addDnsName@{addDnsName}}
+\index{addDnsName@{addDnsName}!fix-\/hosts.h@{fix-\/hosts.h}}
+\doxysubsubsection{\texorpdfstring{addDnsName()}{addDnsName()}}
+{\footnotesize\ttfamily int add\+Dns\+Name (\begin{DoxyParamCaption}\item[{const char \texorpdfstring{$\ast$}{*}}]{hblock\+\_\+dir,  }\item[{const char \texorpdfstring{$\ast$}{*}}]{dns\+\_\+name,  }\item[{const char \texorpdfstring{$\ast$}{*}}]{allow\+\_\+file }\end{DoxyParamCaption})}
+
+
+
+Add DNS name to hblock allow list. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em hblock\+\_\+dir} & Directory holding hblock allow list \\
+\hline
+{\em dns\+\_\+name} & DNS name to add \\
+\hline
+{\em allow\+\_\+file} & Name of allow list file \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+int Return status 
+\end{DoxyReturn}
+\Hypertarget{fix-hosts_8h_a41d6b59f6c02f7b340a08ae07296a7af}\label{fix-hosts_8h_a41d6b59f6c02f7b340a08ae07296a7af} 
+\index{fix-\/hosts.h@{fix-\/hosts.h}!dnsFlush@{dnsFlush}}
+\index{dnsFlush@{dnsFlush}!fix-\/hosts.h@{fix-\/hosts.h}}
+\doxysubsubsection{\texorpdfstring{dnsFlush()}{dnsFlush()}}
+{\footnotesize\ttfamily int dns\+Flush (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Flush the DNS cache and restart m\+DNSResponder daemon. 
+
+\begin{DoxyReturn}{Returns}
+int Return status 
+\end{DoxyReturn}
+\Hypertarget{fix-hosts_8h_a9497f07dad57da211843b1c08cd6ca3a}\label{fix-hosts_8h_a9497f07dad57da211843b1c08cd6ca3a} 
+\index{fix-\/hosts.h@{fix-\/hosts.h}!updateHostsFiles@{updateHostsFiles}}
+\index{updateHostsFiles@{updateHostsFiles}!fix-\/hosts.h@{fix-\/hosts.h}}
+\doxysubsubsection{\texorpdfstring{updateHostsFiles()}{updateHostsFiles()}}
+{\footnotesize\ttfamily int update\+Hosts\+Files (\begin{DoxyParamCaption}\item[{const char \texorpdfstring{$\ast$}{*}}]{src,  }\item[{const char \texorpdfstring{$\ast$}{*}}]{dst,  }\item[{Action}]{action }\end{DoxyParamCaption})}
+
+
+
+Modify /etc/hosts. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em src} & Source file for action, typically hosts or hosts-\/\+ORIG \\
+\hline
+{\em dst} & Destination for action, typically hosts or hosts-\/\+ORIG \\
+\hline
+{\em action} & Action being performed. ACTION\+\_\+\+PREP is action of interest. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+int Return status 
+\end{DoxyReturn}
+\Hypertarget{fix-hosts_8h_aa2fcbb42fa01bd818c6942546447cbb5}\label{fix-hosts_8h_aa2fcbb42fa01bd818c6942546447cbb5} 
+\index{fix-\/hosts.h@{fix-\/hosts.h}!usage@{usage}}
+\index{usage@{usage}!fix-\/hosts.h@{fix-\/hosts.h}}
+\doxysubsubsection{\texorpdfstring{usage()}{usage()}}
+{\footnotesize\ttfamily void usage (\begin{DoxyParamCaption}\item[{const char \texorpdfstring{$\ast$}{*}}]{program }\end{DoxyParamCaption})}
+
+
+
+Display usage. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em program} & Basename of calling program \\
+\hline
+\end{DoxyParams}

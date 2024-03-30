@@ -2,15 +2,17 @@
 
 #include "system-actions.h"
 
-void handleError(const char *message, ...) {
-    fprintf(stderr, "Error: ");
+void handleError(bool fatal, char *file, const char *func, int line, const char *fmt, ...) {
+    fprintf(stderr, "Error in %s:%s, line %d: ", basename(file), func, line);
     va_list args;
-    va_start(args, message);
-    vfprintf(stderr, message, args);
+    va_start(args, fmt);
+    vfprintf(stderr, fmt, args);
     va_end(args);
     fprintf(stderr, "\n");
-    exit(EXIT_FAILURE);
-} // handleError()
+
+    if (fatal) 
+        exit(EXIT_FAILURE);
+}
 
 int booleanQuery(const char *prompt) {
     char response[10];
@@ -19,10 +21,6 @@ int booleanQuery(const char *prompt) {
 
     if (fgets(response, sizeof(response), stdin) == NULL)
         HANDLE_ERROR("failed to read user response"); 
-
-    // Empty newline interpreted as non-yes answer 
-    if (response[0] == '\n')     
-        return 0;
 
     return (response[0] == 'y' || response[0] == 'Y');
 } // booleanQuery()
@@ -125,7 +123,6 @@ int lsFiles(const char *dirname, const char *files) {
 
     while ((entry = readdir(dir)) != NULL) {
         if (fnmatch(files, entry->d_name, 0) == 0) {
-            
             if (dirname[strlen(dirname) - 1] == '/') 
                 snprintf(full_path, sizeof(full_path), "%s%s", dirname, entry->d_name);
             else 
@@ -138,7 +135,8 @@ int lsFiles(const char *dirname, const char *files) {
                 printf("Size: %lld ", (long long)file_stat.st_size);
                 printf("Last modified: %s", ctime(&file_stat.st_mtime));
             } else {
-                perror("lstat");
+                REPORT_ERROR("lstat: %s", strerror(errno));
+                closedir(dir); 
                 return EXIT_FAILURE;
             }
         }

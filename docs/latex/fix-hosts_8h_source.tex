@@ -1,0 +1,53 @@
+\doxysection{fix-\/hosts.h}
+\hypertarget{fix-hosts_8h_source}{}\label{fix-hosts_8h_source}\index{src/fix-\/hosts.h@{src/fix-\/hosts.h}}
+\mbox{\hyperlink{fix-hosts_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#ifndef\ FIX\_HOSTS\_H}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#define\ FIX\_HOSTS\_H}}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{system-actions_8h}{system-\/actions.h}}"{}}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#include\ "{}actions.h"{}}}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#include\ <dirent.h>}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#include\ <fcntl.h>}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#include\ <fnmatch.h>}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#include\ <grp.h>}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#include\ <libgen.h>}}
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#include\ <limits.h>}}
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\#include\ <pwd.h>}}
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\#include\ <stdio.h>}}
+\DoxyCodeLine{00031\ \textcolor{preprocessor}{\#include\ <stdbool.h>}}
+\DoxyCodeLine{00032\ \textcolor{preprocessor}{\#include\ <stdlib.h>}}
+\DoxyCodeLine{00033\ \textcolor{preprocessor}{\#include\ <string.h>}}
+\DoxyCodeLine{00034\ \textcolor{preprocessor}{\#include\ <sys/stat.h>}}
+\DoxyCodeLine{00035\ \textcolor{preprocessor}{\#include\ <sys/types.h>}}
+\DoxyCodeLine{00036\ \textcolor{preprocessor}{\#include\ <sys/utsname.h>}}
+\DoxyCodeLine{00037\ \textcolor{preprocessor}{\#include\ <time.h>}}
+\DoxyCodeLine{00038\ \textcolor{preprocessor}{\#include\ <unistd.h>}}
+\DoxyCodeLine{00039\ }
+\DoxyCodeLine{00040\ \textcolor{preprocessor}{\#ifdef\ DEBUG}}
+\DoxyCodeLine{00041\ \textcolor{preprocessor}{\#define\ ETC\ "{}./etc/"{}\ }}
+\DoxyCodeLine{00042\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00043\ \textcolor{preprocessor}{\#define\ ETC\ "{}/etc/"{}}}
+\DoxyCodeLine{00044\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ DEBUG}}
+\DoxyCodeLine{00045\ }
+\DoxyCodeLine{00046\ \textcolor{preprocessor}{\#define\ HOSTS\ ETC\ "{}hosts"{}}}
+\DoxyCodeLine{00047\ \textcolor{preprocessor}{\#define\ HOSTS\_ORIG\ ETC\ "{}hosts-\/ORIG"{}}}
+\DoxyCodeLine{00048\ \textcolor{preprocessor}{\#define\ HOSTFILES\ "{}hosts*"{}}}
+\DoxyCodeLine{00049\ }
+\DoxyCodeLine{00050\ \textcolor{preprocessor}{\#define\ HBLOCK\ "{}hblock"{}}}
+\DoxyCodeLine{00051\ \textcolor{preprocessor}{\#define\ ALLOWLIST\ ETC\ HBLOCK\ "{}/allow.list"{}}}
+\DoxyCodeLine{00052\ \textcolor{preprocessor}{\#define\ HBLOCK\_DIR\ ETC\ HBLOCK\ }}
+\DoxyCodeLine{00053\ }
+\DoxyCodeLine{00059\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{fix-hosts_8h_aa2fcbb42fa01bd818c6942546447cbb5}{usage}}(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *program);}
+\DoxyCodeLine{00060\ }
+\DoxyCodeLine{00069\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{fix-hosts_8h_a9497f07dad57da211843b1c08cd6ca3a}{updateHostsFiles}}(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *src,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *dst,\ Action\ action);}
+\DoxyCodeLine{00070\ }
+\DoxyCodeLine{00079\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{fix-hosts_8h_adceb939a0d53db7851192cf8c5581b1c}{addDnsName}}(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *hblock\_dir,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *dns\_name,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *allow\_file);}
+\DoxyCodeLine{00080\ }
+\DoxyCodeLine{00086\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{fix-hosts_8h_a41d6b59f6c02f7b340a08ae07296a7af}{dnsFlush}}(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00087\ }
+\DoxyCodeLine{00088\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ FIX\_HOSTS\_H}}
+
+\end{DoxyCode}

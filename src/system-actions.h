@@ -1,9 +1,9 @@
 /**
- * @file systems-actions.h
+ * @file system-actions.h
  * @author Robert Primmer (https://github.com/rprimmer)
- * @brief Common functions and system actions
- * @version 1.1
- * @date 2024-03-22
+ * @brief Common functions and system actions.
+ * @version 1.2
+ * @date 2024-03-24
  */
 
 #ifndef SYSTEM_ACTIONS_H
@@ -19,6 +19,7 @@
 #include <pwd.h>
 #include <regex.h>
 #include <stdarg.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -28,93 +29,97 @@
 #include <time.h>
 #include <unistd.h>
 
-// NOTE: In this macro, ##__VA_ARGS__ is a GNU extension that still works if __VA_ARGS__ is empty, 
-// which supports calling HANDLE_ERROR with just a string or with additional format arguments.
+// ##__VA_ARGS__ is a GNU extension that still works if __VA_ARGS__ is empty, 
+// which supports calling the macro with just a string or with additional format arguments.
 // Modern compilers support this so I didn't want to clutter the code with a bunch of 
-// #ifdef __GNUC__ conditionals just for the sake of some ancient compiler from a time long ago...
-// Additionally, __func__ was introduced in C99. 
-#define HANDLE_ERROR(fmt, ...) handleError("%s:%s, %d: " fmt, basename(__FILE__), __func__, __LINE__, ##__VA_ARGS__)
+// #ifdef __GNUC__ conditionals just for the sake of some ancient compiler from long long ago.
+// __func__ was introduced in C99. 
+#define HANDLE_ERROR(fmt, ...) handleError(true, __FILE__, __func__, __LINE__, fmt, ##__VA_ARGS__)
+#define REPORT_ERROR(fmt, ...) handleError(false, __FILE__, __func__, __LINE__, fmt, ##__VA_ARGS__)
 
 /**
- * @brief Common error handling routine 
+ * @brief Common error handling routine
  * 
- * @param message Message to be displayed to user
- * @param ... Optional parameters can be provided (va_list)
+ * @param fatal If true, exit program, else returns to the caller.
+ * @param file C filename (translation unit) of caller.
+ * @param func Function name of caller.
+ * @param line Line number in translation unit.
+ * @param fmt Optional parameters can be provided (va_list).
  */
-void handleError(const char *message, ...);
+void handleError(bool fatal, char *file, const char *func, int line, const char *fmt, ...);
 
 /**
- * @brief Query user for yes or no
+ * @brief Query user for yes or no.
  * 
- * @param prompt Message to be displayed to user
- * @return int Return true if user entered y or Y
+ * @param prompt Message to be displayed to user.
+ * @return int Return true if user entered y or Y.
  */
 int booleanQuery(const char *prompt); 
 
 /**
- * @brief Check for file existence 
+ * @brief Check for file existence.
  * 
- * @param filename File to check
- * @return int Return true of file exists
+ * @param filename File to check.
+ * @return int Return true of file exists.
  */
 int fileExists(const char *filename);
 
 /**
- * @brief Make a copy of a file. Uses fread(3) & fwrite(3)
+ * @brief Make a copy of a file. Uses fread(3) & fwrite(3).
  * 
- * @param src File to be copied
- * @param dest Filename of copy
- * @return int Return status 
+ * @param src File to be copied.
+ * @param dest Filename of copy.
+ * @return int Return status.
  */
 int copyFile(const char *src, const char *dest);
 
 /**
- * @brief Make a copy of a file. Uses read(2) & write(2)
+ * @brief Make a copy of a file. Uses read(2) & write(2).
  *
- * @param src File to be copied
- * @param dest Filename of copy
- * @return int Return status
+ * @param src File to be copied.
+ * @param dest Filename of copy.
+ * @return int Return status.
  */
 int copyFile2(const char *src, const char *dest);
 
 /**
- * @brief List files in a directory
+ * @brief List files in a directory.
  * 
- * @param dirname Directory housing files
- * @param files Files to list
- * @return int Return status 
+ * @param dirname Directory housing files.
+ * @param files Files to list.
+ * @return int Return status. 
  */
 int lsFiles(const char *dirname, const char *files);
 
 /**
- * @brief Display information about a file
+ * @brief Display information about a file.
  * 
- * @param filepath File to stat
- * @return int Return status 
+ * @param filepath File to stat.
+ * @return int Return status.
  */
 int fileInfo(const char *filepath);
 
 /**
- * @brief Check if a process is currently running
+ * @brief Check if a process is currently running.
  * 
- * @param process_name Process to look for
- * @return int Return status 
+ * @param process_name Process to look for.
+ * @return int Return status.
  */
 int checkProcess(const char *process_name);
 
 /**
- * @brief Display info on a running process
+ * @brief Display info on a running process.
  *
- * @param process_name Process to look for
- * @return int Return status
+ * @param process_name Process to look for.
+ * @return int Return status.
  */
 int displayProcess(const char *process_name);
 
 /**
  * @brief DNS name must start & end with a letter or a number and can only contain letters, numbers, and hyphens.
  *
- * @param dns_name DNS name to check
- * @return int Return status 
+ * @param dns_name DNS name to check.
+ * @return int Return status.
  */
 int validateDNSname(const char *dns_name);
 

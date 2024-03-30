@@ -26,8 +26,8 @@ void usage(const char *program) {
 
 int updateHostsFiles(const char *src, const char *dst, Action action) {
 #ifdef DEBUG
-    fprintf(stderr, "%s:%s, %d: src: %s, dst: %s, action: %d\n", basename(__FILE__), __func__, __LINE__, src, dst, action);
-    fprintf(stderr, "%s, %d: HOSTS: %s, HOSTS_ORIG: %s\n", basename(__FILE__), __LINE__, HOSTS, HOSTS_ORIG);
+    fprintf(stderr, "%s:%s, %d: src: %s, dst: %s, action: %d\n", __FILE__, __func__, __LINE__, src, dst, action);
+    fprintf(stderr, "%s, %d: HOSTS: %s, HOSTS_ORIG: %s\n", __FILE__, __LINE__, HOSTS, HOSTS_ORIG);
 #endif // DEBUG
 
     uid_t original_uid = getuid();
@@ -75,7 +75,7 @@ int updateHostsFiles(const char *src, const char *dst, Action action) {
 
 int addDnsName(const char *hblock_dir, const char *dns_name, const char *allow_file) {
 #ifdef DEBUG
-    fprintf(stderr, "%s:%s, %d: DNS name: %s\n", basename(__FILE__), __func__, __LINE__, dns_name);
+    fprintf(stderr, "%s:%s, %d: DNS name: %s\n", __FILE__, __func__, __LINE__, dns_name);
 #endif // DEBUG
 
     if (validateDNSname(dns_name))
@@ -135,7 +135,7 @@ int addDnsName(const char *hblock_dir, const char *dns_name, const char *allow_f
 
 int dnsFlush(void) {
 #ifdef DEBUG
-    fprintf(stderr, "%s:%s, %d\n", basename(__FILE__), __func__, __LINE__);
+    fprintf(stderr, "%s:%s, %d\n", __FILE__, __func__, __LINE__);
 #endif // DEBUG
 
     struct utsname system_info;      

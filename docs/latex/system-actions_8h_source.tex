@@ -1,0 +1,59 @@
+\doxysection{system-\/actions.h}
+\hypertarget{system-actions_8h_source}{}\label{system-actions_8h_source}\index{src/system-\/actions.h@{src/system-\/actions.h}}
+\mbox{\hyperlink{system-actions_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#ifndef\ SYSTEM\_ACTIONS\_H}}
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#define\ SYSTEM\_ACTIONS\_H}}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#include\ <dirent.h>}}
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#include\ <errno.h>}}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#include\ <fcntl.h>}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#include\ <fnmatch.h>}}
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#include\ <grp.h>}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#include\ <libgen.h>}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#include\ <limits.h>}}
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#include\ <pwd.h>}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#include\ <regex.h>}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#include\ <stdarg.h>}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#include\ <stdbool.h>}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#include\ <stdio.h>}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#include\ <stdlib.h>}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#include\ <string.h>}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#include\ <sys/stat.h>}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#include\ <sys/types.h>}}
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#include\ <sys/wait.h>}}
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\#include\ <time.h>}}
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\#include\ <unistd.h>}}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00032\ \textcolor{comment}{//\ \#\#\_\_VA\_ARGS\_\_\ is\ a\ GNU\ extension\ that\ still\ works\ if\ \_\_VA\_ARGS\_\_\ is\ empty,\ }}
+\DoxyCodeLine{00033\ \textcolor{comment}{//\ which\ supports\ calling\ the\ macro\ with\ just\ a\ string\ or\ with\ additional\ format\ arguments.}}
+\DoxyCodeLine{00034\ \textcolor{comment}{//\ Modern\ compilers\ support\ this\ so\ I\ didn't\ want\ to\ clutter\ the\ code\ with\ a\ bunch\ of\ }}
+\DoxyCodeLine{00035\ \textcolor{comment}{//\ \#ifdef\ \_\_GNUC\_\_\ conditionals\ just\ for\ the\ sake\ of\ some\ ancient\ compiler\ from\ long\ long\ ago.}}
+\DoxyCodeLine{00036\ \textcolor{comment}{//\ \_\_func\_\_\ was\ introduced\ in\ C99.\ }}
+\DoxyCodeLine{00037\ \textcolor{preprocessor}{\#define\ HANDLE\_ERROR(fmt,\ ...)\ handleError(true,\ \_\_FILE\_\_,\ \_\_func\_\_,\ \_\_LINE\_\_,\ fmt,\ \#\#\_\_VA\_ARGS\_\_)}}
+\DoxyCodeLine{00038\ \textcolor{preprocessor}{\#define\ REPORT\_ERROR(fmt,\ ...)\ handleError(false,\ \_\_FILE\_\_,\ \_\_func\_\_,\ \_\_LINE\_\_,\ fmt,\ \#\#\_\_VA\_ARGS\_\_)}}
+\DoxyCodeLine{00039\ }
+\DoxyCodeLine{00049\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{system-actions_8h_ab719e77d50ec6d2ad1d970def769b19f}{handleError}}(\textcolor{keywordtype}{bool}\ fatal,\ \textcolor{keywordtype}{char}\ *file,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *func,\ \textcolor{keywordtype}{int}\ line,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *fmt,\ ...);}
+\DoxyCodeLine{00050\ }
+\DoxyCodeLine{00057\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{system-actions_8h_aacec6921920b3fd38c4a4e697b511294}{booleanQuery}}(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *prompt);\ }
+\DoxyCodeLine{00058\ }
+\DoxyCodeLine{00065\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{system-actions_8h_a5c3fee518af0ba8b435624e66e850f73}{fileExists}}(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *filename);}
+\DoxyCodeLine{00066\ }
+\DoxyCodeLine{00074\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{system-actions_8h_a867793539943cf9063d0211f522bdeb7}{copyFile}}(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *src,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *dest);}
+\DoxyCodeLine{00075\ }
+\DoxyCodeLine{00083\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{system-actions_8h_ad8b64d3293d7b5b4eef88bb487f52dc7}{copyFile2}}(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *src,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *dest);}
+\DoxyCodeLine{00084\ }
+\DoxyCodeLine{00092\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{system-actions_8h_af3f50032c2e61b1af985fa1cd136b18c}{lsFiles}}(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *dirname,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *files);}
+\DoxyCodeLine{00093\ }
+\DoxyCodeLine{00100\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{system-actions_8h_ade1d1cc95d45aa0d314ee83573ca2d8b}{fileInfo}}(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *filepath);}
+\DoxyCodeLine{00101\ }
+\DoxyCodeLine{00108\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{system-actions_8h_a17115f262e6d530eb316f389d25ea9c3}{checkProcess}}(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *process\_name);}
+\DoxyCodeLine{00109\ }
+\DoxyCodeLine{00116\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{system-actions_8h_a9933a8203091574569403e9409795446}{displayProcess}}(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *process\_name);}
+\DoxyCodeLine{00117\ }
+\DoxyCodeLine{00124\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{system-actions_8h_a5ffe2cbc043d8660d971d6b9d734f539}{validateDNSname}}(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *dns\_name);}
+\DoxyCodeLine{00125\ }
+\DoxyCodeLine{00126\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ SYSTEM\_ACTIONS\_H\ */}\textcolor{preprocessor}{}}
+
+\end{DoxyCode}
