@@ -2,8 +2,8 @@
  * @file system-actions.h
  * @author Robert Primmer (https://github.com/rprimmer)
  * @brief Common functions and system actions.
- * @version 1.2
- * @date 2024-03-24
+ * @version 1.3
+ * @date 2024-04-02
  */
 
 #ifndef SYSTEM_ACTIONS_H
@@ -60,12 +60,12 @@ int booleanQuery(const char *prompt);
  * @brief Check for file existence.
  * 
  * @param filename File to check.
- * @return int Return true of file exists.
+ * @return int Return true if file exists.
  */
 int fileExists(const char *filename);
 
 /**
- * @brief Make a copy of a file. Uses fread(3) & fwrite(3).
+ * @brief Make a copy of a file. Uses libC functions.
  * 
  * @param src File to be copied.
  * @param dest Filename of copy.
@@ -74,7 +74,7 @@ int fileExists(const char *filename);
 int copyFile(const char *src, const char *dest);
 
 /**
- * @brief Make a copy of a file. Uses read(2) & write(2).
+ * @brief Make a copy of a file. Uses system calls.
  *
  * @param src File to be copied.
  * @param dest Filename of copy.
@@ -94,18 +94,19 @@ int lsFiles(const char *dirname, const char *files);
 /**
  * @brief Display information about a file.
  * 
- * @param filepath File to stat.
+ * @param filepath File to stat(2).
  * @return int Return status.
  */
 int fileInfo(const char *filepath);
 
 /**
- * @brief Check if a process is currently running.
+ * @brief Check if a process is currently running. 
  * 
  * @param process_name Process to look for.
+ * @param display_pids Optionally display PIDs of running process.
  * @return int Return status.
  */
-int checkProcess(const char *process_name);
+int checkProcess(const char *process_name, bool display_pids);
 
 /**
  * @brief Display info on a running process.

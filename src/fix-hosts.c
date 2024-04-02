@@ -98,7 +98,7 @@ int addDnsName(const char *hblock_dir, const char *dns_name, const char *allow_f
     bool dns_found = false;
 
     if ((file = fopen(allow_file, "r+")) == NULL)
-        HANDLE_ERROR("failed to open allow list file: %s", allow_file);
+        HANDLE_ERROR("fopen: %s, file: %s", strerror(errno), allow_file);
 
     while ((read = getline(&line, &len, file)) != -1) {
         line[strcspn(line, "\n")] = '\0';   // Newline messes up strcmp()
@@ -140,6 +140,7 @@ int dnsFlush(void) {
 
     struct utsname system_info;      
     int result = uname(&system_info);
+    int return_val = 0;
 
     if (result == 0 && strcmp(system_info.sysname, "Darwin")) 
         HANDLE_ERROR("flush action is specific to macOS");
@@ -154,23 +155,27 @@ int dnsFlush(void) {
 
 #ifdef DEBUG
     fprintf(stderr, "%s:%s, %d: PIDs for %s before restart\n", basename(__FILE__), __func__, __LINE__, service_name);
-    if (checkProcess(service_name)) HANDLE_ERROR("checkProcess failed");
+    if (checkProcess(service_name,1)) HANDLE_ERROR("checkProcess failed");
     if (displayProcess(service_name)) HANDLE_ERROR("displayProcess failed");
 #endif // DEBUG
 
     printf("Restarting the %s service…\n", service_name);
-    char command[20];
+    char command[30];
     snprintf(command, sizeof(command), "%s %s", "killall", service_name);
     if (system(command))
         HANDLE_ERROR("%s failed", command);
 
     sleep(3); 
 
-    if (checkProcess(service_name))
-        HANDLE_ERROR("checkProcess failed");
+    if (checkProcess(service_name, true)) {
+        REPORT_ERROR("checkProcess failed");
+        return_val = 1;
+    }
 
-    if (displayProcess(service_name))
-        HANDLE_ERROR("displayProcess failed"); 
+    if (displayProcess(service_name)) {
+        REPORT_ERROR("displayProcess failed"); 
+        return_val = 1;
+    }
 
-    return EXIT_SUCCESS;
+    return return_val;
 } // dnsFlush()
