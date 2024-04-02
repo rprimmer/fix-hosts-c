@@ -144,10 +144,10 @@ Functions</h2></td></tr>
 <tr class="memdesc:a5c3fee518af0ba8b435624e66e850f73"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check for file existence.  <br /></td></tr>
 <tr class="separator:a5c3fee518af0ba8b435624e66e850f73"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a867793539943cf9063d0211f522bdeb7" id="r_a867793539943cf9063d0211f522bdeb7"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a867793539943cf9063d0211f522bdeb7">copyFile</a> (const char *src, const char *dest)</td></tr>
-<tr class="memdesc:a867793539943cf9063d0211f522bdeb7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Make a copy of a file. Uses fread(3) &amp; fwrite(3).  <br /></td></tr>
+<tr class="memdesc:a867793539943cf9063d0211f522bdeb7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Make a copy of a file. Uses libC functions.  <br /></td></tr>
 <tr class="separator:a867793539943cf9063d0211f522bdeb7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad8b64d3293d7b5b4eef88bb487f52dc7" id="r_ad8b64d3293d7b5b4eef88bb487f52dc7"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad8b64d3293d7b5b4eef88bb487f52dc7">copyFile2</a> (const char *src, const char *dest)</td></tr>
-<tr class="memdesc:ad8b64d3293d7b5b4eef88bb487f52dc7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Make a copy of a file. Uses read(2) &amp; write(2).  <br /></td></tr>
+<tr class="memdesc:ad8b64d3293d7b5b4eef88bb487f52dc7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Make a copy of a file. Uses system calls.  <br /></td></tr>
 <tr class="separator:ad8b64d3293d7b5b4eef88bb487f52dc7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af3f50032c2e61b1af985fa1cd136b18c" id="r_af3f50032c2e61b1af985fa1cd136b18c"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af3f50032c2e61b1af985fa1cd136b18c">lsFiles</a> (const char *dirname, const char *files)</td></tr>
 <tr class="memdesc:af3f50032c2e61b1af985fa1cd136b18c"><td class="mdescLeft">&#160;</td><td class="mdescRight">List files in a directory.  <br /></td></tr>
@@ -155,9 +155,9 @@ Functions</h2></td></tr>
 <tr class="memitem:ade1d1cc95d45aa0d314ee83573ca2d8b" id="r_ade1d1cc95d45aa0d314ee83573ca2d8b"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ade1d1cc95d45aa0d314ee83573ca2d8b">fileInfo</a> (const char *filepath)</td></tr>
 <tr class="memdesc:ade1d1cc95d45aa0d314ee83573ca2d8b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Display information about a file.  <br /></td></tr>
 <tr class="separator:ade1d1cc95d45aa0d314ee83573ca2d8b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a17115f262e6d530eb316f389d25ea9c3" id="r_a17115f262e6d530eb316f389d25ea9c3"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a17115f262e6d530eb316f389d25ea9c3">checkProcess</a> (const char *process_name)</td></tr>
-<tr class="memdesc:a17115f262e6d530eb316f389d25ea9c3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check if a process is currently running.  <br /></td></tr>
-<tr class="separator:a17115f262e6d530eb316f389d25ea9c3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a954cf5c78ab5efeeac25286821eb6177" id="r_a954cf5c78ab5efeeac25286821eb6177"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a954cf5c78ab5efeeac25286821eb6177">checkProcess</a> (const char *process_name, bool display_pids)</td></tr>
+<tr class="memdesc:a954cf5c78ab5efeeac25286821eb6177"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check if a process is currently running.  <br /></td></tr>
+<tr class="separator:a954cf5c78ab5efeeac25286821eb6177"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9933a8203091574569403e9409795446" id="r_a9933a8203091574569403e9409795446"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9933a8203091574569403e9409795446">displayProcess</a> (const char *process_name)</td></tr>
 <tr class="memdesc:a9933a8203091574569403e9409795446"><td class="mdescLeft">&#160;</td><td class="mdescRight">Display info on a running process.  <br /></td></tr>
 <tr class="separator:a9933a8203091574569403e9409795446"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -168,8 +168,8 @@ Functions</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Common functions and system actions. </p>
 <dl class="section author"><dt>Author</dt><dd>Robert Primmer (<a href="https://github.com/rprimmer">https://github.com/rprimmer</a>) </dd></dl>
-<dl class="section version"><dt>Version</dt><dd>1.2 </dd></dl>
-<dl class="section date"><dt>Date</dt><dd>2024-03-24 </dd></dl>
+<dl class="section version"><dt>Version</dt><dd>1.3 </dd></dl>
+<dl class="section date"><dt>Date</dt><dd>2024-04-02 </dd></dl>
 </div><h2 class="groupheader">Function Documentation</h2>
 <a id="aacec6921920b3fd38c4a4e697b511294" name="aacec6921920b3fd38c4a4e697b511294"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aacec6921920b3fd38c4a4e697b511294">&#9670;&#160;</a></span>booleanQuery()</h2>
@@ -197,8 +197,8 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a17115f262e6d530eb316f389d25ea9c3" name="a17115f262e6d530eb316f389d25ea9c3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a17115f262e6d530eb316f389d25ea9c3">&#9670;&#160;</a></span>checkProcess()</h2>
+<a id="a954cf5c78ab5efeeac25286821eb6177" name="a954cf5c78ab5efeeac25286821eb6177"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a954cf5c78ab5efeeac25286821eb6177">&#9670;&#160;</a></span>checkProcess()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -206,8 +206,12 @@ Functions</h2></td></tr>
         <tr>
           <td class="memname">int checkProcess </td>
           <td>(</td>
-          <td class="paramtype">const char *</td>          <td class="paramname"><span class="paramname"><em>process_name</em></span></td><td>)</td>
+          <td class="paramtype">const char *</td>          <td class="paramname"><span class="paramname"><em>process_name</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>display_pids</em></span>&#160;)</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -216,6 +220,7 @@ Functions</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">process_name</td><td>Process to look for. </td></tr>
+    <tr><td class="paramname">display_pids</td><td>Optionally display PIDs of running process. </td></tr>
   </table>
   </dd>
 </dl>
@@ -242,7 +247,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Make a copy of a file. Uses fread(3) &amp; fwrite(3). </p>
+<p>Make a copy of a file. Uses libC functions. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">src</td><td>File to be copied. </td></tr>
@@ -273,7 +278,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Make a copy of a file. Uses read(2) &amp; write(2). </p>
+<p>Make a copy of a file. Uses system calls. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">src</td><td>File to be copied. </td></tr>
@@ -333,7 +338,7 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>int Return true of file exists. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>int Return true if file exists. </dd></dl>
 
 </div>
 </div>
@@ -355,7 +360,7 @@ Functions</h2></td></tr>
 <p>Display information about a file. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">filepath</td><td>File to stat. </td></tr>
+    <tr><td class="paramname">filepath</td><td>File to stat(2). </td></tr>
   </table>
   </dd>
 </dl>
