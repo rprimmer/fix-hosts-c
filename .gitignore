@@ -55,15 +55,6 @@ dkms.conf
 .DS_Store
 
 # project specific 
-etc/foo
-etc/hosts
-etc/hosts-HBLOCK
-etc/hosts-ORIG
-etc/hosts.bak
-etc/hosts.equiv
-etc/save
-etc/SAVE-ORIG-hosts
-etc/hblock/allow.list
-etc/hblock/SAVE-ORIG-allow.list
+etc
 bin/fix-hostfiles
 Hblock-Allow-List.md

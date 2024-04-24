@@ -1,0 +1,37 @@
+This file has been automatically generated using the following command:
+
+	git log --pretty=format:'%h %d %ai - %s'
+
+8184574  (HEAD -> main, origin/main) Sun Apr 7 12:31:46 2024 -0400 - nits
+8b0de0e  Tue Apr 2 11:03:21 2024 -0400 - v1.3
+4741598  Tue Apr 2 11:00:44 2024 -0400 - Updated checkProcess
+8e4a73c  Sat Mar 30 15:17:03 2024 -0400 - remove md
+71fae24  Sat Mar 30 15:16:26 2024 -0400 - update gitignore
+a8e63d6  Sat Mar 30 15:14:09 2024 -0400 - v1.20
+ed197d3  Sat Mar 23 11:21:55 2024 -0400 - Renamed system-actions.c
+c2689f2  Sat Mar 23 11:20:16 2024 -0400 - v1.1 changes
+338d71b  Fri Mar 22 08:45:29 2024 -0400 - Minor Updates
+54a384c  Tue Mar 19 09:28:45 2024 -0400 - nits
+505e929  Sat Mar 16 17:54:09 2024 -0400 - nits
+c888411  (New-features) Sat Mar 16 17:49:22 2024 -0400 - Added HANDLE_ERROR macro
+bacd203  Sat Mar 16 16:39:07 2024 -0400 - spec changes
+b80c0ba  Fri Mar 15 16:32:44 2024 -0400 - nits
+dbc41e5  Fri Mar 15 16:28:15 2024 -0400 - Lint changes
+f9ee63b  Fri Mar 15 16:23:33 2024 -0400 - Final v1.00 code
+097c853  Thu Mar 14 16:38:28 2024 -0400 - updated manpage
+83b274c  Thu Mar 14 16:20:43 2024 -0400 - Format edits - move api doc to header files
+f4d1545  Wed Mar 13 17:05:30 2024 -0400 - Update json files
+485d335  Sun Mar 10 14:19:03 2024 -0400 - Added doxygen comments
+d13d79d  Sat Mar 9 10:33:34 2024 -0500 - Minor updates
+99b4b78  Sat Mar 9 09:55:57 2024 -0500 - Candidate for unit tests
+2d5bf6a  Thu Mar 7 09:23:33 2024 -0500 - Minor updates
+39c15f0  Thu Mar 7 08:53:35 2024 -0500 - Created updateHostsFiles
+46897f1  Wed Mar 6 08:49:07 2024 -0500 - Update before new branch
+ba41c2e  Tue Mar 5 11:01:31 2024 -0500 - Updated copyHostsFiles()
+279c261  Tue Feb 27 08:43:42 2024 -0500 - Minor cleanup
+befb64a  Tue Feb 27 08:23:41 2024 -0500 - Moves lsFiles() to system-actions.c
+b4d0a78  Mon Feb 26 15:50:10 2024 -0500 - System-actions added
+6673249  Mon Feb 26 09:35:23 2024 -0500 - Stable version of main.c
+048554d  Sun Feb 25 14:33:54 2024 -0500 - Stable before new code to fix-hosts.c
+b744a1d  Sun Feb 25 14:14:12 2024 -0500 - Added getopt-long
+7d0bf1e  (long-opt-changes) Sun Feb 25 10:27:40 2024 -0500 - Initial Commit
