@@ -1,18 +1,28 @@
 \doxysection{actions.\+h}
 \hypertarget{actions_8h_source}{}\label{actions_8h_source}\index{src/actions.h@{src/actions.h}}
-
+\doxymbox{\hyperlink{actions_8h}{Go to the documentation of this file.}}
 \begin{DoxyCode}{0}
-\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#ifndef\ ACTIONS\_H}}
-\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#define\ ACTIONS\_H}}
-\DoxyCodeLine{00003\ }
-\DoxyCodeLine{00008\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{enum}\ \{}
-\DoxyCodeLine{00009\ \ \ \ \ ACTION\_PREP,}
-\DoxyCodeLine{00010\ \ \ \ \ ACTION\_RESTORE,}
-\DoxyCodeLine{00011\ \ \ \ \ ACTION\_ADD,}
-\DoxyCodeLine{00012\ \ \ \ \ ACTION\_FLUSH,}
-\DoxyCodeLine{00013\ \ \ \ \ ACTION\_INVALID}
-\DoxyCodeLine{00014\ \}\ Action;}
-\DoxyCodeLine{00015\ }
-\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ ACTIONS\_H\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00005\ }
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#ifndef\ ACTIONS\_H}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#define\ ACTIONS\_H}}
+\DoxyCodeLine{00008\ }
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#include\ <stdbool.h>}}
+\DoxyCodeLine{00010\ }
+\DoxyCodeLine{00012\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{enum}\ \{}
+\DoxyCodeLine{00014\ \ \ \ \ \doxymbox{\hyperlink{actions_8h_a8bb1ef53467e4f61410d12822d922498a543cb617798d00382e803d97badb4492}{ACTION\_INVALID}}\ =\ 0,}
+\DoxyCodeLine{00016\ \ \ \ \ \doxymbox{\hyperlink{actions_8h_a8bb1ef53467e4f61410d12822d922498a9e09e950d2ac5ad712dc17b5e46279f2}{ACTION\_PREP}},}
+\DoxyCodeLine{00018\ \ \ \ \ \doxymbox{\hyperlink{actions_8h_a8bb1ef53467e4f61410d12822d922498a20e6c6a35831f0ea50e32d4c7c73ee8a}{ACTION\_RESTORE}},}
+\DoxyCodeLine{00020\ \ \ \ \ \doxymbox{\hyperlink{actions_8h_a8bb1ef53467e4f61410d12822d922498a6264b3d00427b0e5364acc659905116e}{ACTION\_ADD}},}
+\DoxyCodeLine{00022\ \ \ \ \ \doxymbox{\hyperlink{actions_8h_a8bb1ef53467e4f61410d12822d922498abbf3ef46a1453afa8839be6591cbfeb7}{ACTION\_FLUSH}}}
+\DoxyCodeLine{00023\ \}\ \doxymbox{\hyperlink{actions_8h_a8bb1ef53467e4f61410d12822d922498}{Action}};}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00026\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{00028\ \ \ \ \ \doxymbox{\hyperlink{actions_8h_a8bb1ef53467e4f61410d12822d922498}{Action}}\ \doxymbox{\hyperlink{struct_command_aa9cf7d0afedceb0d21dd5f412fe08c18}{action}};}
+\DoxyCodeLine{00030\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *\doxymbox{\hyperlink{struct_command_a2412a8a19d6374ab378851482cc13b84}{dns\_name}};}
+\DoxyCodeLine{00032\ \ \ \ \ \textcolor{keywordtype}{bool}\ \doxymbox{\hyperlink{struct_command_ab3f078684998b83967d507d0f453f454}{verbose}};}
+\DoxyCodeLine{00033\ \}\ \doxymbox{\hyperlink{struct_command}{Command}};}
+\DoxyCodeLine{00034\ }
+\DoxyCodeLine{00035\ \textcolor{preprocessor}{\#endif}}
 
 \end{DoxyCode}

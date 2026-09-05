@@ -1,108 +1,225 @@
-\doxysection{src/fix-\/hosts.c File Reference}
+\doxysection{src/\+fix-\/hosts.c File Reference}
 \hypertarget{fix-hosts_8c}{}\label{fix-hosts_8c}\index{src/fix-\/hosts.c@{src/fix-\/hosts.c}}
 
 
-Modify /etc/hosts for use with hblock(1)  
+Application-\/level hosts-\/file operations.  
 
 
-{\ttfamily \#include "{}fix-\/hosts.\+h"{}}\newline
+{\ttfamily \+\#include "{}fix-\/hosts.\+h"{}}\newline
+{\ttfamily \+\#include "{}system-\/actions.\+h"{}}\newline
+{\ttfamily \+\#include $<$ctype.\+h$>$}\newline
+{\ttfamily \+\#include $<$errno.\+h$>$}\newline
+{\ttfamily \+\#include $<$stdbool.\+h$>$}\newline
+{\ttfamily \+\#include $<$stdio.\+h$>$}\newline
+{\ttfamily \+\#include $<$stdlib.\+h$>$}\newline
+{\ttfamily \+\#include $<$string.\+h$>$}\newline
+{\ttfamily \+\#include $<$sys/\+stat.\+h$>$}\newline
+{\ttfamily \+\#include $<$sys/\+types.\+h$>$}\newline
+{\ttfamily \+\#include $<$sys/\+utsname.\+h$>$}\newline
+{\ttfamily \+\#include $<$unistd.\+h$>$}\newline
 \doxysubsubsection*{Functions}
 \begin{DoxyCompactItemize}
 \item 
-void \mbox{\hyperlink{fix-hosts_8c_aa2fcbb42fa01bd818c6942546447cbb5}{usage}} (const char \texorpdfstring{$\ast$}{*}program)
-\begin{DoxyCompactList}\small\item\em Display usage. \end{DoxyCompactList}\item 
-int \mbox{\hyperlink{fix-hosts_8c_a9497f07dad57da211843b1c08cd6ca3a}{update\+Hosts\+Files}} (const char \texorpdfstring{$\ast$}{*}src, const char \texorpdfstring{$\ast$}{*}dst, Action action)
-\begin{DoxyCompactList}\small\item\em Modify /etc/hosts. \end{DoxyCompactList}\item 
-int \mbox{\hyperlink{fix-hosts_8c_adceb939a0d53db7851192cf8c5581b1c}{add\+Dns\+Name}} (const char \texorpdfstring{$\ast$}{*}hblock\+\_\+dir, const char \texorpdfstring{$\ast$}{*}dns\+\_\+name, const char \texorpdfstring{$\ast$}{*}allow\+\_\+file)
-\begin{DoxyCompactList}\small\item\em Add DNS name to hblock allow list. \end{DoxyCompactList}\item 
-int \mbox{\hyperlink{fix-hosts_8c_a41d6b59f6c02f7b340a08ae07296a7af}{dns\+Flush}} (void)
-\begin{DoxyCompactList}\small\item\em Flush the DNS cache and restart m\+DNSResponder daemon. \end{DoxyCompactList}\end{DoxyCompactItemize}
+static int \doxymbox{\hyperlink{fix-hosts_8c_ad61bf0d8382589071a8a1f3d09fcae25}{join\+Path}} (char \texorpdfstring{$\ast$}{*}destination, size\+\_\+t capacity, const char \texorpdfstring{$\ast$}{*}directory, const char \texorpdfstring{$\ast$}{*}name)
+\item 
+void \doxymbox{\hyperlink{fix-hosts_8c_a16bb306133911d6f86c8c0f693dc0dbf}{usage}} (const char \texorpdfstring{$\ast$}{*}program, FILE \texorpdfstring{$\ast$}{*}stream)
+\item 
+int \doxymbox{\hyperlink{fix-hosts_8c_a02126306557dd72523c1e22f2a698d4f}{load\+Paths}} (\doxymbox{\hyperlink{struct_paths}{Paths}} \texorpdfstring{$\ast$}{*}paths)
+\item 
+static int \doxymbox{\hyperlink{fix-hosts_8c_ae3e7818428de410e09c082db3ec8bfae}{show\+File\+Info}} (const char \texorpdfstring{$\ast$}{*}label, const char \texorpdfstring{$\ast$}{*}path)
+\item 
+int \doxymbox{\hyperlink{fix-hosts_8c_a90129dd8a0cb33a88b2730294e594067}{update\+Hosts\+Files}} (const \doxymbox{\hyperlink{struct_paths}{Paths}} \texorpdfstring{$\ast$}{*}paths, \doxymbox{\hyperlink{actions_8h_a8bb1ef53467e4f61410d12822d922498}{Action}} action, bool verbose)
+\item 
+static bool \doxymbox{\hyperlink{fix-hosts_8c_a7b9eb95c961b71f774df920e35a6e8ab}{line\+Contains\+Host}} (const char \texorpdfstring{$\ast$}{*}line, const char \texorpdfstring{$\ast$}{*}dns\+\_\+name)
+\item 
+int \doxymbox{\hyperlink{fix-hosts_8c_a206132add1e0d1cf709b85460fdc8a64}{remove\+Host\+Entry}} (const char \texorpdfstring{$\ast$}{*}hosts\+\_\+path, const char \texorpdfstring{$\ast$}{*}dns\+\_\+name)
+\item 
+int \doxymbox{\hyperlink{fix-hosts_8c_a521a6e112ac251c3a30b9411426b90a9}{add\+Dns\+Name}} (const \doxymbox{\hyperlink{struct_paths}{Paths}} \texorpdfstring{$\ast$}{*}paths, const char \texorpdfstring{$\ast$}{*}dns\+\_\+name, bool verbose)
+\item 
+int \doxymbox{\hyperlink{fix-hosts_8c_a350fa1520809f2209f7b4d0fd3dbedf2}{flush\+Dns\+Cache}} (bool verbose)
+\end{DoxyCompactItemize}
 
 
 \doxysubsection{Detailed Description}
-Modify /etc/hosts for use with hblock(1) 
-
-\begin{DoxyAuthor}{Author}
-Robert Primmer (\href{https://github.com/rprimmer}{\texttt{ https\+://github.\+com/rprimmer}})
-\end{DoxyAuthor}
-hblock(1) is a shell script, available on \href{https://brew.sh}{\texttt{ homebrew}}, that blocks ads, beacons and malware sites. It does this by editing {\ttfamily /etc/hosts} and setting the IP address for such sites to 0.\+0.\+0.\+0. The issue is that hblock sometimes adds sites to /etc/hosts that are needed. This executable fixes such issues by adding good DNS hosts to the exclusion list ({\ttfamily /etc/hblock/allow.list}) and removing the corresponding entry from {\ttfamily /etc/hosts}. It will also optionally flush the DNS cache and restart the {\ttfamily m\+DNSResponder} daemon. \begin{DoxyVersion}{Version}
-1.\+0 
-\end{DoxyVersion}
-\begin{DoxyDate}{Date}
-2024-\/03-\/10 
-\end{DoxyDate}
+Application-\/level hosts-\/file operations. 
 
 
+
+\label{fix-hosts_8c_doc-func-members}
+\Hypertarget{fix-hosts_8c_doc-func-members}
 \doxysubsection{Function Documentation}
-\Hypertarget{fix-hosts_8c_adceb939a0d53db7851192cf8c5581b1c}\label{fix-hosts_8c_adceb939a0d53db7851192cf8c5581b1c} 
-\index{fix-\/hosts.c@{fix-\/hosts.c}!addDnsName@{addDnsName}}
+\Hypertarget{fix-hosts_8c_a521a6e112ac251c3a30b9411426b90a9}\index{fix-\/hosts.c@{fix-\/hosts.c}!addDnsName@{addDnsName}}
 \index{addDnsName@{addDnsName}!fix-\/hosts.c@{fix-\/hosts.c}}
 \doxysubsubsection{\texorpdfstring{addDnsName()}{addDnsName()}}
-{\footnotesize\ttfamily int add\+Dns\+Name (\begin{DoxyParamCaption}\item[{const char \texorpdfstring{$\ast$}{*}}]{hblock\+\_\+dir,  }\item[{const char \texorpdfstring{$\ast$}{*}}]{dns\+\_\+name,  }\item[{const char \texorpdfstring{$\ast$}{*}}]{allow\+\_\+file }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily \label{fix-hosts_8c_a521a6e112ac251c3a30b9411426b90a9} 
+int add\+Dns\+Name (\begin{DoxyParamCaption}\item[{const \doxymbox{\hyperlink{struct_paths}{Paths}} \texorpdfstring{$\ast$}{*}}]{paths}{, }\item[{const char \texorpdfstring{$\ast$}{*}}]{dns\+\_\+name}{, }\item[{bool}]{verbose}{}\end{DoxyParamCaption})}
 
+Add a DNS name to hblock\textquotesingle{}s allow list and unblock it.
 
-
-Add DNS name to hblock allow list. 
+The allow-\/list update is idempotent. Afterward, matching hosts-\/file lines are removed through \doxylink{fix-hosts_8h_a206132add1e0d1cf709b85460fdc8a64}{remove\+Host\+Entry()}.
 
 
 \begin{DoxyParams}{Parameters}
-{\em hblock\+\_\+dir} & Directory holding hblock allow list \\
+{\em paths} & Filesystem paths used by the operation. \\
 \hline
-{\em dns\+\_\+name} & DNS name to add \\
+{\em dns\+\_\+name} & DNS name to add and unblock. \\
 \hline
-{\em allow\+\_\+file} & Name of allow list file \\
+{\em verbose} & Whether to display detailed before-\/and-\/after file metadata. \\
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
-int Return status 
+EXIT\+\_\+\+SUCCESS on success; EXIT\+\_\+\+FAILURE on validation or I/\+O error. 
 \end{DoxyReturn}
-\Hypertarget{fix-hosts_8c_a41d6b59f6c02f7b340a08ae07296a7af}\label{fix-hosts_8c_a41d6b59f6c02f7b340a08ae07296a7af} 
-\index{fix-\/hosts.c@{fix-\/hosts.c}!dnsFlush@{dnsFlush}}
-\index{dnsFlush@{dnsFlush}!fix-\/hosts.c@{fix-\/hosts.c}}
-\doxysubsubsection{\texorpdfstring{dnsFlush()}{dnsFlush()}}
-{\footnotesize\ttfamily int dns\+Flush (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+\Hypertarget{fix-hosts_8c_a350fa1520809f2209f7b4d0fd3dbedf2}\index{fix-\/hosts.c@{fix-\/hosts.c}!flushDnsCache@{flushDnsCache}}
+\index{flushDnsCache@{flushDnsCache}!fix-\/hosts.c@{fix-\/hosts.c}}
+\doxysubsubsection{\texorpdfstring{flushDnsCache()}{flushDnsCache()}}
+{\footnotesize\ttfamily \label{fix-hosts_8c_a350fa1520809f2209f7b4d0fd3dbedf2} 
+int flush\+Dns\+Cache (\begin{DoxyParamCaption}\item[{bool}]{verbose}{}\end{DoxyParamCaption})}
+
+Flush the mac\+OS DNS cache and restart m\+DNSResponder.
+
+Commands are executed directly without invoking a shell. The function also verifies that m\+DNSResponder is present after the restart.
 
 
-
-Flush the DNS cache and restart m\+DNSResponder daemon. 
-
+\begin{DoxyParams}{Parameters}
+{\em verbose} & Whether to display platform and command details. \\
+\hline
+\end{DoxyParams}
 \begin{DoxyReturn}{Returns}
-int Return status 
+EXIT\+\_\+\+SUCCESS when all commands succeed and the daemon is found; EXIT\+\_\+\+FAILURE on unsupported platforms or command failure. 
 \end{DoxyReturn}
-\Hypertarget{fix-hosts_8c_a9497f07dad57da211843b1c08cd6ca3a}\label{fix-hosts_8c_a9497f07dad57da211843b1c08cd6ca3a} 
-\index{fix-\/hosts.c@{fix-\/hosts.c}!updateHostsFiles@{updateHostsFiles}}
+\Hypertarget{fix-hosts_8c_ad61bf0d8382589071a8a1f3d09fcae25}\index{fix-\/hosts.c@{fix-\/hosts.c}!joinPath@{joinPath}}
+\index{joinPath@{joinPath}!fix-\/hosts.c@{fix-\/hosts.c}}
+\doxysubsubsection{\texorpdfstring{joinPath()}{joinPath()}}
+{\footnotesize\ttfamily \label{fix-hosts_8c_ad61bf0d8382589071a8a1f3d09fcae25} 
+int join\+Path (\begin{DoxyParamCaption}\item[{char \texorpdfstring{$\ast$}{*}}]{destination}{, }\item[{size\+\_\+t}]{capacity}{, }\item[{const char \texorpdfstring{$\ast$}{*}}]{directory}{, }\item[{const char \texorpdfstring{$\ast$}{*}}]{name}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+Join one directory and leaf name with exactly one slash.
+
+
+\begin{DoxyParams}{Parameters}
+{\em destination} & Buffer that receives the joined path. \\
+\hline
+{\em capacity} & Size of destination in bytes. \\
+\hline
+{\em directory} & Directory portion of the path. \\
+\hline
+{\em name} & Final pathname component. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+EXIT\+\_\+\+SUCCESS on success; EXIT\+\_\+\+FAILURE when the path does not fit. 
+\end{DoxyReturn}
+\Hypertarget{fix-hosts_8c_a7b9eb95c961b71f774df920e35a6e8ab}\index{fix-\/hosts.c@{fix-\/hosts.c}!lineContainsHost@{lineContainsHost}}
+\index{lineContainsHost@{lineContainsHost}!fix-\/hosts.c@{fix-\/hosts.c}}
+\doxysubsubsection{\texorpdfstring{lineContainsHost()}{lineContainsHost()}}
+{\footnotesize\ttfamily \label{fix-hosts_8c_a7b9eb95c961b71f774df920e35a6e8ab} 
+bool line\+Contains\+Host (\begin{DoxyParamCaption}\item[{const char \texorpdfstring{$\ast$}{*}}]{line}{, }\item[{const char \texorpdfstring{$\ast$}{*}}]{dns\+\_\+name}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+Determine whether a hosts-\/file line contains an exact DNS token.
+
+Tokens are separated by whitespace; comments beginning with \# are ignored.
+
+
+\begin{DoxyParams}{Parameters}
+{\em line} & Complete hosts-\/file line. \\
+\hline
+{\em dns\+\_\+name} & DNS token to locate. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true when an exact token is present before any comment. 
+\end{DoxyReturn}
+\Hypertarget{fix-hosts_8c_a02126306557dd72523c1e22f2a698d4f}\index{fix-\/hosts.c@{fix-\/hosts.c}!loadPaths@{loadPaths}}
+\index{loadPaths@{loadPaths}!fix-\/hosts.c@{fix-\/hosts.c}}
+\doxysubsubsection{\texorpdfstring{loadPaths()}{loadPaths()}}
+{\footnotesize\ttfamily \label{fix-hosts_8c_a02126306557dd72523c1e22f2a698d4f} 
+int load\+Paths (\begin{DoxyParamCaption}\item[{\doxymbox{\hyperlink{struct_paths}{Paths}} \texorpdfstring{$\ast$}{*}}]{paths}{}\end{DoxyParamCaption})}
+
+Load all filesystem paths used by the application.
+
+Production paths are derived from /\+etc. The FIX\+\_\+\+HOSTFILES\+\_\+\+ETC\+\_\+\+DIR and FIX\+\_\+\+HOSTFILES\+\_\+\+HBLOCK\+\_\+\+DIR environment variables provide explicit overrides for isolated tests and development fixtures.
+
+
+\begin{DoxyParams}{Parameters}
+{\em paths} & Structure populated with validated, absolute or relative paths. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+EXIT\+\_\+\+SUCCESS on success; EXIT\+\_\+\+FAILURE if a path exceeds PATH\+\_\+\+MAX. 
+\end{DoxyReturn}
+\Hypertarget{fix-hosts_8c_a206132add1e0d1cf709b85460fdc8a64}\index{fix-\/hosts.c@{fix-\/hosts.c}!removeHostEntry@{removeHostEntry}}
+\index{removeHostEntry@{removeHostEntry}!fix-\/hosts.c@{fix-\/hosts.c}}
+\doxysubsubsection{\texorpdfstring{removeHostEntry()}{removeHostEntry()}}
+{\footnotesize\ttfamily \label{fix-hosts_8c_a206132add1e0d1cf709b85460fdc8a64} 
+int remove\+Host\+Entry (\begin{DoxyParamCaption}\item[{const char \texorpdfstring{$\ast$}{*}}]{hosts\+\_\+path}{, }\item[{const char \texorpdfstring{$\ast$}{*}}]{dns\+\_\+name}{}\end{DoxyParamCaption})}
+
+Atomically remove hosts-\/file lines containing an exact DNS token.
+
+The original file is first copied to a .bak file. Retained lines are written to a same-\/directory temporary file, synchronized, assigned the original permissions and ownership, and atomically renamed over the hosts file.
+
+
+\begin{DoxyParams}{Parameters}
+{\em hosts\+\_\+path} & Path to the active hosts file. \\
+\hline
+{\em dns\+\_\+name} & Validated DNS token to remove. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+EXIT\+\_\+\+SUCCESS on success; EXIT\+\_\+\+FAILURE on any filesystem error. 
+\end{DoxyReturn}
+\Hypertarget{fix-hosts_8c_ae3e7818428de410e09c082db3ec8bfae}\index{fix-\/hosts.c@{fix-\/hosts.c}!showFileInfo@{showFileInfo}}
+\index{showFileInfo@{showFileInfo}!fix-\/hosts.c@{fix-\/hosts.c}}
+\doxysubsubsection{\texorpdfstring{showFileInfo()}{showFileInfo()}}
+{\footnotesize\ttfamily \label{fix-hosts_8c_ae3e7818428de410e09c082db3ec8bfae} 
+int show\+File\+Info (\begin{DoxyParamCaption}\item[{const char \texorpdfstring{$\ast$}{*}}]{label}{, }\item[{const char \texorpdfstring{$\ast$}{*}}]{path}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+Display metadata for a path when it exists.
+
+
+\begin{DoxyParams}{Parameters}
+{\em label} & Heading that identifies the path\textquotesingle{}s role. \\
+\hline
+{\em path} & Filesystem path to inspect. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+EXIT\+\_\+\+SUCCESS when absent or successfully inspected; otherwise EXIT\+\_\+\+FAILURE. 
+\end{DoxyReturn}
+\Hypertarget{fix-hosts_8c_a90129dd8a0cb33a88b2730294e594067}\index{fix-\/hosts.c@{fix-\/hosts.c}!updateHostsFiles@{updateHostsFiles}}
 \index{updateHostsFiles@{updateHostsFiles}!fix-\/hosts.c@{fix-\/hosts.c}}
 \doxysubsubsection{\texorpdfstring{updateHostsFiles()}{updateHostsFiles()}}
-{\footnotesize\ttfamily int update\+Hosts\+Files (\begin{DoxyParamCaption}\item[{const char \texorpdfstring{$\ast$}{*}}]{src,  }\item[{const char \texorpdfstring{$\ast$}{*}}]{dst,  }\item[{Action}]{action }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily \label{fix-hosts_8c_a90129dd8a0cb33a88b2730294e594067} 
+int update\+Hosts\+Files (\begin{DoxyParamCaption}\item[{const \doxymbox{\hyperlink{struct_paths}{Paths}} \texorpdfstring{$\ast$}{*}}]{paths}{, }\item[{\doxymbox{\hyperlink{actions_8h_a8bb1ef53467e4f61410d12822d922498}{Action}}}]{action}{, }\item[{bool}]{verbose}{}\end{DoxyParamCaption})}
 
+Back up or restore the system hosts file.
 
-
-Modify /etc/hosts. 
+Existing destination files require interactive confirmation. ACTION\+\_\+\+PREP runs hblock after creating the backup; ACTION\+\_\+\+RESTORE copies the backup over the active hosts file.
 
 
 \begin{DoxyParams}{Parameters}
-{\em src} & Source file for action, typically hosts or hosts-\/\+ORIG \\
+{\em paths} & Filesystem paths used by the operation. \\
 \hline
-{\em dst} & Destination for action, typically hosts or hosts-\/\+ORIG \\
+{\em action} & ACTION\+\_\+\+PREP or ACTION\+\_\+\+RESTORE. \\
 \hline
-{\em action} & Action being performed. ACTION\+\_\+\+PREP is action of interest. \\
+{\em verbose} & Whether to display detailed before-\/and-\/after file metadata. \\
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
-int Return status 
+EXIT\+\_\+\+SUCCESS on success or user cancellation; EXIT\+\_\+\+FAILURE on error. 
 \end{DoxyReturn}
-\Hypertarget{fix-hosts_8c_aa2fcbb42fa01bd818c6942546447cbb5}\label{fix-hosts_8c_aa2fcbb42fa01bd818c6942546447cbb5} 
-\index{fix-\/hosts.c@{fix-\/hosts.c}!usage@{usage}}
+\Hypertarget{fix-hosts_8c_a16bb306133911d6f86c8c0f693dc0dbf}\index{fix-\/hosts.c@{fix-\/hosts.c}!usage@{usage}}
 \index{usage@{usage}!fix-\/hosts.c@{fix-\/hosts.c}}
 \doxysubsubsection{\texorpdfstring{usage()}{usage()}}
-{\footnotesize\ttfamily void usage (\begin{DoxyParamCaption}\item[{const char \texorpdfstring{$\ast$}{*}}]{program }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily \label{fix-hosts_8c_a16bb306133911d6f86c8c0f693dc0dbf} 
+void usage (\begin{DoxyParamCaption}\item[{const char \texorpdfstring{$\ast$}{*}}]{program}{, }\item[{FILE \texorpdfstring{$\ast$}{*}}]{stream}{}\end{DoxyParamCaption})}
 
-
-
-Display usage. 
+Print command help.
 
 
 \begin{DoxyParams}{Parameters}
-{\em program} & Basename of calling program \\
+{\em program} & Basename used to invoke the executable. \\
+\hline
+{\em stream} & Destination stream, normally stdout or stderr. \\
 \hline
 \end{DoxyParams}

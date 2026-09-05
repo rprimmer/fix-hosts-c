@@ -1,149 +1,171 @@
-\doxysection{src/fix-\/hosts.h File Reference}
+\doxysection{src/\+fix-\/hosts.h File Reference}
 \hypertarget{fix-hosts_8h}{}\label{fix-hosts_8h}\index{src/fix-\/hosts.h@{src/fix-\/hosts.h}}
 
 
-Modify /etc/hosts for use with hblock(1)  
+Hosts-\/file paths and application operations.  
 
 
-{\ttfamily \#include "{}system-\/actions.\+h"{}}\newline
-{\ttfamily \#include "{}actions.\+h"{}}\newline
-{\ttfamily \#include $<$dirent.\+h$>$}\newline
-{\ttfamily \#include $<$fcntl.\+h$>$}\newline
-{\ttfamily \#include $<$fnmatch.\+h$>$}\newline
-{\ttfamily \#include $<$grp.\+h$>$}\newline
-{\ttfamily \#include $<$libgen.\+h$>$}\newline
-{\ttfamily \#include $<$limits.\+h$>$}\newline
-{\ttfamily \#include $<$pwd.\+h$>$}\newline
-{\ttfamily \#include $<$stdio.\+h$>$}\newline
-{\ttfamily \#include $<$stdbool.\+h$>$}\newline
-{\ttfamily \#include $<$stdlib.\+h$>$}\newline
-{\ttfamily \#include $<$string.\+h$>$}\newline
-{\ttfamily \#include $<$sys/stat.\+h$>$}\newline
-{\ttfamily \#include $<$sys/types.\+h$>$}\newline
-{\ttfamily \#include $<$sys/utsname.\+h$>$}\newline
-{\ttfamily \#include $<$time.\+h$>$}\newline
-{\ttfamily \#include $<$unistd.\+h$>$}\newline
+{\ttfamily \+\#include "{}actions.\+h"{}}\newline
+{\ttfamily \+\#include $<$limits.\+h$>$}\newline
+{\ttfamily \+\#include $<$stdio.\+h$>$}\newline
+\doxysubsubsection*{Data Structures}
+\begin{DoxyCompactItemize}
+\item 
+struct \doxymbox{\hyperlink{struct_paths}{Paths}}
+\end{DoxyCompactItemize}
 \doxysubsubsection*{Macros}
 \begin{DoxyCompactItemize}
 \item 
-\Hypertarget{fix-hosts_8h_a86d0608c5a8dd8a64eb88d7b229904fa}\label{fix-hosts_8h_a86d0608c5a8dd8a64eb88d7b229904fa} 
-\#define {\bfseries ETC}~"{}/etc/"{}
-\item 
-\Hypertarget{fix-hosts_8h_a0cacea6cfd787ee58dfe0db5ce40d448}\label{fix-hosts_8h_a0cacea6cfd787ee58dfe0db5ce40d448} 
-\#define {\bfseries HOSTS}~ETC "{}hosts"{}
-\item 
-\Hypertarget{fix-hosts_8h_afbe40b73485379ba1023cdcdbecbf428}\label{fix-hosts_8h_afbe40b73485379ba1023cdcdbecbf428} 
-\#define {\bfseries HOSTS\+\_\+\+ORIG}~ETC "{}hosts-\/ORIG"{}
-\item 
-\Hypertarget{fix-hosts_8h_a7dfe127a1ffe9454d4629286056f0f5b}\label{fix-hosts_8h_a7dfe127a1ffe9454d4629286056f0f5b} 
-\#define {\bfseries HOSTFILES}~"{}hosts\texorpdfstring{$\ast$}{*}"{}
-\item 
-\Hypertarget{fix-hosts_8h_a4613a92ec7a29ab5454ed8754686896a}\label{fix-hosts_8h_a4613a92ec7a29ab5454ed8754686896a} 
-\#define {\bfseries HBLOCK}~"{}hblock"{}
-\item 
-\Hypertarget{fix-hosts_8h_a2ca9cbc054a57be4b9f6628b95368727}\label{fix-hosts_8h_a2ca9cbc054a57be4b9f6628b95368727} 
-\#define {\bfseries ALLOWLIST}~ETC HBLOCK "{}/allow.\+list"{}
-\item 
-\Hypertarget{fix-hosts_8h_ab39e59d52cffabd234cd4edf6df12068}\label{fix-hosts_8h_ab39e59d52cffabd234cd4edf6df12068} 
-\#define {\bfseries HBLOCK\+\_\+\+DIR}~ETC HBLOCK
+\+\#define \doxymbox{\hyperlink{fix-hosts_8h_ae688d728e1acdfe5988c7db45d6f0166}{PATH\+\_\+\+MAX}}~4096
 \end{DoxyCompactItemize}
 \doxysubsubsection*{Functions}
 \begin{DoxyCompactItemize}
 \item 
-void \mbox{\hyperlink{fix-hosts_8h_aa2fcbb42fa01bd818c6942546447cbb5}{usage}} (const char \texorpdfstring{$\ast$}{*}program)
-\begin{DoxyCompactList}\small\item\em Display usage. \end{DoxyCompactList}\item 
-int \mbox{\hyperlink{fix-hosts_8h_a9497f07dad57da211843b1c08cd6ca3a}{update\+Hosts\+Files}} (const char \texorpdfstring{$\ast$}{*}src, const char \texorpdfstring{$\ast$}{*}dst, Action action)
-\begin{DoxyCompactList}\small\item\em Modify /etc/hosts. \end{DoxyCompactList}\item 
-int \mbox{\hyperlink{fix-hosts_8h_adceb939a0d53db7851192cf8c5581b1c}{add\+Dns\+Name}} (const char \texorpdfstring{$\ast$}{*}hblock\+\_\+dir, const char \texorpdfstring{$\ast$}{*}dns\+\_\+name, const char \texorpdfstring{$\ast$}{*}allow\+\_\+file)
-\begin{DoxyCompactList}\small\item\em Add DNS name to hblock allow list. \end{DoxyCompactList}\item 
-int \mbox{\hyperlink{fix-hosts_8h_a41d6b59f6c02f7b340a08ae07296a7af}{dns\+Flush}} (void)
-\begin{DoxyCompactList}\small\item\em Flush the DNS cache and restart m\+DNSResponder daemon. \end{DoxyCompactList}\end{DoxyCompactItemize}
+void \doxymbox{\hyperlink{fix-hosts_8h_a16bb306133911d6f86c8c0f693dc0dbf}{usage}} (const char \texorpdfstring{$\ast$}{*}program, FILE \texorpdfstring{$\ast$}{*}stream)
+\item 
+int \doxymbox{\hyperlink{fix-hosts_8h_a02126306557dd72523c1e22f2a698d4f}{load\+Paths}} (\doxymbox{\hyperlink{struct_paths}{Paths}} \texorpdfstring{$\ast$}{*}paths)
+\item 
+int \doxymbox{\hyperlink{fix-hosts_8h_a90129dd8a0cb33a88b2730294e594067}{update\+Hosts\+Files}} (const \doxymbox{\hyperlink{struct_paths}{Paths}} \texorpdfstring{$\ast$}{*}paths, \doxymbox{\hyperlink{actions_8h_a8bb1ef53467e4f61410d12822d922498}{Action}} action, bool verbose)
+\item 
+int \doxymbox{\hyperlink{fix-hosts_8h_a521a6e112ac251c3a30b9411426b90a9}{add\+Dns\+Name}} (const \doxymbox{\hyperlink{struct_paths}{Paths}} \texorpdfstring{$\ast$}{*}paths, const char \texorpdfstring{$\ast$}{*}dns\+\_\+name, bool verbose)
+\item 
+int \doxymbox{\hyperlink{fix-hosts_8h_a206132add1e0d1cf709b85460fdc8a64}{remove\+Host\+Entry}} (const char \texorpdfstring{$\ast$}{*}hosts\+\_\+path, const char \texorpdfstring{$\ast$}{*}dns\+\_\+name)
+\item 
+int \doxymbox{\hyperlink{fix-hosts_8h_a350fa1520809f2209f7b4d0fd3dbedf2}{flush\+Dns\+Cache}} (bool verbose)
+\end{DoxyCompactItemize}
 
 
 \doxysubsection{Detailed Description}
-Modify /etc/hosts for use with hblock(1) 
-
-\begin{DoxyAuthor}{Author}
-Robert Primmer (\href{https://github.com/rprimmer}{\texttt{ https\+://github.\+com/rprimmer}})
-\end{DoxyAuthor}
-hblock(1) is a shell script, available on \href{https://brew.sh}{\texttt{ homebrew}}, that blocks ads, beacons and malware sites. It does this by editing {\ttfamily /etc/hosts} and setting the IP address for such sites to 0.\+0.\+0.\+0. The issue is that hblock sometimes adds sites to /etc/hosts that are needed. This executable fixes such issues by adding good DNS hosts to the exclusion list ({\ttfamily /etc/hblock/allow.list}) and removing the corresponding entry from {\ttfamily /etc/hosts}. It will also optionally flush the DNS cache and restart the {\ttfamily m\+DNSResponder} daemon. \begin{DoxyVersion}{Version}
-1.\+1 
-\end{DoxyVersion}
-\begin{DoxyDate}{Date}
-2024-\/03-\/22 
-\end{DoxyDate}
+Hosts-\/file paths and application operations. 
 
 
+
+\label{fix-hosts_8h_doc-define-members}
+\Hypertarget{fix-hosts_8h_doc-define-members}
+\doxysubsection{Macro Definition Documentation}
+\Hypertarget{fix-hosts_8h_ae688d728e1acdfe5988c7db45d6f0166}\index{fix-\/hosts.h@{fix-\/hosts.h}!PATH\_MAX@{PATH\_MAX}}
+\index{PATH\_MAX@{PATH\_MAX}!fix-\/hosts.h@{fix-\/hosts.h}}
+\doxysubsubsection{\texorpdfstring{PATH\_MAX}{PATH\_MAX}}
+{\footnotesize\ttfamily \label{fix-hosts_8h_ae688d728e1acdfe5988c7db45d6f0166} 
+\+\#define PATH\+\_\+\+MAX~4096}
+
+Fallback maximum path length for platforms that do not define PATH\+\_\+\+MAX. 
+
+\label{fix-hosts_8h_doc-func-members}
+\Hypertarget{fix-hosts_8h_doc-func-members}
 \doxysubsection{Function Documentation}
-\Hypertarget{fix-hosts_8h_adceb939a0d53db7851192cf8c5581b1c}\label{fix-hosts_8h_adceb939a0d53db7851192cf8c5581b1c} 
-\index{fix-\/hosts.h@{fix-\/hosts.h}!addDnsName@{addDnsName}}
+\Hypertarget{fix-hosts_8h_a521a6e112ac251c3a30b9411426b90a9}\index{fix-\/hosts.h@{fix-\/hosts.h}!addDnsName@{addDnsName}}
 \index{addDnsName@{addDnsName}!fix-\/hosts.h@{fix-\/hosts.h}}
 \doxysubsubsection{\texorpdfstring{addDnsName()}{addDnsName()}}
-{\footnotesize\ttfamily int add\+Dns\+Name (\begin{DoxyParamCaption}\item[{const char \texorpdfstring{$\ast$}{*}}]{hblock\+\_\+dir,  }\item[{const char \texorpdfstring{$\ast$}{*}}]{dns\+\_\+name,  }\item[{const char \texorpdfstring{$\ast$}{*}}]{allow\+\_\+file }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily \label{fix-hosts_8h_a521a6e112ac251c3a30b9411426b90a9} 
+int add\+Dns\+Name (\begin{DoxyParamCaption}\item[{const \doxymbox{\hyperlink{struct_paths}{Paths}} \texorpdfstring{$\ast$}{*}}]{paths}{, }\item[{const char \texorpdfstring{$\ast$}{*}}]{dns\+\_\+name}{, }\item[{bool}]{verbose}{}\end{DoxyParamCaption})}
 
+Add a DNS name to hblock\textquotesingle{}s allow list and unblock it.
 
-
-Add DNS name to hblock allow list. 
+The allow-\/list update is idempotent. Afterward, matching hosts-\/file lines are removed through \doxylink{fix-hosts_8h_a206132add1e0d1cf709b85460fdc8a64}{remove\+Host\+Entry()}.
 
 
 \begin{DoxyParams}{Parameters}
-{\em hblock\+\_\+dir} & Directory holding hblock allow list \\
+{\em paths} & Filesystem paths used by the operation. \\
 \hline
-{\em dns\+\_\+name} & DNS name to add \\
+{\em dns\+\_\+name} & DNS name to add and unblock. \\
 \hline
-{\em allow\+\_\+file} & Name of allow list file \\
+{\em verbose} & Whether to display detailed before-\/and-\/after file metadata. \\
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
-int Return status 
+EXIT\+\_\+\+SUCCESS on success; EXIT\+\_\+\+FAILURE on validation or I/\+O error. 
 \end{DoxyReturn}
-\Hypertarget{fix-hosts_8h_a41d6b59f6c02f7b340a08ae07296a7af}\label{fix-hosts_8h_a41d6b59f6c02f7b340a08ae07296a7af} 
-\index{fix-\/hosts.h@{fix-\/hosts.h}!dnsFlush@{dnsFlush}}
-\index{dnsFlush@{dnsFlush}!fix-\/hosts.h@{fix-\/hosts.h}}
-\doxysubsubsection{\texorpdfstring{dnsFlush()}{dnsFlush()}}
-{\footnotesize\ttfamily int dns\+Flush (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+\Hypertarget{fix-hosts_8h_a350fa1520809f2209f7b4d0fd3dbedf2}\index{fix-\/hosts.h@{fix-\/hosts.h}!flushDnsCache@{flushDnsCache}}
+\index{flushDnsCache@{flushDnsCache}!fix-\/hosts.h@{fix-\/hosts.h}}
+\doxysubsubsection{\texorpdfstring{flushDnsCache()}{flushDnsCache()}}
+{\footnotesize\ttfamily \label{fix-hosts_8h_a350fa1520809f2209f7b4d0fd3dbedf2} 
+int flush\+Dns\+Cache (\begin{DoxyParamCaption}\item[{bool}]{verbose}{}\end{DoxyParamCaption})}
+
+Flush the mac\+OS DNS cache and restart m\+DNSResponder.
+
+Commands are executed directly without invoking a shell. The function also verifies that m\+DNSResponder is present after the restart.
 
 
-
-Flush the DNS cache and restart m\+DNSResponder daemon. 
-
+\begin{DoxyParams}{Parameters}
+{\em verbose} & Whether to display platform and command details. \\
+\hline
+\end{DoxyParams}
 \begin{DoxyReturn}{Returns}
-int Return status 
+EXIT\+\_\+\+SUCCESS when all commands succeed and the daemon is found; EXIT\+\_\+\+FAILURE on unsupported platforms or command failure. 
 \end{DoxyReturn}
-\Hypertarget{fix-hosts_8h_a9497f07dad57da211843b1c08cd6ca3a}\label{fix-hosts_8h_a9497f07dad57da211843b1c08cd6ca3a} 
-\index{fix-\/hosts.h@{fix-\/hosts.h}!updateHostsFiles@{updateHostsFiles}}
+\Hypertarget{fix-hosts_8h_a02126306557dd72523c1e22f2a698d4f}\index{fix-\/hosts.h@{fix-\/hosts.h}!loadPaths@{loadPaths}}
+\index{loadPaths@{loadPaths}!fix-\/hosts.h@{fix-\/hosts.h}}
+\doxysubsubsection{\texorpdfstring{loadPaths()}{loadPaths()}}
+{\footnotesize\ttfamily \label{fix-hosts_8h_a02126306557dd72523c1e22f2a698d4f} 
+int load\+Paths (\begin{DoxyParamCaption}\item[{\doxymbox{\hyperlink{struct_paths}{Paths}} \texorpdfstring{$\ast$}{*}}]{paths}{}\end{DoxyParamCaption})}
+
+Load all filesystem paths used by the application.
+
+Production paths are derived from /\+etc. The FIX\+\_\+\+HOSTFILES\+\_\+\+ETC\+\_\+\+DIR and FIX\+\_\+\+HOSTFILES\+\_\+\+HBLOCK\+\_\+\+DIR environment variables provide explicit overrides for isolated tests and development fixtures.
+
+
+\begin{DoxyParams}{Parameters}
+{\em paths} & Structure populated with validated, absolute or relative paths. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+EXIT\+\_\+\+SUCCESS on success; EXIT\+\_\+\+FAILURE if a path exceeds PATH\+\_\+\+MAX. 
+\end{DoxyReturn}
+\Hypertarget{fix-hosts_8h_a206132add1e0d1cf709b85460fdc8a64}\index{fix-\/hosts.h@{fix-\/hosts.h}!removeHostEntry@{removeHostEntry}}
+\index{removeHostEntry@{removeHostEntry}!fix-\/hosts.h@{fix-\/hosts.h}}
+\doxysubsubsection{\texorpdfstring{removeHostEntry()}{removeHostEntry()}}
+{\footnotesize\ttfamily \label{fix-hosts_8h_a206132add1e0d1cf709b85460fdc8a64} 
+int remove\+Host\+Entry (\begin{DoxyParamCaption}\item[{const char \texorpdfstring{$\ast$}{*}}]{hosts\+\_\+path}{, }\item[{const char \texorpdfstring{$\ast$}{*}}]{dns\+\_\+name}{}\end{DoxyParamCaption})}
+
+Atomically remove hosts-\/file lines containing an exact DNS token.
+
+The original file is first copied to a .bak file. Retained lines are written to a same-\/directory temporary file, synchronized, assigned the original permissions and ownership, and atomically renamed over the hosts file.
+
+
+\begin{DoxyParams}{Parameters}
+{\em hosts\+\_\+path} & Path to the active hosts file. \\
+\hline
+{\em dns\+\_\+name} & Validated DNS token to remove. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+EXIT\+\_\+\+SUCCESS on success; EXIT\+\_\+\+FAILURE on any filesystem error. 
+\end{DoxyReturn}
+\Hypertarget{fix-hosts_8h_a90129dd8a0cb33a88b2730294e594067}\index{fix-\/hosts.h@{fix-\/hosts.h}!updateHostsFiles@{updateHostsFiles}}
 \index{updateHostsFiles@{updateHostsFiles}!fix-\/hosts.h@{fix-\/hosts.h}}
 \doxysubsubsection{\texorpdfstring{updateHostsFiles()}{updateHostsFiles()}}
-{\footnotesize\ttfamily int update\+Hosts\+Files (\begin{DoxyParamCaption}\item[{const char \texorpdfstring{$\ast$}{*}}]{src,  }\item[{const char \texorpdfstring{$\ast$}{*}}]{dst,  }\item[{Action}]{action }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily \label{fix-hosts_8h_a90129dd8a0cb33a88b2730294e594067} 
+int update\+Hosts\+Files (\begin{DoxyParamCaption}\item[{const \doxymbox{\hyperlink{struct_paths}{Paths}} \texorpdfstring{$\ast$}{*}}]{paths}{, }\item[{\doxymbox{\hyperlink{actions_8h_a8bb1ef53467e4f61410d12822d922498}{Action}}}]{action}{, }\item[{bool}]{verbose}{}\end{DoxyParamCaption})}
 
+Back up or restore the system hosts file.
 
-
-Modify /etc/hosts. 
+Existing destination files require interactive confirmation. ACTION\+\_\+\+PREP runs hblock after creating the backup; ACTION\+\_\+\+RESTORE copies the backup over the active hosts file.
 
 
 \begin{DoxyParams}{Parameters}
-{\em src} & Source file for action, typically hosts or hosts-\/\+ORIG \\
+{\em paths} & Filesystem paths used by the operation. \\
 \hline
-{\em dst} & Destination for action, typically hosts or hosts-\/\+ORIG \\
+{\em action} & ACTION\+\_\+\+PREP or ACTION\+\_\+\+RESTORE. \\
 \hline
-{\em action} & Action being performed. ACTION\+\_\+\+PREP is action of interest. \\
+{\em verbose} & Whether to display detailed before-\/and-\/after file metadata. \\
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
-int Return status 
+EXIT\+\_\+\+SUCCESS on success or user cancellation; EXIT\+\_\+\+FAILURE on error. 
 \end{DoxyReturn}
-\Hypertarget{fix-hosts_8h_aa2fcbb42fa01bd818c6942546447cbb5}\label{fix-hosts_8h_aa2fcbb42fa01bd818c6942546447cbb5} 
-\index{fix-\/hosts.h@{fix-\/hosts.h}!usage@{usage}}
+\Hypertarget{fix-hosts_8h_a16bb306133911d6f86c8c0f693dc0dbf}\index{fix-\/hosts.h@{fix-\/hosts.h}!usage@{usage}}
 \index{usage@{usage}!fix-\/hosts.h@{fix-\/hosts.h}}
 \doxysubsubsection{\texorpdfstring{usage()}{usage()}}
-{\footnotesize\ttfamily void usage (\begin{DoxyParamCaption}\item[{const char \texorpdfstring{$\ast$}{*}}]{program }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily \label{fix-hosts_8h_a16bb306133911d6f86c8c0f693dc0dbf} 
+void usage (\begin{DoxyParamCaption}\item[{const char \texorpdfstring{$\ast$}{*}}]{program}{, }\item[{FILE \texorpdfstring{$\ast$}{*}}]{stream}{}\end{DoxyParamCaption})}
 
-
-
-Display usage. 
+Print command help.
 
 
 \begin{DoxyParams}{Parameters}
-{\em program} & Basename of calling program \\
+{\em program} & Basename used to invoke the executable. \\
+\hline
+{\em stream} & Destination stream, normally stdout or stderr. \\
 \hline
 \end{DoxyParams}

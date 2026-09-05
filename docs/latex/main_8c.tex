@@ -1,0 +1,108 @@
+\doxysection{src/\+main.c File Reference}
+\hypertarget{main_8c}{}\label{main_8c}\index{src/main.c@{src/main.c}}
+
+
+Command-\/line parsing and application dispatch.  
+
+
+{\ttfamily \+\#include "{}actions.\+h"{}}\newline
+{\ttfamily \+\#include "{}fix-\/hosts.\+h"{}}\newline
+{\ttfamily \+\#include "{}system-\/actions.\+h"{}}\newline
+{\ttfamily \+\#include $<$getopt.\+h$>$}\newline
+{\ttfamily \+\#include $<$stdbool.\+h$>$}\newline
+{\ttfamily \+\#include $<$stdio.\+h$>$}\newline
+{\ttfamily \+\#include $<$stdlib.\+h$>$}\newline
+{\ttfamily \+\#include $<$string.\+h$>$}\newline
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+static const char \texorpdfstring{$\ast$}{*} \doxymbox{\hyperlink{main_8c_a12f9f8dcc4d8839d0e728a83e1467a4a}{program\+Name}} (const char \texorpdfstring{$\ast$}{*}path)
+\item 
+static int \doxymbox{\hyperlink{main_8c_a8e132b8c3604e869c1d9b08093e19e53}{select\+Action}} (\doxymbox{\hyperlink{struct_command}{Command}} \texorpdfstring{$\ast$}{*}command, \doxymbox{\hyperlink{actions_8h_a8bb1ef53467e4f61410d12822d922498}{Action}} action)
+\item 
+static int \doxymbox{\hyperlink{main_8c_afdcfa071549c30f606626de33c33ee92}{parse\+Arguments}} (int argc, char \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}argv, \doxymbox{\hyperlink{struct_command}{Command}} \texorpdfstring{$\ast$}{*}command)
+\item 
+int \doxymbox{\hyperlink{main_8c_a3c04138a5bfe5d72780bb7e82a18e627}{main}} (int argc, char \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}argv)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Command-\/line parsing and application dispatch. 
+
+
+
+\label{main_8c_doc-func-members}
+\Hypertarget{main_8c_doc-func-members}
+\doxysubsection{Function Documentation}
+\Hypertarget{main_8c_a3c04138a5bfe5d72780bb7e82a18e627}\index{main.c@{main.c}!main@{main}}
+\index{main@{main}!main.c@{main.c}}
+\doxysubsubsection{\texorpdfstring{main()}{main()}}
+{\footnotesize\ttfamily \label{main_8c_a3c04138a5bfe5d72780bb7e82a18e627} 
+int main (\begin{DoxyParamCaption}\item[{int}]{argc}{, }\item[{char \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}}]{argv}{}\end{DoxyParamCaption})}
+
+Parse the requested operation, load its paths, and dispatch it.
+
+
+\begin{DoxyParams}{Parameters}
+{\em argc} & Number of command-\/line arguments. \\
+\hline
+{\em argv} & NULL-\/terminated command-\/line argument vector. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+EXIT\+\_\+\+SUCCESS on success; EXIT\+\_\+\+FAILURE on parsing or operation errors. 
+\end{DoxyReturn}
+\Hypertarget{main_8c_afdcfa071549c30f606626de33c33ee92}\index{main.c@{main.c}!parseArguments@{parseArguments}}
+\index{parseArguments@{parseArguments}!main.c@{main.c}}
+\doxysubsubsection{\texorpdfstring{parseArguments()}{parseArguments()}}
+{\footnotesize\ttfamily \label{main_8c_afdcfa071549c30f606626de33c33ee92} 
+int parse\+Arguments (\begin{DoxyParamCaption}\item[{int}]{argc}{, }\item[{char \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}}]{argv}{, }\item[{\doxymbox{\hyperlink{struct_command}{Command}} \texorpdfstring{$\ast$}{*}}]{command}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+Parse short options, long options, and positional actions.
+
+
+\begin{DoxyParams}{Parameters}
+{\em argc} & Argument count from \doxylink{main_8c_a3c04138a5bfe5d72780bb7e82a18e627}{main()}. \\
+\hline
+{\em argv} & Argument vector from \doxylink{main_8c_a3c04138a5bfe5d72780bb7e82a18e627}{main()}. \\
+\hline
+{\em command} & Output command populated from the arguments. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+0 when execution should continue, 1 after displaying help, or -\/1 when the command line is invalid. 
+\end{DoxyReturn}
+\Hypertarget{main_8c_a12f9f8dcc4d8839d0e728a83e1467a4a}\index{main.c@{main.c}!programName@{programName}}
+\index{programName@{programName}!main.c@{main.c}}
+\doxysubsubsection{\texorpdfstring{programName()}{programName()}}
+{\footnotesize\ttfamily \label{main_8c_a12f9f8dcc4d8839d0e728a83e1467a4a} 
+const char \texorpdfstring{$\ast$}{*} program\+Name (\begin{DoxyParamCaption}\item[{const char \texorpdfstring{$\ast$}{*}}]{path}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+Return the final pathname component used to invoke the program.
+
+
+\begin{DoxyParams}{Parameters}
+{\em path} & argv\+[0] from \doxylink{main_8c_a3c04138a5bfe5d72780bb7e82a18e627}{main()}. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Pointer into path at its basename. 
+\end{DoxyReturn}
+\Hypertarget{main_8c_a8e132b8c3604e869c1d9b08093e19e53}\index{main.c@{main.c}!selectAction@{selectAction}}
+\index{selectAction@{selectAction}!main.c@{main.c}}
+\doxysubsubsection{\texorpdfstring{selectAction()}{selectAction()}}
+{\footnotesize\ttfamily \label{main_8c_a8e132b8c3604e869c1d9b08093e19e53} 
+int select\+Action (\begin{DoxyParamCaption}\item[{\doxymbox{\hyperlink{struct_command}{Command}} \texorpdfstring{$\ast$}{*}}]{command}{, }\item[{\doxymbox{\hyperlink{actions_8h_a8bb1ef53467e4f61410d12822d922498}{Action}}}]{action}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+Select one action while rejecting conflicting command syntax.
+
+
+\begin{DoxyParams}{Parameters}
+{\em command} & Parsed command being populated. \\
+\hline
+{\em action} & Newly requested action. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+EXIT\+\_\+\+SUCCESS when selected; EXIT\+\_\+\+FAILURE if an action already exists. 
+\end{DoxyReturn}

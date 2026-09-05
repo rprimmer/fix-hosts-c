@@ -1,0 +1,288 @@
+\doxysection{src/\+system-\/actions.c File Reference}
+\hypertarget{system-actions_8c}{}\label{system-actions_8c}\index{src/system-\/actions.c@{src/system-\/actions.c}}
+
+
+Filesystem, subprocess, validation, and reporting utilities.  
+
+
+{\ttfamily \+\#include "{}system-\/actions.\+h"{}}\newline
+{\ttfamily \+\#include $<$dirent.\+h$>$}\newline
+{\ttfamily \+\#include $<$errno.\+h$>$}\newline
+{\ttfamily \+\#include $<$fnmatch.\+h$>$}\newline
+{\ttfamily \+\#include $<$grp.\+h$>$}\newline
+{\ttfamily \+\#include $<$pwd.\+h$>$}\newline
+{\ttfamily \+\#include $<$regex.\+h$>$}\newline
+{\ttfamily \+\#include $<$stdarg.\+h$>$}\newline
+{\ttfamily \+\#include $<$stdio.\+h$>$}\newline
+{\ttfamily \+\#include $<$stdlib.\+h$>$}\newline
+{\ttfamily \+\#include $<$string.\+h$>$}\newline
+{\ttfamily \+\#include $<$sys/\+stat.\+h$>$}\newline
+{\ttfamily \+\#include $<$sys/\+types.\+h$>$}\newline
+{\ttfamily \+\#include $<$sys/\+wait.\+h$>$}\newline
+{\ttfamily \+\#include $<$time.\+h$>$}\newline
+{\ttfamily \+\#include $<$unistd.\+h$>$}\newline
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \doxymbox{\hyperlink{system-actions_8c_ae1eddeeda6e2e3f049e304b8b6d8e409}{report\+Error}} (const char \texorpdfstring{$\ast$}{*}file, const char \texorpdfstring{$\ast$}{*}function, int line, const char \texorpdfstring{$\ast$}{*}format,...)
+\item 
+bool \doxymbox{\hyperlink{system-actions_8c_ad9f1bc38d5dcf1b132dfa2c0374c3cdd}{confirm}} (const char \texorpdfstring{$\ast$}{*}prompt)
+\item 
+bool \doxymbox{\hyperlink{system-actions_8c_abf3c5ba630c32e4fd49fdeca5f90bab4}{file\+Exists}} (const char \texorpdfstring{$\ast$}{*}path)
+\item 
+int \doxymbox{\hyperlink{system-actions_8c_a4a5aeec65fc442e5ed4c1ae9b0e261ee}{copy\+File}} (const char \texorpdfstring{$\ast$}{*}source\+\_\+path, const char \texorpdfstring{$\ast$}{*}destination\+\_\+path)
+\item 
+int \doxymbox{\hyperlink{system-actions_8c_a4d723a740438d598d19b43c93a17c9ee}{list\+Files}} (const char \texorpdfstring{$\ast$}{*}directory\+\_\+path, const char \texorpdfstring{$\ast$}{*}pattern)
+\item 
+static const char \texorpdfstring{$\ast$}{*} \doxymbox{\hyperlink{system-actions_8c_a9603ada7c4e3c26f151c828b87cace0e}{file\+Type}} (mode\+\_\+t mode)
+\item 
+static void \doxymbox{\hyperlink{system-actions_8c_aa23d7c6078887075028425e975249bc1}{format\+Permissions}} (mode\+\_\+t mode, char permissions\+[11]\+)
+\item 
+int \doxymbox{\hyperlink{system-actions_8c_af4a356202524dbcd649390c54692c861}{file\+Info}} (const char \texorpdfstring{$\ast$}{*}path)
+\item 
+int \doxymbox{\hyperlink{system-actions_8c_a06f8fb12d5f917f6f3ca7489607ad003}{ensure\+Directory}} (const char \texorpdfstring{$\ast$}{*}path)
+\item 
+int \doxymbox{\hyperlink{system-actions_8c_a57508bc5a1d6dfc97a22b67e6c828af5}{run\+Command}} (char \texorpdfstring{$\ast$}{*}const arguments\+[$\,$]\+)
+\item 
+bool \doxymbox{\hyperlink{system-actions_8c_afc41b5ea4856e57d233d7c60796489a9}{is\+Valid\+Dns\+Name}} (const char \texorpdfstring{$\ast$}{*}dns\+\_\+name)
+\item 
+bool \doxymbox{\hyperlink{system-actions_8c_acc5149fdef3d575f3c97e0891bb0c4a0}{file\+Contains\+Line}} (const char \texorpdfstring{$\ast$}{*}path, const char \texorpdfstring{$\ast$}{*}expected\+\_\+line)
+\item 
+int \doxymbox{\hyperlink{system-actions_8c_a2129e19e3c548c5dc181bca8cfa23e38}{append\+Line}} (const char \texorpdfstring{$\ast$}{*}path, const char \texorpdfstring{$\ast$}{*}line)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Filesystem, subprocess, validation, and reporting utilities. 
+
+
+
+\label{system-actions_8c_doc-func-members}
+\Hypertarget{system-actions_8c_doc-func-members}
+\doxysubsection{Function Documentation}
+\Hypertarget{system-actions_8c_a2129e19e3c548c5dc181bca8cfa23e38}\index{system-\/actions.c@{system-\/actions.c}!appendLine@{appendLine}}
+\index{appendLine@{appendLine}!system-\/actions.c@{system-\/actions.c}}
+\doxysubsubsection{\texorpdfstring{appendLine()}{appendLine()}}
+{\footnotesize\ttfamily \label{system-actions_8c_a2129e19e3c548c5dc181bca8cfa23e38} 
+int append\+Line (\begin{DoxyParamCaption}\item[{const char \texorpdfstring{$\ast$}{*}}]{path}{, }\item[{const char \texorpdfstring{$\ast$}{*}}]{line}{}\end{DoxyParamCaption})}
+
+Append one newline-\/terminated line to a file.
+
+
+\begin{DoxyParams}{Parameters}
+{\em path} & File to create or append to. \\
+\hline
+{\em line} & Text to append without a terminating newline. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+EXIT\+\_\+\+SUCCESS on success; EXIT\+\_\+\+FAILURE on an I/\+O error. 
+\end{DoxyReturn}
+\Hypertarget{system-actions_8c_ad9f1bc38d5dcf1b132dfa2c0374c3cdd}\index{system-\/actions.c@{system-\/actions.c}!confirm@{confirm}}
+\index{confirm@{confirm}!system-\/actions.c@{system-\/actions.c}}
+\doxysubsubsection{\texorpdfstring{confirm()}{confirm()}}
+{\footnotesize\ttfamily \label{system-actions_8c_ad9f1bc38d5dcf1b132dfa2c0374c3cdd} 
+bool confirm (\begin{DoxyParamCaption}\item[{const char \texorpdfstring{$\ast$}{*}}]{prompt}{}\end{DoxyParamCaption})}
+
+Repeatedly prompt for a yes-\/or-\/no response.
+
+
+\begin{DoxyParams}{Parameters}
+{\em prompt} & Question displayed before the input prompt. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true for yes; false for no or end-\/of-\/file. 
+\end{DoxyReturn}
+\Hypertarget{system-actions_8c_a4a5aeec65fc442e5ed4c1ae9b0e261ee}\index{system-\/actions.c@{system-\/actions.c}!copyFile@{copyFile}}
+\index{copyFile@{copyFile}!system-\/actions.c@{system-\/actions.c}}
+\doxysubsubsection{\texorpdfstring{copyFile()}{copyFile()}}
+{\footnotesize\ttfamily \label{system-actions_8c_a4a5aeec65fc442e5ed4c1ae9b0e261ee} 
+int copy\+File (\begin{DoxyParamCaption}\item[{const char \texorpdfstring{$\ast$}{*}}]{source\+\_\+path}{, }\item[{const char \texorpdfstring{$\ast$}{*}}]{destination\+\_\+path}{}\end{DoxyParamCaption})}
+
+Copy a regular file and preserve its permission bits.
+
+
+\begin{DoxyParams}{Parameters}
+{\em source\+\_\+path} & Existing file to copy. \\
+\hline
+{\em destination\+\_\+path} & Destination to create or overwrite. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+EXIT\+\_\+\+SUCCESS on success; EXIT\+\_\+\+FAILURE on any I/\+O error. 
+\end{DoxyReturn}
+\Hypertarget{system-actions_8c_a06f8fb12d5f917f6f3ca7489607ad003}\index{system-\/actions.c@{system-\/actions.c}!ensureDirectory@{ensureDirectory}}
+\index{ensureDirectory@{ensureDirectory}!system-\/actions.c@{system-\/actions.c}}
+\doxysubsubsection{\texorpdfstring{ensureDirectory()}{ensureDirectory()}}
+{\footnotesize\ttfamily \label{system-actions_8c_a06f8fb12d5f917f6f3ca7489607ad003} 
+int ensure\+Directory (\begin{DoxyParamCaption}\item[{const char \texorpdfstring{$\ast$}{*}}]{path}{}\end{DoxyParamCaption})}
+
+Create a directory if it does not already exist.
+
+
+\begin{DoxyParams}{Parameters}
+{\em path} & Directory to validate or create. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+EXIT\+\_\+\+SUCCESS when a directory exists at path; otherwise EXIT\+\_\+\+FAILURE. 
+\end{DoxyReturn}
+\Hypertarget{system-actions_8c_acc5149fdef3d575f3c97e0891bb0c4a0}\index{system-\/actions.c@{system-\/actions.c}!fileContainsLine@{fileContainsLine}}
+\index{fileContainsLine@{fileContainsLine}!system-\/actions.c@{system-\/actions.c}}
+\doxysubsubsection{\texorpdfstring{fileContainsLine()}{fileContainsLine()}}
+{\footnotesize\ttfamily \label{system-actions_8c_acc5149fdef3d575f3c97e0891bb0c4a0} 
+bool file\+Contains\+Line (\begin{DoxyParamCaption}\item[{const char \texorpdfstring{$\ast$}{*}}]{path}{, }\item[{const char \texorpdfstring{$\ast$}{*}}]{expected\+\_\+line}{}\end{DoxyParamCaption})}
+
+Search a text file for an exact line.
+
+Line endings are removed before comparison.
+
+
+\begin{DoxyParams}{Parameters}
+{\em path} & File to search. \\
+\hline
+{\em expected\+\_\+line} & Complete line to locate, without a newline. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true when the line is found; false otherwise. 
+\end{DoxyReturn}
+\Hypertarget{system-actions_8c_abf3c5ba630c32e4fd49fdeca5f90bab4}\index{system-\/actions.c@{system-\/actions.c}!fileExists@{fileExists}}
+\index{fileExists@{fileExists}!system-\/actions.c@{system-\/actions.c}}
+\doxysubsubsection{\texorpdfstring{fileExists()}{fileExists()}}
+{\footnotesize\ttfamily \label{system-actions_8c_abf3c5ba630c32e4fd49fdeca5f90bab4} 
+bool file\+Exists (\begin{DoxyParamCaption}\item[{const char \texorpdfstring{$\ast$}{*}}]{path}{}\end{DoxyParamCaption})}
+
+Test whether a filesystem path exists.
+
+
+\begin{DoxyParams}{Parameters}
+{\em path} & Path to inspect. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true when access(path, F\+\_\+\+OK) succeeds. 
+\end{DoxyReturn}
+\Hypertarget{system-actions_8c_af4a356202524dbcd649390c54692c861}\index{system-\/actions.c@{system-\/actions.c}!fileInfo@{fileInfo}}
+\index{fileInfo@{fileInfo}!system-\/actions.c@{system-\/actions.c}}
+\doxysubsubsection{\texorpdfstring{fileInfo()}{fileInfo()}}
+{\footnotesize\ttfamily \label{system-actions_8c_af4a356202524dbcd649390c54692c861} 
+int file\+Info (\begin{DoxyParamCaption}\item[{const char \texorpdfstring{$\ast$}{*}}]{path}{}\end{DoxyParamCaption})}
+
+Display detailed metadata for one filesystem object.
+
+The report includes type, permissions, ownership, size, inode, link count, and last-\/modification time. Symbolic links are inspected without following their targets.
+
+
+\begin{DoxyParams}{Parameters}
+{\em path} & Filesystem object to inspect. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+EXIT\+\_\+\+SUCCESS on success; EXIT\+\_\+\+FAILURE when metadata is unavailable. 
+\end{DoxyReturn}
+\Hypertarget{system-actions_8c_a9603ada7c4e3c26f151c828b87cace0e}\index{system-\/actions.c@{system-\/actions.c}!fileType@{fileType}}
+\index{fileType@{fileType}!system-\/actions.c@{system-\/actions.c}}
+\doxysubsubsection{\texorpdfstring{fileType()}{fileType()}}
+{\footnotesize\ttfamily \label{system-actions_8c_a9603ada7c4e3c26f151c828b87cace0e} 
+const char \texorpdfstring{$\ast$}{*} file\+Type (\begin{DoxyParamCaption}\item[{mode\+\_\+t}]{mode}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+Return a readable name for a mode\textquotesingle{}s filesystem-\/object type.
+
+
+\begin{DoxyParams}{Parameters}
+{\em mode} & st\+\_\+mode value returned by lstat(2). \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Static string describing the object type. 
+\end{DoxyReturn}
+\Hypertarget{system-actions_8c_aa23d7c6078887075028425e975249bc1}\index{system-\/actions.c@{system-\/actions.c}!formatPermissions@{formatPermissions}}
+\index{formatPermissions@{formatPermissions}!system-\/actions.c@{system-\/actions.c}}
+\doxysubsubsection{\texorpdfstring{formatPermissions()}{formatPermissions()}}
+{\footnotesize\ttfamily \label{system-actions_8c_aa23d7c6078887075028425e975249bc1} 
+void format\+Permissions (\begin{DoxyParamCaption}\item[{mode\+\_\+t}]{mode}{, }\item[{char}]{permissions}{\+[11]}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+Format a mode as the familiar ten-\/character ls-\/style permission string.
+
+
+\begin{DoxyParams}{Parameters}
+{\em mode} & st\+\_\+mode value returned by lstat(2). \\
+\hline
+{\em permissions} & Output buffer with room for eleven bytes. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{system-actions_8c_afc41b5ea4856e57d233d7c60796489a9}\index{system-\/actions.c@{system-\/actions.c}!isValidDnsName@{isValidDnsName}}
+\index{isValidDnsName@{isValidDnsName}!system-\/actions.c@{system-\/actions.c}}
+\doxysubsubsection{\texorpdfstring{isValidDnsName()}{isValidDnsName()}}
+{\footnotesize\ttfamily \label{system-actions_8c_afc41b5ea4856e57d233d7c60796489a9} 
+bool is\+Valid\+Dns\+Name (\begin{DoxyParamCaption}\item[{const char \texorpdfstring{$\ast$}{*}}]{dns\+\_\+name}{}\end{DoxyParamCaption})}
+
+Validate a fully qualified DNS name.
+
+Labels may contain letters, numbers, and interior hyphens. The final label must contain at least two letters.
+
+
+\begin{DoxyParams}{Parameters}
+{\em dns\+\_\+name} & Candidate DNS name. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true when the complete string matches the accepted DNS syntax. 
+\end{DoxyReturn}
+\Hypertarget{system-actions_8c_a4d723a740438d598d19b43c93a17c9ee}\index{system-\/actions.c@{system-\/actions.c}!listFiles@{listFiles}}
+\index{listFiles@{listFiles}!system-\/actions.c@{system-\/actions.c}}
+\doxysubsubsection{\texorpdfstring{listFiles()}{listFiles()}}
+{\footnotesize\ttfamily \label{system-actions_8c_a4d723a740438d598d19b43c93a17c9ee} 
+int list\+Files (\begin{DoxyParamCaption}\item[{const char \texorpdfstring{$\ast$}{*}}]{directory\+\_\+path}{, }\item[{const char \texorpdfstring{$\ast$}{*}}]{pattern}{}\end{DoxyParamCaption})}
+
+List directory entries matching a shell-\/style pattern.
+
+
+\begin{DoxyParams}{Parameters}
+{\em directory\+\_\+path} & Directory to scan. \\
+\hline
+{\em pattern} & Pattern interpreted by fnmatch(3). \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+EXIT\+\_\+\+SUCCESS on success; EXIT\+\_\+\+FAILURE on directory or stat errors. 
+\end{DoxyReturn}
+\Hypertarget{system-actions_8c_ae1eddeeda6e2e3f049e304b8b6d8e409}\index{system-\/actions.c@{system-\/actions.c}!reportError@{reportError}}
+\index{reportError@{reportError}!system-\/actions.c@{system-\/actions.c}}
+\doxysubsubsection{\texorpdfstring{reportError()}{reportError()}}
+{\footnotesize\ttfamily \label{system-actions_8c_ae1eddeeda6e2e3f049e304b8b6d8e409} 
+void report\+Error (\begin{DoxyParamCaption}\item[{const char \texorpdfstring{$\ast$}{*}}]{file}{, }\item[{const char \texorpdfstring{$\ast$}{*}}]{function}{, }\item[{int}]{line}{, }\item[{const char \texorpdfstring{$\ast$}{*}}]{format}{, }\item[{}]{...}{}\end{DoxyParamCaption})}
+
+Report a formatted error with its source location.
+
+
+\begin{DoxyParams}{Parameters}
+{\em file} & Translation unit supplied by REPORT\+\_\+\+ERROR. \\
+\hline
+{\em function} & Calling function supplied by REPORT\+\_\+\+ERROR. \\
+\hline
+{\em line} & Source line supplied by REPORT\+\_\+\+ERROR. \\
+\hline
+{\em format} & printf-\/compatible message format. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{system-actions_8c_a57508bc5a1d6dfc97a22b67e6c828af5}\index{system-\/actions.c@{system-\/actions.c}!runCommand@{runCommand}}
+\index{runCommand@{runCommand}!system-\/actions.c@{system-\/actions.c}}
+\doxysubsubsection{\texorpdfstring{runCommand()}{runCommand()}}
+{\footnotesize\ttfamily \label{system-actions_8c_a57508bc5a1d6dfc97a22b67e6c828af5} 
+int run\+Command (\begin{DoxyParamCaption}\item[{char \texorpdfstring{$\ast$}{*}const}]{arguments}{\+[$\,$]}\end{DoxyParamCaption})}
+
+Execute an argument vector without invoking a shell.
+
+The function forks, calls execvp(3) in the child, and waits for that child.
+
+
+\begin{DoxyParams}{Parameters}
+{\em arguments} & NULL-\/terminated argv array whose first element is a command. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The child\textquotesingle{}s exit status, or EXIT\+\_\+\+FAILURE when it cannot be executed. 
+\end{DoxyReturn}

@@ -1,48 +1,60 @@
-# make bin -> create project directory structre
-# make release -> make final version for release
-# make markdown -> convert markdown files
-# make docs --> create API doc
+PROGRAM  = fix-hostfiles
+CC       = clang
+CPPFLAGS = -D_POSIX_C_SOURCE=200809L
+CFLAGS   = -std=c11 -g -Wall -Wextra -Wpedantic -Werror
+LDFLAGS  =
+SRC_DIR  = src
+OBJ_DIR  = obj
+BIN_DIR  = bin
+TEST     = test/fix-hostfiles-test.sh
+SOURCES  = $(wildcard $(SRC_DIR)/*.c)
+OBJECTS  = $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o,$(SOURCES))
+BINARY   = $(BIN_DIR)/$(PROGRAM)
+PREFIX  ?= /opt/homebrew
+BINDIR  ?= $(PREFIX)/bin
+MANDIR  ?= $(PREFIX)/share/man/man1
+PANDOC  ?= pandoc
+DOXYGEN ?= doxygen
+DOC_DIR  = docs
+API_HTML = fix-hostfiles-apidoc.html
+API_PDF  = fix-hostfiles-apidoc.pdf
 
-PROGRAM = fix-hostfiles
-CC      = clang
-CFLAGS  = -g -Wall -Wextra -DDEBUG
-LDFLAGS =
-SRC     = src
-OBJ     = obj
-BINDIR  = bin
-DOCDIR  = docs
-SRCS    = $(wildcard $(SRC)/*.c)
-OBJS    = $(patsubst $(SRC)/%.c, $(OBJ)/%.o, $(SRCS))
-BIN     = $(BINDIR)/$(PROGRAM)
-MANPAGE = $(PROGRAM).1
-PANDOC  = pandoc
-DOXYGEN = /Applications/Doxygen.app/Contents/Resources/doxygen
+.PHONY: all test release docs api-docs install clean
 
-all: $(BINDIR) $(BIN)
+all: $(BINARY)
 
-$(BINDIR):
-	mkdir -p $(SRC) $(OBJ) $(BINDIR) $(DOCDIR)
+$(BINARY): $(OBJECTS) | $(BIN_DIR)
+	$(CC) $(CFLAGS) $(OBJECTS) -o $@ $(LDFLAGS)
 
-$(BIN): $(OBJS) $(OBJ) $(BINDIR)
-	$(CC) $(CFLAGS) $(OBJS) -o $@ $(LDFLAGS)
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c | $(OBJ_DIR)
+	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
 
-$(OBJ)/%.o: $(SRC)/%.c $(OBJ)
-	$(CC) $(CFLAGS) -c $< -o $@
+$(OBJ_DIR) $(BIN_DIR):
+	mkdir -p $@
 
-.PHONY: release markdown docs clean
+test: all
+	bash -n $(TEST)
+	shellcheck $(TEST)
+	bash $(TEST)
 
-release: CFLAGS=-Wall -Wextra -O2 -DNDEBUG
-release: clean markdown docs $(BIN)
-	@echo "Release build complete."
+release: clean
+	$(MAKE) CFLAGS='-std=c11 -O2 -Wall -Wextra -Wpedantic -Werror -DNDEBUG' all
 
-markdown: README.md
-	$(PANDOC) README.md -o readme.pdf
+docs: readme.pdf api-docs
 
-docs: 
+readme.pdf: README.md
+	$(PANDOC) -V geometry:margin=0.7in $< -o $@
+
+api-docs: Doxyfile
 	$(DOXYGEN) Doxyfile > makefile.out 2>&1
-	$(MAKE) -C $(DOCDIR)/latex >> makefile.out 2>&1
-	ln -sf docs/html/index.html $(PROGRAM)-apidoc.html
-	cp docs/latex/refman.pdf ./$(PROGRAM)-apidoc.pdf
+	$(MAKE) -C $(DOC_DIR)/latex >> makefile.out 2>&1
+	ln -sfn $(DOC_DIR)/html/index.html $(API_HTML)
+	cp $(DOC_DIR)/latex/refman.pdf $(API_PDF)
+
+install: $(BINARY) fix-hostfiles.1
+	install -d $(BINDIR) $(MANDIR)
+	install -m 755 $(BINARY) $(BINDIR)/$(PROGRAM)
+	install -m 644 fix-hostfiles.1 $(MANDIR)/fix-hostfiles.1
 
 clean:
-	$(RM) -rf $(BINDIR)/* $(OBJ)/* *.dSYM readme.pdf $(PROGRAM)-apidoc.*
+	$(RM) -r $(BIN_DIR) $(OBJ_DIR)

@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['lsfiles_0',['lsFiles',['../system-actions_8h.html#af3f50032c2e61b1af985fa1cd136b18c',1,'system-actions.c']]]
+  ['isvaliddnsname_0',['isValidDnsName',['../system-actions_8c.html#afc41b5ea4856e57d233d7c60796489a9',1,'isValidDnsName(const char *dns_name):&#160;system-actions.c'],['../system-actions_8h.html#afc41b5ea4856e57d233d7c60796489a9',1,'isValidDnsName(const char *dns_name):&#160;system-actions.c']]]
 ];

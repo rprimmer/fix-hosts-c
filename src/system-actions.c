@@ -1,291 +1,345 @@
-// system-actions.c
+/**
+ * @file system-actions.c
+ * @brief Filesystem, subprocess, validation, and reporting utilities.
+ */
 
 #include "system-actions.h"
 
-void handleError(bool fatal, char *file, const char *func, int line, const char *fmt, ...) {
-    fprintf(stderr, "Error in %s:%s, line %d: ", basename(file), func, line);
-    va_list args;
-    va_start(args, fmt);
-    vfprintf(stderr, fmt, args);
-    va_end(args);
-    fprintf(stderr, "\n");
+#include <dirent.h>
+#include <errno.h>
+#include <fnmatch.h>
+#include <grp.h>
+#include <pwd.h>
+#include <regex.h>
+#include <stdarg.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <time.h>
+#include <unistd.h>
 
-    if (fatal) 
-        exit(EXIT_FAILURE);
+void reportError(const char *file, const char *function, int line,
+                 const char *format, ...) {
+    const char *filename = strrchr(file, '/');
+    filename = filename == NULL ? file : filename + 1;
+
+    fprintf(stderr, "Error in %s:%s, line %d: ", filename, function, line);
+
+    va_list arguments;
+    va_start(arguments, format);
+    vfprintf(stderr, format, arguments);
+    va_end(arguments);
+    fputc('\n', stderr);
 }
 
-int booleanQuery(const char *prompt) {
-    char response[10];
+bool confirm(const char *prompt) {
+    char response[16];
 
-    printf("%s ", prompt);
+    for (;;) {
+        printf("%s [y/n]: ", prompt);
+        if (fgets(response, sizeof(response), stdin) == NULL)
+            return false;
 
-    if (fgets(response, sizeof(response), stdin) == NULL) 
-        HANDLE_ERROR("failed to read user response"); 
+        if (response[0] == 'y' || response[0] == 'Y')
+            return true;
+        if (response[0] == 'n' || response[0] == 'N')
+            return false;
 
-    return (response[0] == 'y' || response[0] == 'Y');
-} // booleanQuery()
+        puts("Invalid response. Please enter 'y' or 'n'.");
+    }
+}
 
-int fileExists(const char *filename) {
-    struct stat buffer;
-    return (stat(filename, &buffer) == 0);
-} // fileExists()
+bool fileExists(const char *path) {
+    return access(path, F_OK) == 0;
+}
 
-int copyFile(const char *src, const char *dest) {
-    char buffer[BUFSIZ];
-    size_t bytesRead, bytesWritten; 
+int copyFile(const char *source_path, const char *destination_path) {
+    unsigned char buffer[BUFSIZ];
+    struct stat source_status;
+    FILE *source = NULL;
+    FILE *destination = NULL;
+    int result = EXIT_FAILURE;
 
-    FILE *source = fopen(src, "rb");
+    if (stat(source_path, &source_status) == -1) {
+        REPORT_ERROR("stat: %s: %s", source_path, strerror(errno));
+        return result;
+    }
+
+    source = fopen(source_path, "rb");
     if (source == NULL) {
-        REPORT_ERROR("fopen: %s, file %s", strerror(errno), src); 
-        return EXIT_FAILURE;
+        REPORT_ERROR("fopen: %s: %s", source_path, strerror(errno));
+        return result;
     }
 
-    FILE *destination = fopen(dest, "wb");
+    destination = fopen(destination_path, "wb");
     if (destination == NULL) {
-        fclose(source);
-        REPORT_ERROR("fopen: %s, file: %s", strerror(errno), dest); 
-        return EXIT_FAILURE;
+        REPORT_ERROR("fopen: %s: %s", destination_path, strerror(errno));
+        goto cleanup;
     }
 
-    while ((bytesRead = fread(buffer, 1, sizeof(buffer), source)) > 0) {
-        bytesWritten = fwrite(buffer, 1, bytesRead, destination);
-        if (bytesWritten < bytesRead) {
-            fclose(source);
-            fclose(destination);
-            REPORT_ERROR("fwrite: %s, file: %s", strerror(errno), dest);
-            return EXIT_FAILURE;
+    for (;;) {
+        size_t bytes_read = fread(buffer, 1, sizeof(buffer), source);
+        if (bytes_read > 0 &&
+            fwrite(buffer, 1, bytes_read, destination) != bytes_read) {
+            REPORT_ERROR("fwrite: %s: %s", destination_path, strerror(errno));
+            goto cleanup;
+        }
+
+        if (bytes_read < sizeof(buffer)) {
+            if (ferror(source)) {
+                REPORT_ERROR("fread: %s: %s", source_path, strerror(errno));
+                goto cleanup;
+            }
+            break;
         }
     }
 
-    if (ferror(source)) {
-        fclose(source);
-        fclose(destination);
-        REPORT_ERROR("read error: %s", src);
-        return EXIT_FAILURE;
-    } else if (!feof(source)) {
-        fclose(source);
-        fclose(destination);
-        REPORT_ERROR("unexpected end of file: %s", src);
-        return EXIT_FAILURE;
+    if (fflush(destination) == EOF ||
+        chmod(destination_path, source_status.st_mode & 07777) == -1) {
+        REPORT_ERROR("finalizing %s: %s", destination_path, strerror(errno));
+        goto cleanup;
     }
 
-    fclose(source);
-    fclose(destination);
+    result = EXIT_SUCCESS;
 
-    return EXIT_SUCCESS;
-} // copyFile()
+cleanup:
+    if (destination != NULL && fclose(destination) == EOF)
+        result = EXIT_FAILURE;
+    if (fclose(source) == EOF)
+        result = EXIT_FAILURE;
+    return result;
+}
 
-int copyFile2(const char *src, const char *dest) {
-    char buffer[BUFSIZ];
-    ssize_t bytes_read, bytes_written, total_written;
-
-    int source_fd = open(src, O_RDONLY);
-    if (source_fd == -1) {
-        REPORT_ERROR("open: %s, file %s", strerror(errno), src);
+int listFiles(const char *directory_path, const char *pattern) {
+    DIR *directory = opendir(directory_path);
+    if (directory == NULL) {
+        REPORT_ERROR("opendir: %s: %s", directory_path, strerror(errno));
         return EXIT_FAILURE;
-    }
-
-    int dest_fd = open(dest, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-    if (dest_fd == -1) {
-        close(source_fd);
-        REPORT_ERROR("open: %s, file %s", strerror(errno), dest);
-        return EXIT_FAILURE;
-    }
-
-    while ((bytes_read = read(source_fd, buffer, sizeof(buffer))) > 0) {
-        total_written = 0;
-        do {
-            bytes_written = write(dest_fd, buffer + total_written, bytes_read - total_written);
-            if (bytes_written >= 0) {
-                total_written += bytes_written;
-            } else {
-                close(source_fd);
-                close(dest_fd);
-                REPORT_ERROR("write: %s, file: %s", strerror(errno), dest);
-                return EXIT_FAILURE;
-            }
-        } while (bytes_read > total_written);
-    }
-
-    if (bytes_read == -1) {
-        close(source_fd);
-        close(dest_fd);
-        REPORT_ERROR("read error: %s", src);
-        return EXIT_FAILURE;
-    }
-
-    close(source_fd);
-    close(dest_fd);
-
-    return EXIT_SUCCESS;
-} // copyFile2()
-
-int lsFiles(const char *dirname, const char *files) { 
-    DIR *dir = opendir(dirname);
-
-    if (dir == NULL) {
-        REPORT_ERROR("opendir: %s, file: %s", strerror(errno), dirname); 
-        return EXIT_FAILURE; 
     }
 
     struct dirent *entry;
-    struct stat file_stat;
-    char full_path[PATH_MAX];
+    int result = EXIT_SUCCESS;
 
-    while ((entry = readdir(dir)) != NULL) {
-        if (fnmatch(files, entry->d_name, 0) == 0) {
-            
-            if (dirname[strlen(dirname) - 1] == '/') 
-                snprintf(full_path, sizeof(full_path), "%s%s", dirname, entry->d_name);
-            else 
-                snprintf(full_path, sizeof(full_path), "%s/%s", dirname, entry->d_name);
+    while ((entry = readdir(directory)) != NULL) {
+        if (fnmatch(pattern, entry->d_name, 0) != 0)
+            continue;
 
-            if (lstat(full_path, &file_stat) == 0) {
-                printf("%s ", full_path);
-                printf("Owner: %s ", getpwuid(file_stat.st_uid)->pw_name);
-                printf("Group: %s ", getgrgid(file_stat.st_gid)->gr_name);
-                printf("Size: %lld ", (long long)file_stat.st_size);
-                printf("Last modified: %s", ctime(&file_stat.st_mtime));
-            } else {
-                closedir(dir); 
-                REPORT_ERROR("lstat: %s, file: %s", strerror(errno), full_path);
-                return EXIT_FAILURE;
-            }
+        char full_path[4096];
+        int length = snprintf(full_path, sizeof(full_path), "%s%s%s",
+                              directory_path,
+                              directory_path[strlen(directory_path) - 1] == '/' ? "" : "/",
+                              entry->d_name);
+        if (length < 0 || (size_t)length >= sizeof(full_path)) {
+            REPORT_ERROR("path is too long: %s/%s", directory_path, entry->d_name);
+            result = EXIT_FAILURE;
+            break;
         }
+
+        struct stat status;
+        if (stat(full_path, &status) == -1) {
+            REPORT_ERROR("stat: %s: %s", full_path, strerror(errno));
+            result = EXIT_FAILURE;
+            break;
+        }
+
+        printf("%s (%lld bytes)\n", full_path, (long long)status.st_size);
     }
 
-    return (closedir(dir)); 
-} // lsFiles()
+    if (closedir(directory) == -1) {
+        REPORT_ERROR("closedir: %s: %s", directory_path, strerror(errno));
+        result = EXIT_FAILURE;
+    }
+    return result;
+}
 
-int fileInfo(const char *filepath) {
-    struct stat fileStat;
-    if (lstat(filepath, &fileStat) < 0) {
-        REPORT_ERROR("lstat: %s, file: %s", strerror(errno), filepath);
+/**
+ * Return a readable name for a mode's filesystem-object type.
+ *
+ * @param mode st_mode value returned by lstat(2).
+ * @return Static string describing the object type.
+ */
+static const char *fileType(mode_t mode) {
+    if (S_ISREG(mode))
+        return "regular file";
+    if (S_ISDIR(mode))
+        return "directory";
+    if (S_ISLNK(mode))
+        return "symbolic link";
+    if (S_ISCHR(mode))
+        return "character device";
+    if (S_ISBLK(mode))
+        return "block device";
+    if (S_ISFIFO(mode))
+        return "FIFO";
+    if (S_ISSOCK(mode))
+        return "socket";
+    return "unknown";
+}
+
+/**
+ * Format a mode as the familiar ten-character ls-style permission string.
+ *
+ * @param mode st_mode value returned by lstat(2).
+ * @param permissions Output buffer with room for eleven bytes.
+ */
+static void formatPermissions(mode_t mode, char permissions[11]) {
+    permissions[0] = S_ISDIR(mode)   ? 'd'
+                     : S_ISLNK(mode) ? 'l'
+                     : S_ISCHR(mode) ? 'c'
+                     : S_ISBLK(mode) ? 'b'
+                     : S_ISFIFO(mode) ? 'p'
+                     : S_ISSOCK(mode) ? 's'
+                                      : '-';
+    permissions[1] = mode & S_IRUSR ? 'r' : '-';
+    permissions[2] = mode & S_IWUSR ? 'w' : '-';
+    permissions[3] = mode & S_ISUID ? (mode & S_IXUSR ? 's' : 'S')
+                                      : (mode & S_IXUSR ? 'x' : '-');
+    permissions[4] = mode & S_IRGRP ? 'r' : '-';
+    permissions[5] = mode & S_IWGRP ? 'w' : '-';
+    permissions[6] = mode & S_ISGID ? (mode & S_IXGRP ? 's' : 'S')
+                                      : (mode & S_IXGRP ? 'x' : '-');
+    permissions[7] = mode & S_IROTH ? 'r' : '-';
+    permissions[8] = mode & S_IWOTH ? 'w' : '-';
+    permissions[9] = mode & S_ISVTX ? (mode & S_IXOTH ? 't' : 'T')
+                                      : (mode & S_IXOTH ? 'x' : '-');
+    permissions[10] = '\0';
+}
+
+int fileInfo(const char *path) {
+    struct stat status;
+    if (lstat(path, &status) == -1) {
+        REPORT_ERROR("lstat: %s: %s", path, strerror(errno));
         return EXIT_FAILURE;
     }
 
-    printf("Information for %s\n", filepath);
-    printf("---------------------------\n");
-    printf("File Size: \t\t%lld bytes\n", (long long)fileStat.st_size);
-    printf("Number of Links: \t%lu\n", (unsigned long)fileStat.st_nlink);
-    printf("File inode: \t\t%lu\n", (unsigned long)fileStat.st_ino);
+    char permissions[11];
+    char modified[32] = "unavailable";
+    formatPermissions(status.st_mode, permissions);
 
-    printf("File Permissions: \t");
-    printf((S_ISDIR(fileStat.st_mode)) ? "d" : (S_ISLNK(fileStat.st_mode)) ? "l" : (S_ISFIFO(fileStat.st_mode)) ? "p" :
-           (S_ISSOCK(fileStat.st_mode)) ? "s" : (S_ISCHR(fileStat.st_mode)) ? "c" : (S_ISBLK(fileStat.st_mode)) ? "b" : "-");
-    printf((fileStat.st_mode & S_IRUSR) ? "r" : "-");
-    printf((fileStat.st_mode & S_IWUSR) ? "w" : "-");
-    printf((fileStat.st_mode & S_IXUSR) ? ((fileStat.st_mode & S_ISUID) ? "s" : "x") : 
-           ((fileStat.st_mode & S_ISUID) ? "S" : "-"));
-    printf((fileStat.st_mode & S_IRGRP) ? "r" : "-");
-    printf((fileStat.st_mode & S_IWGRP) ? "w" : "-");
-    printf((fileStat.st_mode & S_IXGRP) ? ((fileStat.st_mode & S_ISGID) ? "s" : "x") :
-           ((fileStat.st_mode & S_ISGID) ? "S" : "-"));
-    printf((fileStat.st_mode & S_IROTH) ? "r" : "-");
-    printf((fileStat.st_mode & S_IWOTH) ? "w" : "-");
-    printf((fileStat.st_mode & S_IXOTH) ? ((fileStat.st_mode & S_ISVTX) ? "t" : "x") :
-           ((fileStat.st_mode & S_ISVTX) ? "T" : "-"));
-    printf("\n");
+    struct tm local_time;
+    if (localtime_r(&status.st_mtime, &local_time) != NULL)
+        strftime(modified, sizeof(modified), "%Y-%m-%d %H:%M:%S %Z", &local_time);
 
-    printf("Last access time: \t%s", ctime(&fileStat.st_atime));
-    printf("Last modification time: %s", ctime(&fileStat.st_mtime));
-    printf("Last status change time: %s", ctime(&fileStat.st_ctime));
+    const struct passwd *owner = getpwuid(status.st_uid);
+    const struct group *group = getgrgid(status.st_gid);
 
-    struct passwd *pw = getpwuid(fileStat.st_uid);
-    struct group *gr = getgrgid(fileStat.st_gid);
-    printf("File Owner: \t\t%s (%d)\n", pw->pw_name, fileStat.st_uid);
-    printf("File Group: \t\t%s (%d)\n", gr->gr_name, fileStat.st_gid);
-    printf("Block Size: \t\t%ld bytes\n", (long)fileStat.st_blksize);
+    printf("File: %s\n", path);
+    printf("  Type:        %s\n", fileType(status.st_mode));
+    printf("  Permissions: %s (%04o)\n", permissions,
+           status.st_mode & 07777);
+    printf("  Owner:       %s (%u)\n", owner == NULL ? "unknown" : owner->pw_name,
+           (unsigned int)status.st_uid);
+    printf("  Group:       %s (%u)\n", group == NULL ? "unknown" : group->gr_name,
+           (unsigned int)status.st_gid);
+    printf("  Size:        %lld bytes\n", (long long)status.st_size);
+    printf("  Inode:       %llu\n", (unsigned long long)status.st_ino);
+    printf("  Links:       %u\n", (unsigned int)status.st_nlink);
+    printf("  Modified:    %s\n", modified);
 
-    printf("File Type: \t\t");
-    if (S_ISREG(fileStat.st_mode))
-        printf("Regular file\n");
-    else if (S_ISDIR(fileStat.st_mode))
-        printf("Directory\n");
-    else if (S_ISCHR(fileStat.st_mode))
-        printf("Character device\n");
-    else if (S_ISBLK(fileStat.st_mode))
-        printf("Block device\n");
-    else if (S_ISFIFO(fileStat.st_mode))
-        printf("FIFO\n");
-    else if (S_ISLNK(fileStat.st_mode))
-        printf("Symbolic link\n");
-    else if (S_ISSOCK(fileStat.st_mode))
-        printf("Socket\n");
-    else
-        printf("Unknown\n");
+    return EXIT_SUCCESS;
+}
 
-    return EXIT_SUCCESS; 
-} // fileInfo()
+int ensureDirectory(const char *path) {
+    struct stat status;
 
-int checkProcess(const char *process_name, bool display_pids) {
-    char command[128];
-    snprintf(command, sizeof(command), "pgrep %s", process_name);
-
-    FILE *pipe = popen(command, "r");
-    if (pipe == NULL) {
-        REPORT_ERROR("popen: %s, process name: %s", strerror(errno), process_name);
-        return EXIT_FAILURE;
-    }
-
-    char buffer[256];
-    if (fgets(buffer, sizeof(buffer), pipe) == NULL) {
-        if (!display_pids) {
-            pclose(pipe);
-            return EXIT_FAILURE;
-        }
-        fprintf(stderr, "Warning: the %s process is not running.\n", process_name);
-    } else {
-        if (!display_pids) {
-            pclose(pipe);
+    if (stat(path, &status) == 0) {
+        if (S_ISDIR(status.st_mode))
             return EXIT_SUCCESS;
-        }
-        pid_t pid = atoi(strtok(buffer, "\n")); // Extract first PID
-        printf("The %s process is running with PID(s): %d", process_name, pid);
-
-        // Check for additional PIDs
-        while (fgets(buffer, sizeof(buffer), pipe) != NULL) {
-            pid = atoi(strtok(buffer, "\n"));
-            printf(" %d", pid);
-        }
-        printf("\n");
-    }
-
-    return (pclose(pipe)); 
-} // checkProcess()
-
-int displayProcess(const char *process_name) {
-    char command[128];
-    snprintf(command, sizeof(command), "ps aux | grep %s | grep -v grep", process_name);
-
-    FILE *pipe = popen(command, "r");
-    if (pipe == NULL) {
-        REPORT_ERROR("popen: %s, process name: %s", strerror(errno), process_name);
+        REPORT_ERROR("not a directory: %s", path);
         return EXIT_FAILURE;
     }
 
-    char buffer[256];
-    while (fgets(buffer, sizeof(buffer), pipe) != NULL)
-        printf("%s", buffer);
-
-    return (pclose(pipe));
-} // displayProcess()
-
-int validateDNSname(const char *dns_name) {
-    regex_t regex;
-    int result;
-    const char *dns_regex = "^([a-zA-Z0-9]([-a-zA-Z0-9]{0,61}[a-zA-Z0-9])?\\.)+[a-zA-Z]{2,}$";
-
-    // Compile the regular expression
-    result = regcomp(&regex, dns_regex, REG_EXTENDED | REG_NOSUB);
-    if (result) {
-        REPORT_ERROR("regex: %s, DNS name: %s", strerror(errno), dns_name); 
+    if (errno != ENOENT) {
+        REPORT_ERROR("stat: %s: %s", path, strerror(errno));
         return EXIT_FAILURE;
     }
 
-    // Execute the regular expression
-    result = regexec(&regex, dns_name, 0, NULL, 0);
-    regfree(&regex); // Free memory allocated to the pattern buffer by regcomp
+    if (mkdir(path, 0755) == -1) {
+        REPORT_ERROR("mkdir: %s: %s", path, strerror(errno));
+        return EXIT_FAILURE;
+    }
+    return EXIT_SUCCESS;
+}
 
-    return result; 
-} // validateDNSname
+int runCommand(char *const arguments[]) {
+    pid_t child = fork();
+    if (child == -1) {
+        REPORT_ERROR("fork: %s", strerror(errno));
+        return EXIT_FAILURE;
+    }
+
+    if (child == 0) {
+        execvp(arguments[0], arguments);
+        fprintf(stderr, "Error: execvp %s: %s\n", arguments[0], strerror(errno));
+        _exit(127);
+    }
+
+    int status;
+    while (waitpid(child, &status, 0) == -1) {
+        if (errno == EINTR)
+            continue;
+        REPORT_ERROR("waitpid: %s", strerror(errno));
+        return EXIT_FAILURE;
+    }
+
+    if (WIFEXITED(status))
+        return WEXITSTATUS(status);
+    if (WIFSIGNALED(status))
+        REPORT_ERROR("%s terminated by signal %d", arguments[0], WTERMSIG(status));
+    return EXIT_FAILURE;
+}
+
+bool isValidDnsName(const char *dns_name) {
+    static const char pattern[] =
+        "^([a-zA-Z0-9]([-a-zA-Z0-9]{0,61}[a-zA-Z0-9])?\\.)+[a-zA-Z]{2,}$";
+    regex_t expression;
+
+    if (dns_name == NULL ||
+        regcomp(&expression, pattern, REG_EXTENDED | REG_NOSUB) != 0)
+        return false;
+
+    int result = regexec(&expression, dns_name, 0, NULL, 0);
+    regfree(&expression);
+    return result == 0;
+}
+
+bool fileContainsLine(const char *path, const char *expected_line) {
+    FILE *file = fopen(path, "r");
+    if (file == NULL)
+        return false;
+
+    char *line = NULL;
+    size_t capacity = 0;
+    bool found = false;
+
+    while (getline(&line, &capacity, file) != -1) {
+        line[strcspn(line, "\r\n")] = '\0';
+        if (strcmp(line, expected_line) == 0) {
+            found = true;
+            break;
+        }
+    }
+
+    free(line);
+    fclose(file);
+    return found;
+}
+
+int appendLine(const char *path, const char *line) {
+    FILE *file = fopen(path, "a");
+    if (file == NULL) {
+        REPORT_ERROR("fopen: %s: %s", path, strerror(errno));
+        return EXIT_FAILURE;
+    }
+
+    int result = fprintf(file, "%s\n", line) < 0 ? EXIT_FAILURE : EXIT_SUCCESS;
+    if (fclose(file) == EOF)
+        result = EXIT_FAILURE;
+
+    if (result != EXIT_SUCCESS)
+        REPORT_ERROR("writing: %s: %s", path, strerror(errno));
+    return result;
+}

@@ -1,78 +1,223 @@
 \begin{theindex}
 
+  \item {Action}
+    \subitem {actions.h}, \hyperpage{9}
+  \item {action}
+    \subitem {Command}, \hyperpage{5}
+  \item {ACTION\_ADD}
+    \subitem {actions.h}, \hyperpage{10}
+  \item {ACTION\_FLUSH}
+    \subitem {actions.h}, \hyperpage{10}
+  \item {ACTION\_INVALID}
+    \subitem {actions.h}, \hyperpage{10}
+  \item {ACTION\_PREP}
+    \subitem {actions.h}, \hyperpage{10}
+  \item {ACTION\_RESTORE}
+    \subitem {actions.h}, \hyperpage{10}
+  \item {actions.h}
+    \subitem {Action}, \hyperpage{9}
+    \subitem {ACTION\_ADD}, \hyperpage{10}
+    \subitem {ACTION\_FLUSH}, \hyperpage{10}
+    \subitem {ACTION\_INVALID}, \hyperpage{10}
+    \subitem {ACTION\_PREP}, \hyperpage{10}
+    \subitem {ACTION\_RESTORE}, \hyperpage{10}
   \item {addDnsName}
-    \subitem {fix-\/hosts.h}, \hyperpage{4}
+    \subitem {fix-\/hosts.c}, \hyperpage{11}
+    \subitem {fix-\/hosts.h}, \hyperpage{16}
+  \item {allow\_file}
+    \subitem {Paths}, \hyperpage{6}
+  \item {appendLine}
+    \subitem {system-\/actions.c}, \hyperpage{21}
+    \subitem {system-\/actions.h}, \hyperpage{27}
 
   \indexspace
 
-  \item {booleanQuery}
-    \subitem {system-\/actions.h}, \hyperpage{8}
-
-  \indexspace
-
-  \item {checkProcess}
-    \subitem {system-\/actions.h}, \hyperpage{8}
+  \item {Command}, \hyperpage{5}
+    \subitem {action}, \hyperpage{5}
+    \subitem {dns\_name}, \hyperpage{5}
+    \subitem {verbose}, \hyperpage{5}
+  \item {confirm}
+    \subitem {system-\/actions.c}, \hyperpage{22}
+    \subitem {system-\/actions.h}, \hyperpage{27}
   \item {copyFile}
-    \subitem {system-\/actions.h}, \hyperpage{8}
-  \item {copyFile2}
-    \subitem {system-\/actions.h}, \hyperpage{9}
+    \subitem {system-\/actions.c}, \hyperpage{22}
+    \subitem {system-\/actions.h}, \hyperpage{27}
 
   \indexspace
 
-  \item {displayProcess}
-    \subitem {system-\/actions.h}, \hyperpage{9}
-  \item {dnsFlush}
-    \subitem {fix-\/hosts.h}, \hyperpage{5}
+  \item {dns\_name}
+    \subitem {Command}, \hyperpage{5}
 
   \indexspace
 
+  \item {ensureDirectory}
+    \subitem {system-\/actions.c}, \hyperpage{22}
+    \subitem {system-\/actions.h}, \hyperpage{28}
+  \item {etc\_dir}
+    \subitem {Paths}, \hyperpage{6}
+
+  \indexspace
+
+  \item {fileContainsLine}
+    \subitem {system-\/actions.c}, \hyperpage{23}
+    \subitem {system-\/actions.h}, \hyperpage{28}
   \item {fileExists}
-    \subitem {system-\/actions.h}, \hyperpage{9}
+    \subitem {system-\/actions.c}, \hyperpage{23}
+    \subitem {system-\/actions.h}, \hyperpage{28}
   \item {fileInfo}
-    \subitem {system-\/actions.h}, \hyperpage{10}
+    \subitem {system-\/actions.c}, \hyperpage{23}
+    \subitem {system-\/actions.h}, \hyperpage{29}
+  \item {fileType}
+    \subitem {system-\/actions.c}, \hyperpage{24}
+  \item {fix-\/hosts.c}
+    \subitem {addDnsName}, \hyperpage{11}
+    \subitem {flushDnsCache}, \hyperpage{11}
+    \subitem {joinPath}, \hyperpage{11}
+    \subitem {lineContainsHost}, \hyperpage{12}
+    \subitem {loadPaths}, \hyperpage{12}
+    \subitem {removeHostEntry}, \hyperpage{13}
+    \subitem {showFileInfo}, \hyperpage{13}
+    \subitem {updateHostsFiles}, \hyperpage{14}
+    \subitem {usage}, \hyperpage{14}
   \item {fix-\/hosts.h}
-    \subitem {addDnsName}, \hyperpage{4}
-    \subitem {dnsFlush}, \hyperpage{5}
-    \subitem {updateHostsFiles}, \hyperpage{5}
-    \subitem {usage}, \hyperpage{5}
+    \subitem {addDnsName}, \hyperpage{16}
+    \subitem {flushDnsCache}, \hyperpage{16}
+    \subitem {loadPaths}, \hyperpage{16}
+    \subitem {PATH\_MAX}, \hyperpage{15}
+    \subitem {removeHostEntry}, \hyperpage{17}
+    \subitem {updateHostsFiles}, \hyperpage{17}
+    \subitem {usage}, \hyperpage{18}
+  \item {flushDnsCache}
+    \subitem {fix-\/hosts.c}, \hyperpage{11}
+    \subitem {fix-\/hosts.h}, \hyperpage{16}
+  \item {formatPermissions}
+    \subitem {system-\/actions.c}, \hyperpage{24}
 
   \indexspace
 
-  \item {handleError}
-    \subitem {system-\/actions.h}, \hyperpage{10}
+  \item {hblock\_dir}
+    \subitem {Paths}, \hyperpage{6}
+  \item {hosts\_file}
+    \subitem {Paths}, \hyperpage{6}
 
   \indexspace
 
-  \item {lsFiles}
-    \subitem {system-\/actions.h}, \hyperpage{10}
+  \item {isValidDnsName}
+    \subitem {system-\/actions.c}, \hyperpage{24}
+    \subitem {system-\/actions.h}, \hyperpage{29}
 
   \indexspace
 
-  \item {src/actions.h}, \hyperpage{3}
-  \item {src/fix-\/hosts.h}, \hyperpage{3}, \hyperpage{6}
-  \item {src/system-\/actions.h}, \hyperpage{6}, \hyperpage{11}
+  \item {joinPath}
+    \subitem {fix-\/hosts.c}, \hyperpage{11}
+
+  \indexspace
+
+  \item {lineContainsHost}
+    \subitem {fix-\/hosts.c}, \hyperpage{12}
+  \item {listFiles}
+    \subitem {system-\/actions.c}, \hyperpage{25}
+    \subitem {system-\/actions.h}, \hyperpage{29}
+  \item {loadPaths}
+    \subitem {fix-\/hosts.c}, \hyperpage{12}
+    \subitem {fix-\/hosts.h}, \hyperpage{16}
+
+  \indexspace
+
+  \item {main}
+    \subitem {main.c}, \hyperpage{19}
+  \item {main.c}
+    \subitem {main}, \hyperpage{19}
+    \subitem {parseArguments}, \hyperpage{19}
+    \subitem {programName}, \hyperpage{20}
+    \subitem {selectAction}, \hyperpage{20}
+
+  \indexspace
+
+  \item {original\_hosts\_file}
+    \subitem {Paths}, \hyperpage{7}
+
+  \indexspace
+
+  \item {parseArguments}
+    \subitem {main.c}, \hyperpage{19}
+  \item {PATH\_MAX}
+    \subitem {fix-\/hosts.h}, \hyperpage{15}
+  \item {Paths}, \hyperpage{6}
+    \subitem {allow\_file}, \hyperpage{6}
+    \subitem {etc\_dir}, \hyperpage{6}
+    \subitem {hblock\_dir}, \hyperpage{6}
+    \subitem {hosts\_file}, \hyperpage{6}
+    \subitem {original\_hosts\_file}, \hyperpage{7}
+  \item {programName}
+    \subitem {main.c}, \hyperpage{20}
+
+  \indexspace
+
+  \item {removeHostEntry}
+    \subitem {fix-\/hosts.c}, \hyperpage{13}
+    \subitem {fix-\/hosts.h}, \hyperpage{17}
+  \item {REPORT\_ERROR}
+    \subitem {system-\/actions.h}, \hyperpage{27}
+  \item {reportError}
+    \subitem {system-\/actions.c}, \hyperpage{25}
+    \subitem {system-\/actions.h}, \hyperpage{30}
+  \item {runCommand}
+    \subitem {system-\/actions.c}, \hyperpage{26}
+    \subitem {system-\/actions.h}, \hyperpage{30}
+
+  \indexspace
+
+  \item {selectAction}
+    \subitem {main.c}, \hyperpage{20}
+  \item {showFileInfo}
+    \subitem {fix-\/hosts.c}, \hyperpage{13}
+  \item {src/actions.h}, \hyperpage{9, 10}
+  \item {src/fix-\/hosts.c}, \hyperpage{10}
+  \item {src/fix-\/hosts.h}, \hyperpage{15}, \hyperpage{18}
+  \item {src/main.c}, \hyperpage{19}
+  \item {src/system-\/actions.c}, \hyperpage{21}
+  \item {src/system-\/actions.h}, \hyperpage{26}, \hyperpage{31}
+  \item {system-\/actions.c}
+    \subitem {appendLine}, \hyperpage{21}
+    \subitem {confirm}, \hyperpage{22}
+    \subitem {copyFile}, \hyperpage{22}
+    \subitem {ensureDirectory}, \hyperpage{22}
+    \subitem {fileContainsLine}, \hyperpage{23}
+    \subitem {fileExists}, \hyperpage{23}
+    \subitem {fileInfo}, \hyperpage{23}
+    \subitem {fileType}, \hyperpage{24}
+    \subitem {formatPermissions}, \hyperpage{24}
+    \subitem {isValidDnsName}, \hyperpage{24}
+    \subitem {listFiles}, \hyperpage{25}
+    \subitem {reportError}, \hyperpage{25}
+    \subitem {runCommand}, \hyperpage{26}
   \item {system-\/actions.h}
-    \subitem {booleanQuery}, \hyperpage{8}
-    \subitem {checkProcess}, \hyperpage{8}
-    \subitem {copyFile}, \hyperpage{8}
-    \subitem {copyFile2}, \hyperpage{9}
-    \subitem {displayProcess}, \hyperpage{9}
-    \subitem {fileExists}, \hyperpage{9}
-    \subitem {fileInfo}, \hyperpage{10}
-    \subitem {handleError}, \hyperpage{10}
-    \subitem {lsFiles}, \hyperpage{10}
-    \subitem {validateDNSname}, \hyperpage{11}
+    \subitem {appendLine}, \hyperpage{27}
+    \subitem {confirm}, \hyperpage{27}
+    \subitem {copyFile}, \hyperpage{27}
+    \subitem {ensureDirectory}, \hyperpage{28}
+    \subitem {fileContainsLine}, \hyperpage{28}
+    \subitem {fileExists}, \hyperpage{28}
+    \subitem {fileInfo}, \hyperpage{29}
+    \subitem {isValidDnsName}, \hyperpage{29}
+    \subitem {listFiles}, \hyperpage{29}
+    \subitem {REPORT\_ERROR}, \hyperpage{27}
+    \subitem {reportError}, \hyperpage{30}
+    \subitem {runCommand}, \hyperpage{30}
 
   \indexspace
 
   \item {updateHostsFiles}
-    \subitem {fix-\/hosts.h}, \hyperpage{5}
+    \subitem {fix-\/hosts.c}, \hyperpage{14}
+    \subitem {fix-\/hosts.h}, \hyperpage{17}
   \item {usage}
-    \subitem {fix-\/hosts.h}, \hyperpage{5}
+    \subitem {fix-\/hosts.c}, \hyperpage{14}
+    \subitem {fix-\/hosts.h}, \hyperpage{18}
 
   \indexspace
 
-  \item {validateDNSname}
-    \subitem {system-\/actions.h}, \hyperpage{11}
+  \item {verbose}
+    \subitem {Command}, \hyperpage{5}
 
 \end{theindex}

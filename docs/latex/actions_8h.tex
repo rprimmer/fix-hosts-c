@@ -1,0 +1,73 @@
+\doxysection{src/\+actions.h File Reference}
+\hypertarget{actions_8h}{}\label{actions_8h}\index{src/actions.h@{src/actions.h}}
+
+
+\doxylink{struct_command}{Command} actions and parsed command-\/line state.  
+
+
+{\ttfamily \+\#include $<$stdbool.\+h$>$}\newline
+\doxysubsubsection*{Data Structures}
+\begin{DoxyCompactItemize}
+\item 
+struct \doxymbox{\hyperlink{struct_command}{Command}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+enum \doxymbox{\hyperlink{actions_8h_a8bb1ef53467e4f61410d12822d922498}{Action}} \{ \newline
+\doxymbox{\hyperlink{actions_8h_a8bb1ef53467e4f61410d12822d922498a543cb617798d00382e803d97badb4492}{ACTION\+\_\+\+INVALID}} = 0
+, \doxymbox{\hyperlink{actions_8h_a8bb1ef53467e4f61410d12822d922498a9e09e950d2ac5ad712dc17b5e46279f2}{ACTION\+\_\+\+PREP}}
+, \doxymbox{\hyperlink{actions_8h_a8bb1ef53467e4f61410d12822d922498a20e6c6a35831f0ea50e32d4c7c73ee8a}{ACTION\+\_\+\+RESTORE}}
+, \doxymbox{\hyperlink{actions_8h_a8bb1ef53467e4f61410d12822d922498a6264b3d00427b0e5364acc659905116e}{ACTION\+\_\+\+ADD}}
+, \newline
+\doxymbox{\hyperlink{actions_8h_a8bb1ef53467e4f61410d12822d922498abbf3ef46a1453afa8839be6591cbfeb7}{ACTION\+\_\+\+FLUSH}}
+ \}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\doxylink{struct_command}{Command} actions and parsed command-\/line state. 
+
+
+
+\label{actions_8h_doc-enum-members}
+\Hypertarget{actions_8h_doc-enum-members}
+\doxysubsection{Enumeration Type Documentation}
+\Hypertarget{actions_8h_a8bb1ef53467e4f61410d12822d922498}\index{actions.h@{actions.h}!Action@{Action}}
+\index{Action@{Action}!actions.h@{actions.h}}
+\doxysubsubsection{\texorpdfstring{Action}{Action}}
+{\footnotesize\ttfamily \label{actions_8h_a8bb1ef53467e4f61410d12822d922498} 
+enum \doxymbox{\hyperlink{actions_8h_a8bb1ef53467e4f61410d12822d922498}{Action}}}
+
+Actions supported by the command-\/line interface. \begin{DoxyEnumFields}[2]{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{ACTION\_INVALID@{ACTION\_INVALID}!actions.h@{actions.h}}
+\index{actions.h@{actions.h}!ACTION\_INVALID@{ACTION\_INVALID}}
+}\Hypertarget{actions_8h_a8bb1ef53467e4f61410d12822d922498a543cb617798d00382e803d97badb4492}\label{actions_8h_a8bb1ef53467e4f61410d12822d922498a543cb617798d00382e803d97badb4492} 
+ACTION\+\_\+\+INVALID&No action was selected, or parsing failed. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{ACTION\_PREP@{ACTION\_PREP}!actions.h@{actions.h}}
+\index{actions.h@{actions.h}!ACTION\_PREP@{ACTION\_PREP}}
+}\Hypertarget{actions_8h_a8bb1ef53467e4f61410d12822d922498a9e09e950d2ac5ad712dc17b5e46279f2}\label{actions_8h_a8bb1ef53467e4f61410d12822d922498a9e09e950d2ac5ad712dc17b5e46279f2} 
+ACTION\+\_\+\+PREP&Back up the active hosts file and run hblock. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{ACTION\_RESTORE@{ACTION\_RESTORE}!actions.h@{actions.h}}
+\index{actions.h@{actions.h}!ACTION\_RESTORE@{ACTION\_RESTORE}}
+}\Hypertarget{actions_8h_a8bb1ef53467e4f61410d12822d922498a20e6c6a35831f0ea50e32d4c7c73ee8a}\label{actions_8h_a8bb1ef53467e4f61410d12822d922498a20e6c6a35831f0ea50e32d4c7c73ee8a} 
+ACTION\+\_\+\+RESTORE&Restore the active hosts file from its original backup. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{ACTION\_ADD@{ACTION\_ADD}!actions.h@{actions.h}}
+\index{actions.h@{actions.h}!ACTION\_ADD@{ACTION\_ADD}}
+}\Hypertarget{actions_8h_a8bb1ef53467e4f61410d12822d922498a6264b3d00427b0e5364acc659905116e}\label{actions_8h_a8bb1ef53467e4f61410d12822d922498a6264b3d00427b0e5364acc659905116e} 
+ACTION\+\_\+\+ADD&Add a DNS name to the hblock allow list and unblock it. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{ACTION\_FLUSH@{ACTION\_FLUSH}!actions.h@{actions.h}}
+\index{actions.h@{actions.h}!ACTION\_FLUSH@{ACTION\_FLUSH}}
+}\Hypertarget{actions_8h_a8bb1ef53467e4f61410d12822d922498abbf3ef46a1453afa8839be6591cbfeb7}\label{actions_8h_a8bb1ef53467e4f61410d12822d922498abbf3ef46a1453afa8839be6591cbfeb7} 
+ACTION\+\_\+\+FLUSH&Flush the mac\+OS DNS cache and restart m\+DNSResponder. \\
+\hline
+
+\end{DoxyEnumFields}
