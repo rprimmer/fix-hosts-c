@@ -1,0 +1,48 @@
+\section{Purpose and Scope}
+
+This specification describes the C implementation of \code{fix-hostfiles} as
+an algebra of state transformations.  It is not a transcription of the source
+code.  Implementation details appear only where they refine, constrain, or
+qualify the abstract behavior.
+
+The program coordinates four operations around \code{hblock(1)} and the macOS
+hosts file:
+
+\begin{description}
+  \item[prep] Preserve the active hosts file and run \code{hblock}.
+  \item[restore] Replace the active hosts file with the preserved original.
+  \item[add] Add a DNS name to the allow list and remove its active mappings.
+  \item[flush] Flush the DNS cache and restart \code{mDNSResponder}.
+\end{description}
+
+The algebra has four purposes:
+
+\begin{enumerate}
+  \item define the state visible at the program boundary;
+  \item state precise laws for exact matching, idempotence, commutativity, and
+        reversibility;
+  \item distinguish the laws of primitive transformations from the weaker
+        guarantees of multi-file commands; and
+  \item provide properties that can be checked independently of individual
+        implementation examples.
+\end{enumerate}
+
+The specification deliberately separates several kinds of equality.  An
+operation can be idempotent with respect to the active hosts file and allow
+list while still changing backup history.  Similarly, an atomic rename can
+protect one pathname without making the complete command transactional.
+
+\subsection{Notation}
+
+Function application is written as $f(x)$.  Composition is written as
+$f \circ g$, so $(f \circ g)(x)=f(g(x))$.  A finite sequence is written using
+angle brackets, and $\concat$ denotes concatenation.  State field replacement
+uses the notation
+
+\[
+  S[H \coloneqq H', A \coloneqq A'].
+\]
+
+Every field not named in a replacement retains its old value.  Equations are
+interpreted over successful executions unless a failure result is shown
+explicitly.

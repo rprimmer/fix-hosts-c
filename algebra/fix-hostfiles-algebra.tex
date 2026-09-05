@@ -1,0 +1,35 @@
+\documentclass[11pt]{article}
+
+\input{preamble}
+\input{macros}
+
+\title{An Algebraic Specification of \texttt{fix-hostfiles}}
+\author{}
+\date{September 5, 2026}
+
+\begin{document}
+
+\maketitle
+\begin{abstract}
+This document specifies the externally significant behavior of the C
+implementation of \texttt{fix-hostfiles}.  It defines the program state,
+primitive transformations, command semantics, algebraic laws, failure
+boundaries, and the refinement map to the C modules.  Particular attention is
+given to exact DNS matching, observational idempotence, backup history, and
+atomic replacement of the active hosts file.
+\end{abstract}
+
+\tableofcontents
+
+\input{sections/01-purpose}
+\input{sections/02-sorts-and-state}
+\input{sections/03-equality-and-primitives}
+\input{sections/04-core-laws}
+\input{sections/05-commands-and-actions}
+\input{sections/06-action-laws}
+\input{sections/07-failure-and-atomicity}
+\input{sections/08-refinement}
+\input{sections/09-testing-and-design}
+\input{sections/10-summary}
+
+\end{document}

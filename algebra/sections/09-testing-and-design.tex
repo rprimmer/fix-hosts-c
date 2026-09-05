@@ -1,0 +1,90 @@
+\section{Testing Consequences and Design Questions}
+
+\subsection{Properties Suggested for Testing}
+
+The existing behavior tests exercise representative examples.  The algebra
+suggests a complementary property-based suite.
+
+For generated hosts files and valid names $d$ and $e$, check:
+
+\begin{align*}
+\Remove{d}(\Remove{d}(H)) &= \Remove{d}(H),\\
+\Remove{d}(\Remove{e}(H)) &= \Remove{e}(\Remove{d}(H)),\\
+\Add{d}(\Add{d}(S)) &\HAequiv \Add{d}(S).
+\end{align*}
+
+Generated hosts lines should include:
+
+\begin{itemize}
+  \item prefix and suffix lookalikes;
+  \item multiple hostnames on one line;
+  \item tabs and repeated spaces;
+  \item comments containing the target name;
+  \item a target immediately followed by a hash character;
+  \item blank lines; and
+  \item files without a final newline.
+\end{itemize}
+
+For allow-list insertion, check:
+
+\[
+  \Count(d,\Add{d}(S).A)=1.
+\]
+
+A separate test should document the current second-add backup behavior rather
+than accidentally treating full-state idempotence as guaranteed.
+
+\subsection{Round-Trip and Noninterference Properties}
+
+With a deterministic \code{hblock} stub,
+
+\[
+  \Restore(\Prep(S)).H=S.H.
+\]
+
+Repeated prep should also be tested explicitly because it changes the
+restoration point after confirmation.
+
+Run equivalent fixtures in quiet and verbose modes, then compare all modeled
+files and metadata:
+
+\[
+  \StateOf(\Exec(q(c),S))=\StateOf(\Exec(v(c),S)).
+\]
+
+\subsection{Failure Injection}
+
+Inject failures into append, copy, write, synchronize, permission, ownership,
+close, and rename steps.  Verify the exact boundary promised by each
+operation, especially
+
+\[
+  \mathsf{failureBeforeRename}
+  \quad\Longrightarrow\quad H=H_{old}.
+\]
+
+Failure tests should also record permitted partial progress in the allow list
+and backup files.
+
+\subsection{Design Questions Exposed by the Algebra}
+
+The specification raises several concrete choices:
+
+\begin{enumerate}
+  \item Should repeated $\Add{d}$ preserve the first \path{hosts.bak}, or
+        should the backup always represent the state immediately before the
+        latest invocation?
+  \item Should allow-list insertion preserve append order, or should the file
+        be treated as a mathematical set and normalized?
+  \item Should prep refuse to overwrite \path{hosts-ORIG} rather than permit an
+        interactive overwrite?
+  \item Should \code{copyFile()} use the same atomic replacement primitive as
+        hosts-file removal?
+  \item Should add become transactional across the allow list, backup, and
+        active hosts file, or is recoverable partial progress acceptable?
+  \item Should the containing directory be synchronized after rename for
+        stronger crash durability?
+\end{enumerate}
+
+None of these questions proves the implementation incorrect.  Each identifies
+a semantic decision that can be stated, tested, and documented precisely.

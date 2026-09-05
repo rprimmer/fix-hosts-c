@@ -1,0 +1,85 @@
+\section{Equality and Primitive Transformations}
+
+\subsection{Equality Relations}
+
+\begin{definition}[Full equality]
+$S=T$ requires equality of every modeled field, including backup history and
+allow-list ordering.
+\end{definition}
+
+\begin{definition}[Hosts-and-allow-list equivalence]
+\[
+  S \HAequiv T
+  \quad\Longleftrightarrow\quad
+  S.H=T.H \land S.A=T.A.
+\]
+This relation ignores backups, metadata, cache state, and traces.
+\end{definition}
+
+Let $\SetOf{A}$ discard ordering and duplicate lines from an allow list.
+
+\begin{definition}[Setwise equivalence]
+\[
+  S \Setequiv T
+  \quad\Longleftrightarrow\quad
+  S.H=T.H \land \SetOf{S.A}=\SetOf{T.A}.
+\]
+\end{definition}
+
+These relations prevent the word \emph{idempotent} from concealing which parts
+of an execution are actually being observed.
+
+\subsection{Tokens Before a Comment}
+
+$\Tokens(l)$ splits a line on whitespace and stops at the first hash character.
+For example,
+
+\begin{align*}
+\Tokens(&\text{``0.0.0.0 ads.example.com tracker.example.com''})\\
+  &=\langle\text{``0.0.0.0''},\text{``ads.example.com''},
+             \text{``tracker.example.com''}\rangle,\\[0.5em]
+\Tokens(&\text{``0.0.0.0 ads.example.com \# local''})\\
+  &=\langle\text{``0.0.0.0''},\text{``ads.example.com''}\rangle,\\[0.5em]
+\Tokens(&\text{``\# ads.example.com''})=\langle\rangle.
+\end{align*}
+
+Exact active membership is defined by
+
+\[
+  \Contains(d,l) \quad\Longleftrightarrow\quad d\in\Tokens(l).
+\]
+
+Thus \code{ads.example.com} is not contained in a line whose only relevant
+token is \code{notads.example.com}.
+
+\subsection{Hosts-File Removal}
+
+For $d\in\DNSName$, $\Remove{d}:\Hosts\rightarrow\Hosts$ removes every line
+containing $d$ as an exact active token:
+
+\begin{align*}
+\Remove{d}(\langle\rangle) &= \langle\rangle,\\
+\Remove{d}(l::hs) &=
+  \begin{cases}
+    \Remove{d}(hs), & \Contains(d,l),\\
+    l::\Remove{d}(hs), & \neg\Contains(d,l).
+  \end{cases}
+\end{align*}
+
+Retained lines preserve both relative order and byte contents.
+
+\subsection{Allow-List Insertion}
+
+For $d\in\DNSName$, $\Insert{d}:\AllowList\rightarrow\AllowList$ appends $d$
+only when an exactly equal line is absent:
+
+\[
+\Insert{d}(A)=
+  \begin{cases}
+    A, & d\in\Lines(A),\\
+    A\concat\langle d\rangle, & d\notin\Lines(A).
+  \end{cases}
+\]
+
+The complete-line interpretation corresponds to the implementation's use of
+\code{fileContainsLine()} rather than substring search.

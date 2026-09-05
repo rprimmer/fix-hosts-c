@@ -1,0 +1,51 @@
+\section{Summary}
+
+The central algebra is compact:
+
+\begin{align*}
+\Insert{d}(A)
+  &= \begin{cases}
+       A, & d\in\Lines(A),\\
+       A\concat\langle d\rangle, & d\notin\Lines(A),
+     \end{cases}\\[0.5em]
+\Remove{d}(H)
+  &= \mathsf{filter}(\text{lines not containing }d\text{ as an exact token},H),\\
+\Add{d}(S)
+  &= S[A\coloneqq\Insert{d}(S.A),
+       B\coloneqq\Some{S.H},
+       H\coloneqq\Remove{d}(S.H)],\\
+\Prep_E(S)
+  &= S[O\coloneqq\Some{S.H},H\coloneqq\HBlock(S.A,E)],\\
+\Restore(S)
+  &= S[H\coloneqq H_O]\quad\text{when }S.O=\Some{H_O},\\
+\Flush(S)
+  &= S[K\coloneqq\Fresh].
+\end{align*}
+
+Its principal laws are:
+
+\begin{align*}
+\Remove{d}\circ\Remove{d} &= \Remove{d},\\
+\Remove{d}\circ\Remove{e} &= \Remove{e}\circ\Remove{d},\\
+\Insert{d}\circ\Insert{d} &= \Insert{d},\\
+\Add{d}(\Add{d}(S)) &\HAequiv\Add{d}(S),\\
+\Restore(\Prep_E(S)).H &= S.H.
+\end{align*}
+
+Quiet and verbose forms produce the same modeled state while producing
+different traces.
+
+The most important qualifications are:
+
+\begin{itemize}
+  \item Add is not fully idempotent when \path{hosts.bak} is observed.
+  \item Distinct adds commute setwise, but not in file order or backup history.
+  \item Prep is not idempotent because it advances the restoration point.
+  \item Atomic rename protects one pathname, not the complete multi-file
+        operation.
+  \item Atomic visibility does not by itself imply maximum crash durability.
+\end{itemize}
+
+These qualifications are where the algebra adds the most value.  Familiar
+operational claims become precise enough to verify, refute, or deliberately
+adopt as part of the program's contract.

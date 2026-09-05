@@ -1,0 +1,106 @@
+\section{Commands and Action Semantics}
+
+\subsection{Well-Formed Commands}
+
+A parsed command is a triple
+
+\[
+  c=(action,dns,verbosity).
+\]
+
+The well-formedness predicate requires exactly one action and requires a DNS
+argument exactly when that action is \code{add}:
+
+\[
+\begin{split}
+\mathsf{wellFormed}(c)\quad\Longleftrightarrow\quad
+  &c.action\in\Action\\
+  &{}\land\bigl(c.action=\mathsf{add}
+    \Longleftrightarrow c.dns=\Some{d}\land\Valid(d)\bigr).
+\end{split}
+\]
+
+Verbosity is a modifier, not an action.  Short and long forms are aliases:
+
+\begin{align*}
+\Parse(\text{``-a''},d) &= \Parse(\text{``--add''},d),\\
+\Parse(\text{``-f''}) &= \Parse(\text{``--flush''}),\\
+\Parse(\text{``-h''}) &= \Parse(\text{``--help''}),\\
+\Parse(\text{``-v''},a) &= \Parse(\text{``--verbose''},a).
+\end{align*}
+
+Any command containing two actions is rejected, for example
+
+\[
+  \Parse(\text{``--flush prep''})=\Failure.
+\]
+
+\subsection{Add}
+
+For a valid DNS name $d$, the successful abstract effect is
+
+\[
+\Add{d}(S)=S[
+  A\coloneqq\Insert{d}(S.A),
+  B\coloneqq\Some{S.H},
+  H\coloneqq\Remove{d}(S.H)].
+\]
+
+The active hosts file is backed up immediately before replacement, and its
+metadata is preserved:
+
+\[
+  \Add{d}(S).M=S.M.
+\]
+
+An invalid name has no intended state transition:
+
+\[
+  \neg\Valid(d)\Longrightarrow
+  \Exec(\mathsf{add}(d),S)=(\Failure,S,t)
+\]
+
+for some diagnostic trace $t$.
+
+\subsection{Prep}
+
+Let $\HBlock(A,E)$ denote the hosts contents produced by the external
+\code{hblock} program from allow list $A$ and external environment $E$.
+Subject to successful confirmation when $O$ already exists,
+
+\[
+  \Prep_E(S)=S[O\coloneqq\Some{S.H},
+                 H\coloneqq\HBlock(S.A,E)].
+\]
+
+The environment parameter represents block sources, network results, hblock
+version, and configuration outside this repository.
+
+\subsection{Restore}
+
+Restore is defined only when the original backup exists:
+
+\[
+\Restore(S)=
+  \begin{cases}
+    S[H\coloneqq H_O], & S.O=\Some{H_O},\\
+    \Failure, & S.O=\None.
+  \end{cases}
+\]
+
+Existing active contents require confirmation before replacement.
+
+\subsection{Flush}
+
+Let $\Fresh$ denote the desired cache state with a running
+\code{mDNSResponder}:
+
+\[
+\Flush(S)=
+  \begin{cases}
+    S[K\coloneqq\Fresh], & \text{on macOS and command success},\\
+    \Failure, & \text{on other platforms or command failure}.
+  \end{cases}
+\]
+
+Flush does not intentionally modify $H$, $O$, $A$, $B$, or $M$.

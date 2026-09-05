@@ -1,0 +1,82 @@
+\section{Failure and Atomicity}
+
+\subsection{Atomic Visibility of Hosts Replacement}
+
+During the final replacement performed by \code{removeHostEntry()}, an observer
+of the active hosts pathname sees one of two complete values:
+
+\[
+  \mathsf{visible}(H)\in\{H_{old},\Remove{d}(H_{old})\}.
+\]
+
+No observer should see a partially generated $\Remove{d}(H_{old})$.  The
+implementation creates the temporary file in the same directory, writes the
+complete retained contents, calls \code{fflush()} and \code{fsync()}, restores
+metadata, closes the stream, and then calls \code{rename()}.
+
+\begin{lstlisting}[language=C,caption={Core atomic replacement sequence}]
+temporary_fd = mkstemp(temporary_path);
+destination = fdopen(temporary_fd, "w");
+
+/* Write the complete revised file. */
+
+if (fflush(destination) == EOF ||
+    fsync(fileno(destination)) == -1 ||
+    fchmod(fileno(destination),
+           hosts_status.st_mode & 07777) == -1)
+    goto cleanup;
+
+if (rename(temporary_path, hosts_path) == -1)
+    goto cleanup;
+\end{lstlisting}
+
+If any step before \code{rename()} fails, the active hosts contents remain
+$H_{old}$ and cleanup unlinks the incomplete temporary file.
+
+\subsection{Atomic Visibility Is Not Full Crash Durability}
+
+The replacement file is synchronized before rename.  The containing directory
+is not synchronized after rename.  Consequently, the implementation provides
+atomic pathname visibility but does not claim the strongest possible guarantee
+that the new directory entry survives immediate power loss.
+
+This distinction can be stated as:
+
+\[
+  \mathsf{atomicVisibility}\not\Longrightarrow
+  \mathsf{maximumCrashDurability}.
+\]
+
+A directory \code{fsync()} after rename would strengthen the durability
+contract.
+
+\subsection{Add Is Not a Multi-File Transaction}
+
+The allow list changes before the hosts file is replaced.  A later failure can
+therefore leave
+
+\[
+  d\in\SetOf{A}\quad\land\quad H=H_{old}.
+\]
+
+Likewise, \path{hosts.bak} can be updated even if temporary-file generation or
+rename later fails.  Atomic replacement protects the active hosts pathname; it
+does not make the complete \code{add} action all-or-nothing.
+
+\subsection{Prep and Restore Copy in Place}
+
+\code{copyFile()} opens its destination with truncation.  The \code{prep} and
+\code{restore} copies are therefore outside the atomic-replacement law.  A
+failure during either copy can leave a partially written destination.
+
+\begin{observation}
+Separating primitive laws from whole-command behavior reveals three different
+levels of assurance:
+\begin{enumerate}
+  \item exact and idempotent content transformation;
+  \item atomic replacement of one pathname; and
+  \item transactional update of several files.
+\end{enumerate}
+The current implementation provides the first two for hosts-file removal, but
+does not claim the third.
+\end{observation}

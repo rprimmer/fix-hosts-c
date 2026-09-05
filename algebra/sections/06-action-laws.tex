@@ -1,0 +1,90 @@
+\section{Action Laws and Their Limits}
+
+\begin{law}[Observational idempotence of add]
+\label{law:add-observational}
+For valid $d$,
+\[
+  \Add{d}(\Add{d}(S))\HAequiv\Add{d}(S).
+\]
+The allow list contains one copy of $d$, and the active hosts file contains no
+line with an active $d$ token.
+\end{law}
+
+\begin{boundary}[Add is not fully idempotent]
+\label{boundary:add-backup}
+Under full state equality,
+\[
+  \Add{d}(\Add{d}(S))\ne\Add{d}(S)
+\]
+in general.  After the first call, $B=\Some{S.H}$.  After the second call,
+$B=\Some{\Remove{d}(S.H)}$.
+
+The behavior test for repeated addition proves idempotence of the allow list
+and active hosts result.  It does not require preservation of the first backup.
+The distinction is semantic idempotence versus backup-history idempotence.
+\end{boundary}
+
+\begin{law}[Setwise commutativity of distinct adds]
+\label{law:add-commute}
+For valid, distinct $d$ and $e$,
+\[
+  \Add{d}(\Add{e}(S))\Setequiv\Add{e}(\Add{d}(S)).
+\]
+Full equality can fail because appended allow-list order differs and because
+\path{hosts.bak} records the hosts file immediately before the final add.
+\end{law}
+
+\begin{law}[Restore idempotence]
+\label{law:restore-idempotent}
+If the original backup remains present and unchanged, and both confirmations
+succeed, then
+\[
+  \Restore(\Restore(S))=\Restore(S).
+\]
+The model omits timestamps that can differ between physical copies.
+\end{law}
+
+\begin{law}[Prep-restore round trip]
+\label{law:roundtrip}
+If prep succeeds and $O$ is not modified before restore, then
+\[
+  \Restore(\Prep_E(S)).H=S.H.
+\]
+This is a round-trip law for active contents, not necessarily for the complete
+state.  Cache state and physical timestamps can differ.
+\end{law}
+
+\begin{boundary}[Prep is not idempotent]
+\label{boundary:prep}
+In general,
+\[
+  \Prep_E(\Prep_E(S))\ne\Prep_E(S).
+\]
+A confirmed second preparation overwrites \path{hosts-ORIG} with the current
+hblock-generated hosts file.  That changes the restoration point.  The
+confirmation prompt is therefore semantically important rather than merely a
+user-interface convenience.
+\end{boundary}
+
+\begin{law}[Verbose noninterference]
+\label{law:verbose}
+Let $q(c)$ and $v(c)$ differ only in verbosity.  For any successful command,
+\[
+\StateOf(\Exec(q(c),S))=\StateOf(\Exec(v(c),S)).
+\]
+Only the trace is expected to differ:
+\[
+\TraceOf(\Exec(q(c),S))\ne\TraceOf(\Exec(v(c),S)).
+\]
+The model ignores incidental access-time changes a filesystem might make while
+objects are inspected.
+\end{law}
+
+\begin{law}[Abstract idempotence of flush]
+\label{law:flush}
+\[
+  \Flush(\Flush(S)).K=\Fresh.
+\]
+Process identifiers, timing, and diagnostics may differ, so the law applies
+only to the abstract cache state.
+\end{law}

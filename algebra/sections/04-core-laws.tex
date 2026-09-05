@@ -1,0 +1,63 @@
+\section{Core Laws}
+
+\begin{law}[Removal idempotence]
+\label{law:remove-idempotent}
+\[
+  \Remove{d}(\Remove{d}(H))=\Remove{d}(H).
+\]
+After every line containing $d$ has been removed, another removal has no
+further effect.
+\end{law}
+
+\begin{law}[Commutativity of distinct removals]
+\label{law:remove-commute}
+For distinct DNS names $d$ and $e$,
+\[
+  \Remove{d}(\Remove{e}(H))=\Remove{e}(\Remove{d}(H)).
+\]
+The law remains true when one line contains both names; that line is absent
+from either final result.
+\end{law}
+
+\begin{law}[Preservation of unrelated lines]
+\label{law:preservation}
+If $\neg\Contains(d,l)$, then
+\[
+  \Count(l,\Remove{d}(H))=\Count(l,H).
+\]
+The law covers blank lines, comments, and tokens that merely contain similar
+text.
+\end{law}
+
+\begin{law}[Insertion idempotence]
+\label{law:insert-idempotent}
+\[
+  \Insert{d}(\Insert{d}(A))=\Insert{d}(A).
+\]
+\end{law}
+
+\begin{law}[Setwise commutativity of insertion]
+\label{law:insert-commute}
+For distinct $d$ and $e$,
+\[
+  \SetOf{\Insert{d}(\Insert{e}(A))}
+  =\SetOf{\Insert{e}(\Insert{d}(A))}.
+\]
+Sequence equality does not generally hold.  If both names are initially
+absent, the two sides append them in opposite orders.
+\end{law}
+
+\begin{law}[Exactness]
+\label{law:exactness}
+For distinct DNS tokens $d$ and $e$,
+\[
+  e\in\Tokens(l)\land d\notin\Tokens(l)
+  \quad\Longrightarrow\quad
+  l\text{ occurs unchanged in }\Remove{d}(H).
+\]
+This is the formal reason that removing \code{ads.example.com} must preserve a
+line containing \code{notads.example.com}.
+\end{law}
+
+The first four laws admit direct structural proofs from the definitions in the
+previous section.  They also translate naturally into property-based tests.

@@ -1,0 +1,76 @@
+\section{Sorts and Abstract State}
+
+\subsection{Sorts}
+
+The signature contains the following principal sorts:
+
+\begin{align*}
+\Bool      &= \{\mathsf{false},\mathsf{true}\},\\
+\Result    &= \{\Success,\Failure,\Cancelled\},\\
+\Action    &= \{\mathsf{prep},\mathsf{restore},\mathsf{add},\mathsf{flush}\},\\
+\Verbosity &= \{\Quiet,\Verbose\}.
+\end{align*}
+
+The remaining sorts are characterized rather than exhaustively enumerated:
+
+\begin{description}
+  \item[$\DNSName$] A syntactically valid fully qualified DNS name.
+  \item[$\Line$] A finite sequence of characters.
+  \item[$\Hosts$] A finite sequence of hosts-file lines.
+  \item[$\AllowList$] A finite sequence of DNS-name lines.
+  \item[$\Backup$] Either $\None$ or $\Some{H}$ for some $H\in\Hosts$.
+  \item[$\Metadata$] The mode, owner ID, and group ID of the active hosts file.
+  \item[$\Trace$] A finite sequence of diagnostic messages.
+  \item[$\Cache$] An abstract state of the DNS cache and
+        \code{mDNSResponder}.
+\end{description}
+
+\Hosts{} and \AllowList{} are sequences rather than sets because their on-disk
+ordering is observable.  A separate set interpretation is used when only
+membership matters.
+
+\subsection{State}
+
+The abstract state is the product
+
+\[
+  \State = \Hosts \times \Backup \times \AllowList \times
+           \Backup \times \Metadata \times \Cache.
+\]
+
+A state is written
+
+\[
+  S=(H,O,A,B,M,K),
+\]
+
+where:
+
+\begin{longtable}{@{}>{$}l<{$}p{0.76\linewidth}@{}}
+\toprule
+H & active hosts-file contents \\
+O & contents of \path{hosts-ORIG}, or $\None$ when absent \\
+A & hblock allow-list contents \\
+B & contents of \path{hosts.bak}, or $\None$ when absent \\
+M & mode and ownership of the active hosts file \\
+K & DNS-cache and responder state \\
+\bottomrule
+\end{longtable}
+
+Field selection is written $S.H$, $S.O$, and so forth.  Real execution also
+contains paths, directory entries, timestamps, process identifiers, file
+descriptors, and possible faults.  Those details enter the refinement and
+failure models rather than every state equation.
+
+\subsection{Execution}
+
+A parsed command produces a result, a new state, and an output trace:
+
+\[
+  \Exec : \Command \times \State
+       \longrightarrow \Result \times \State \times \Trace.
+\]
+
+The trace includes ordinary progress output, verbose metadata, and error
+diagnostics.  Separating the trace from the state permits a precise statement
+that verbose execution should not change the filesystem result.

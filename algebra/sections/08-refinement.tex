@@ -1,0 +1,80 @@
+\section{Refinement Map to the C Implementation}
+
+The abstract operators correspond to C types and functions as follows:
+
+\begin{longtable}{@{}p{0.29\linewidth}p{0.62\linewidth}@{}}
+\toprule
+Algebra & C implementation \\
+\midrule
+\endhead
+$\Command$ & \code{Command} in \path{src/actions.h} \\
+State paths & \code{Paths} in \path{src/fix-hosts.h} \\
+$\Contains(d,l)$ & \code{lineContainsHost()} \\
+$\Remove{d}(H)$ & filtering loop in \code{removeHostEntry()} \\
+$\Insert{d}(A)$ & \code{fileContainsLine()} and \code{appendLine()} \\
+$\Add{d}$ & \code{addDnsName()} \\
+$\Prep$, $\Restore$ & \code{updateHostsFiles()} \\
+$\Flush$ & \code{flushDnsCache()} \\
+atomic replacement & \code{mkstemp()}, \code{fsync()}, and \code{rename()} \\
+metadata preservation & \code{fchmod()} and \code{fchown()} \\
+trace extension & \code{fileInfo()} and verbose reporting \\
+external command execution & \code{runCommand()} \\
+\bottomrule
+\end{longtable}
+
+\subsection{Command Refinement}
+
+The C command state is:
+
+\begin{lstlisting}[language=C,caption={Parsed command state}]
+typedef struct {
+    Action action;
+    const char *dns_name;
+    bool verbose;
+} Command;
+\end{lstlisting}
+
+\code{selectAction()} enforces the one-action invariant.  Positional
+\code{prep} and \code{restore} requests pass through the same check as
+\code{--add} and \code{--flush}.  The \code{verbose} field refines the trace
+component rather than the filesystem state.
+
+\subsection{Exact-Match Refinement}
+
+\code{lineContainsHost()} scans whitespace-separated tokens and stops at a
+comment.  Equality requires both equal length and \code{strncmp()} equality:
+
+\begin{lstlisting}[language=C,caption={Exact DNS-token comparison}]
+if (token_length == expected_length &&
+    strncmp((const char *)token,
+            dns_name, expected_length) == 0)
+    return true;
+\end{lstlisting}
+
+The length check is essential.  Without it, a prefix could satisfy the byte
+comparison and violate Law~\ref{law:exactness}.
+
+\subsection{Subprocess Refinement}
+
+\code{runCommand()} implements external operations with \code{fork()},
+\code{execvp()}, and \code{waitpid()} rather than a shell command string.
+
+\Needspace{11\baselineskip}
+\begin{lstlisting}[language=C,caption={Argument-vector execution}]
+char *const flush_arguments[] = {
+    "dscacheutil", "-flushcache", NULL
+};
+
+if (runCommand(flush_arguments) != 0)
+    return EXIT_FAILURE;
+\end{lstlisting}
+
+This refinement passes arguments directly to the executable, eliminating an
+otherwise unnecessary shell grammar from the command semantics.
+
+\subsection{Excluded Implementation Details}
+
+The refinement map intentionally omits exact message wording, output spacing,
+timestamps, allocation strategy, and Doxygen text.  Those details can be
+specified separately, but they do not alter the principal state transitions
+defined here.
