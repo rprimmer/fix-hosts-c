@@ -77,5 +77,9 @@ paths. They exist to support isolated tests and development fixtures.
 Generate `readme.pdf` with `make docs`, or install the executable and man page
 under `/opt/homebrew` with `make install`.
 
+`docs/talk/fix-hostfiles-talk.pdf` is a short slide talk on how the program is
+built. Rebuild it with `make` in `docs/talk/`, which needs Typst, clang,
+Graphviz and Python 3.
+
 The companion Bash implementation lives in the separate `fix-hosts-bash`
 repository.

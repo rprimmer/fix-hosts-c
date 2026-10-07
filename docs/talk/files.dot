@@ -1,0 +1,8 @@
+digraph files {
+  graph [rankdir=LR, fontname="Helvetica"];
+  node [shape=box, style="rounded", fontname="Menlo", fontsize=12];
+  edge [fontname="Helvetica", fontsize=10, color="#555555"];
+  "fix-hosts.c" -> "system-actions.c" [label="18"];
+  "main.c" -> "fix-hosts.c" [label="6"];
+  "main.c" -> "system-actions.c" [label="1"];
+}
